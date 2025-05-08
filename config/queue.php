@@ -75,15 +75,16 @@ return [
     ],
 
     /*
-    |--------------------------------------------------------------------------
-    | Job Batching
-    |--------------------------------------------------------------------------
-    |
-    | The following options configure the database and table that store job
-    | batching information. These options can be updated to any database
-    | connection and table which has been defined by your application.
-    |
-    */
+      |----------------------------------------------------------------------
+      | Agrupación de Tareas (Job Batching)
+      |----------------------------------------------------------------------
+      |
+      | Las siguientes opciones configuran la base de datos y la tabla que 
+      | almacenan la información de la agrupación de tareas. Estas opciones 
+      | pueden ser actualizadas a cualquier conexión de base de datos y tabla 
+      | que haya sido definida por tu aplicación.
+      |
+      */
 
     'batching' => [
         'database' => env('DB_CONNECTION', 'sqlite'),
