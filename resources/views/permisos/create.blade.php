@@ -17,7 +17,7 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-success">Crear Rol</button>
+                        <button type="submit" class="btn btn-success">Crear Permiso</button>
                     </div>
                 </form>
             </div>

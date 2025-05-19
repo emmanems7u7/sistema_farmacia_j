@@ -13,8 +13,9 @@ use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\CategoriaController;
-
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 Route::get('/', function () {
     return redirect('/login');
 });
@@ -26,12 +27,13 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 //usuarios
+Route::get('/usuarios/exportar', [UserController::class, 'export'])->name('usuarios.exportar');
 
 Route::middleware(['auth', 'can:Administración de Usuarios'])->group(function () {
 
     Route::get('/usuarios', [UserController::class, 'index'])
         ->name('users.index')
-        ->middleware('can:Usuarios');
+        ->middleware('can:usuarios.ver');
 
     Route::get('/usuarios/crear', [UserController::class, 'create'])
         ->name('users.create')
@@ -69,8 +71,9 @@ Route::middleware(['auth', 'can:Administración de Usuarios'])->group(function (
 //Rutas para secciones
 Route::resource('secciones', SeccionController::class)->except([
     'show',
-])->middleware(['auth', 'role:admin']);
 
+])->middleware(['auth', 'role:admin']);
+Route::post('obtener/dato/menu', [SeccionController::class, 'cambiarSeccion'])->middleware(['auth', 'role:admin']);
 //Rutas para Menus
 Route::resource('menus', MenuController::class)->except([
     'show',
@@ -223,3 +226,56 @@ Route::middleware(['auth', 'can:Administración y Parametrización'])->group(fun
     Route::put('/categorias/{id}', [CategoriaController::class, 'update'])->name('categorias.update')->middleware('can:categoria.actualizar');
     Route::delete('/categorias/{id}', [CategoriaController::class, 'destroy'])->name('categorias.destroy')->middleware('can:categoria.eliminar');
 });
+
+
+
+
+Route::post('/api/sugerir-icono', function (Request $request) {
+    $titulo = $request->input('titulo');
+
+    try {
+        $respuesta = Http::withHeaders([
+            'Authorization' => 'Bearer ' . env('GROQ_API_KEY'),
+            'Content-Type' => 'application/json',
+        ])
+            ->timeout(10)
+            ->post('https://api.groq.com/openai/v1/chat/completions', [
+                'model' => 'llama3-70b-8192',
+                'messages' => [
+                    [
+                        'role' => 'system',
+                        'content' => 'Eres un asistente que sugiere nombres de iconos de Font Awesome. Responde ÚNICAMENTE con la clase del ícono (ej: "fas fa-user"). No incluyas texto adicional.'
+                    ],
+                    [
+                        'role' => 'user',
+                        'content' => "¿Qué ícono de Font Awesome corresponde al título: '$titulo'?"
+                    ]
+                ],
+                'max_tokens' => 10,
+                'temperature' => 0.3,
+            ]);
+
+        if ($respuesta->successful()) {
+            $icono = trim($respuesta->json('choices.0.message.content') ?? '');
+
+
+            if (preg_match('/^fas fa-[a-zA-Z0-9-]+$/', $icono)) {
+                return response()->json(['icono' => $icono]);
+            } else {
+                Log::warning('Respuesta inesperada de Llama 3', ['respuesta' => $icono]);
+                return response()->json(['icono' => 'fas fa-question']);
+            }
+        } else {
+            Log::error('Error en la respuesta de Groq/Llama 3', [
+                'status' => $respuesta->status(),
+                'body' => $respuesta->body(),
+            ]);
+            return response()->json(['error' => 'Error al obtener el ícono'], 500);
+        }
+
+    } catch (\Exception $e) {
+        Log::error('Excepción al conectar con Groq', ['exception' => $e->getMessage()]);
+        return response()->json(['error' => 'Servicio no disponible'], 503);
+    }
+});
+

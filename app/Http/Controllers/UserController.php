@@ -7,7 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-
+use App\Exports\UsuariosExport;
+use Maatwebsite\Excel\Facades\Excel;
 class UserController extends Controller
 {
     protected $userRepository;
@@ -125,5 +126,9 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'Usuario eliminado exitosamente');
     }
 
+    public function export()
+    {
+        return Excel::download(new UsuariosExport, 'usuarios.xlsx');
+    }
 
 }

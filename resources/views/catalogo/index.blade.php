@@ -47,10 +47,10 @@
                                                     <a href="{{ route('categorias.edit', $categoria->id) }}"
                                                         class="btn btn-sm btn-warning"> {!! __('ui.edit_icon') !!} </a>
                                                     <form action="{{ route('categorias.destroy', $categoria->id) }}"
-                                                        method="POST" class="d-inline">
+                                                        method="POST" class="d-inline" id="delete-form-{{ $categoria->id }}">
                                                         @csrf @method('DELETE')
-                                                        <button class="btn btn-sm btn-danger"
-                                                            onclick="return confirm('¿Eliminar?')">
+                                                        <button class="btn btn-sm btn-danger" type="button"
+                                                            onclick="confirmarEliminacion('delete-form-{{ $categoria->id }}' , '¿Estás seguro de eliminar esta categoría?')">
                                                             {!! __('ui.delete_icon') !!}</button>
                                                     </form>
                                                 </div>
@@ -126,11 +126,12 @@
                                             {!! __('ui.edit_icon') !!}
                                         </a>
                                         <form action="{{ route('catalogos.destroy', $catalogo->id) }}" method="POST"
-                                            class="d-inline">
+                                            id="delete-form-{{ $catalogo->id }}" class="d-inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger"
-                                                onclick="return confirm('¿Eliminar catálogo?')" title="Eliminar">
+                                            <button type="button" class="btn btn-sm btn-danger"
+                                                onclick="confirmarEliminacion('delete-form-{{ $catalogo->id }}' , '¿Estás seguro de eliminar este catalogo?')"
+                                                title="Eliminar">
                                                 {!! __('ui.delete_icon') !!}
                                             </button>
                                         </form>

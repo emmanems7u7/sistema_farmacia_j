@@ -21,7 +21,7 @@
                         @can('usuarios.crear')
                             <a class="btn btn-primary mb-3" href="{{ route('users.create') }}">Crear Usuario</a>
                         @endcan
-
+                        <a href="{{ route('usuarios.exportar') }}" class="btn btn-success mb-3">Exportar a Excel</a>
                     </div>
                 </div>
             </div>
@@ -33,87 +33,7 @@
 
     <div class="card mt-3">
         <div class="table-responsive">
-            <table class="table align-items-center mb-0">
-                <thead>
-                    <tr>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Usuario</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Nombres</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Rol</th>
-
-                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                            Telefono</th>
-                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ultimo
-                            acceso
-                        </th>
-                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                            Acciones
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    @foreach ($users as $usuario)
-                        <tr>
-                            <td>
-                                <div class="d-flex px-2 py-1">
-                                    <div>
-                                        <img src="https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/team-2.jpg"
-                                            class="avatar avatar-sm me-3">
-                                    </div>
-                                    <div class="d-flex flex-column justify-content-center">
-                                        <h6 class="mb-0 text-xs">{{ $usuario->name }}
-                                        </h6>
-                                        <p class="text-xs text-secondary mb-0">{{ $usuario->email }}</p>
-                                    </div>
-                                </div>
-                            </td>
-
-                            <td>
-                                <p class="text-xs font-weight-bold mb-0">{{ $usuario->usuario_nombres }}
-                                    {{ $usuario->usuario_app }}
-                                    {{ $usuario->usuario_apm }}
-                                </p>
-                            </td>
-                            <td>
-                                <p class="text-xs font-weight-bold mb-0 ">
-                                    {{ $usuario->getRoleNames()->first() ?? 'Sin Rol Asignado' }}
-                                </p>
-
-                            </td>
-                            <td class="align-middle text-center text-sm">
-                                <p class="text-xs font-weight-bold mb-0">{{ $usuario->usuario_telefono }}
-
-                                </p>
-                            </td>
-
-                            <td class="align-middle text-center">
-                                <span
-                                    class="text-secondary text-xs font-weight-bold">{{ $usuario->usuario_fecha_ultimo_acceso }}</span>
-                            </td>
-
-                            <td class="align-middle">
-                                @can('usuarios.editar')
-                                    <a href="{{ route('users.edit', ['id' => $usuario->id]) }}"
-                                        class="text-secondary font-weight-bold text-xs" id="modal_edit_usuario_button">Editar
-                                        Usuario</a>
-                                @endcan
-                                @can('usuarios.eliminar')
-                                    <a type="button" class="text-secondary font-weight-bold text-xs" id="modal_edit_usuario_button"
-                                        onclick="confirmarEliminar('{{ $usuario->id }}')">Eliminar Usuario</a>
-
-                                    <form id="eliminarUsuarioForm" method="POST"
-                                        action="{{ route('users.destroy', ['user' => $usuario->id]) }}" style="display: none;">
-                                        @csrf
-                                        @method('DELETE')
-                                    </form>
-                                @endcan
-                            </td>
-                        </tr>
-                    @endforeach
-
-                </tbody>
-            </table>
-
+            @include('usuarios.tabla_usuarios', ['usuarios' => $users, 'export' => 0])
         </div>
         <div class="d-flex justify-content-center">
             <nav>
@@ -166,17 +86,7 @@
 
     <script>
 
-        function confirmarEliminar(userId) {
-            alertify.confirm('Confirmar eliminación', '¿Estás seguro de que deseas eliminar este usuario?',
-                function () {
 
-                    document.getElementById('eliminarUsuarioForm').submit();
-                },
-                function () {
-
-                    alertify.error('Eliminación cancelada');
-                });
-        }
         var ModalEditar = new bootstrap.Modal(document.getElementById('modal_edit_usuario'));
 
         function editarModal(user_id) {

@@ -11,6 +11,21 @@
                 <form action="{{ route('menus.store') }}" method="POST">
                     @csrf
                     <div class="mb-3">
+                        <label for="seccion_id"
+                            class="form-label @error('seccion_id') is-invalid @enderror">Sección</label>
+                        <select name="seccion_id" id="seccion_id" class="form-select" required onchange="enviarId()">
+                            <option value="" selected disabled>Selecciona una sección</option>
+                            @foreach ($secciones as $seccion)
+                                <option value="{{ $seccion->id }}" {{ old('seccion_id') == $seccion->id ? 'selected' : '' }}>
+                                    {{ $seccion->titulo }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('seccion_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="mb-3">
                         <label for="nombre" class="form-label @error('nombre') is-invalid @enderror">Título del
                             Menú</label>
                         <input type="text" name="nombre" id="nombre" value="{{ old('nombre') }}" class="form-control"
@@ -24,7 +39,7 @@
                         <label for="orden" class="form-label @error('orden') is-invalid @enderror">Orden del
                             Menú</label>
                         <input type="text" name="orden" id="orden" value="{{ old('orden') }}" class="form-control"
-                            required>
+                            required placeholder="1..">
                         @error('orden')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -44,24 +59,6 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-
-                    <div class="mb-3">
-                        <label for="seccion_id"
-                            class="form-label @error('seccion_id') is-invalid @enderror">Sección</label>
-                        <select name="seccion_id" id="seccion_id" class="form-select" required>
-                            <option value="" selected disabled>Selecciona una sección</option>
-                            @foreach ($secciones as $seccion)
-                                <option value="{{ $seccion->id }}" {{ old('seccion_id') == $seccion->id ? 'selected' : '' }}>
-                                    {{ $seccion->titulo }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('seccion_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -71,3 +68,31 @@
         </div>
     </div>
 </div>
+
+<script>
+    function enviarId() {
+        var seccionId = document.getElementById('seccion_id').value;
+
+        fetch("obtener/dato/menu", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({
+                seccion_id: seccionId
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+
+                if (data.status == 'success') {
+                    document.getElementById('orden').setAttribute('placeholder', 'Sugerido: ' + data.sugerido);
+                }
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+</script>

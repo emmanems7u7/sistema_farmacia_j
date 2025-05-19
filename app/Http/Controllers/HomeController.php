@@ -41,7 +41,7 @@ class HomeController extends Controller
                 $tiempo_cambio_contraseña = 2;
             }
         } else {
-            $tiempo_cambio_contraseña = 0;
+            $tiempo_cambio_contraseña = 1;
         }
 
         return view('home', compact('breadcrumb', 'tiempo_cambio_contraseña'));

@@ -42,7 +42,7 @@
                 $tiempo_cambio_contraseña = 2;
             }
         } else {
-            $tiempo_cambio_contraseña = 0;
+            $tiempo_cambio_contraseña = 1;
         }
 
 
@@ -316,8 +316,41 @@
     <script src="{{asset('argon/js/plugins/smooth-scrollbar.min.js')}}"></script>
     <script src="{{asset('argon/js/plugins/chartjs.min.js')}}"></script>
 
+<style>
+    .alertify .ajs-modal {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+}
 
+.alertify .ajs-dialog {
+    margin: 0 auto !important;
+
+    transform: translateY(-40%) !important;
+}
+</style>
     <script>
+
+        alertify.defaults.theme.ok = "btn btn-danger";  
+        alertify.defaults.theme.cancel = "btn btn-secondary";
+        alertify.defaults.theme.input = "form-control";  
+        alertify.defaults.glossary.title = "Confirmar acción"; 
+        alertify.defaults.transition = "zoom";             
+      
+        
+        function confirmarEliminacion(formId, mensaje = '¿Estás seguro de que deseas eliminar este elemento?') {
+            alertify.confirm(
+                'Confirmar eliminación',
+                mensaje,
+                function () {
+                    document.getElementById(formId).submit();
+                },
+                function () {
+                    alertify.error('Eliminación cancelada');
+                }
+            ).set('labels', { ok: 'Eliminar', cancel: 'Cancelar' });
+        }
+
         var win = navigator.platform.indexOf('Win') > -1;
         if (win && document.querySelector('#sidenav-scrollbar')) {
             var options = {

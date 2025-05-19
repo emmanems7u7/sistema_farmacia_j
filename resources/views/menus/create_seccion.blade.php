@@ -19,8 +19,13 @@
                     </div>
                     <div class="mb-3">
                         <label for="icono" class="form-label @error('icono') is-invalid @enderror">Icono</label>
-                        <input type="text" name="icono" id="icono" value="{{ old('icono') }}" class="form-control"
-                            required>
+                        <div class="input-group">
+                            <input type="text" name="icono" id="icono" value="{{ old('icono') }}" class="form-control"
+                                required placeholder="fas fa-user">
+                            <span class="input-group-text">
+                                <i id="preview-icono" class="{{ old('icono') }}"></i>
+                            </span>
+                        </div>
                         @error('icono')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -37,3 +42,50 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const inputIcono = document.getElementById('icono');
+        const previewIcono = document.getElementById('preview-icono');
+
+        inputIcono.addEventListener('input', function () {
+            const valor = inputIcono.value.trim();
+            previewIcono.className = valor;
+        });
+    });
+
+
+</script>
+
+<script>
+    let debounceTimer;
+
+    document.getElementById('titulo').addEventListener('input', function () {
+        clearTimeout(debounceTimer);
+
+        const input = this;
+
+        debounceTimer = setTimeout(() => {
+            const titulo = input.value.trim();
+
+            if (titulo.length < 3) return;
+
+            fetch("/api/sugerir-icono", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ titulo })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.icono) {
+                        document.getElementById('icono').value = data.icono;
+                        document.getElementById('preview-icono').className = data.icono;
+                    }
+                })
+                .catch(err => console.error(err));
+        }, 500); // espera 500ms después de la última tecla
+    });
+</script>

@@ -28,7 +28,7 @@ class RolesPermissionsSeeder extends Seeder
         $roleEditor->givePermissionTo($permissionManageSecciones);
 
 
-        $adminUser = \App\Models\User::find(35);
+        $adminUser = \App\Models\User::find(1);
         $adminUser->assignRole('admin');
     }
 }

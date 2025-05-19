@@ -39,7 +39,21 @@ class SeccionController extends Controller
 
         return redirect()->back()->with('success', 'Sección creada exitosamente.');
     }
+    function cambiarSeccion(Request $request)
+    {
+        $request->validate([
+            'seccion_id' => 'required|integer|exists:secciones,id',
+        ]);
+        $seccionId = $request->input('seccion_id');
 
+
+        $menus = $this->menuRepository->ObtenerMenuPorSeccion($seccionId);
+        $sugerido = $menus->max('orden') + 1;
+        return response()->json([
+            'status' => 'success',
+            'sugerido' => $sugerido
+        ]);
+    }
     // Mostrar el formulario para editar una sección
     public function edit($id)
     {

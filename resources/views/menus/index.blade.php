@@ -39,10 +39,11 @@
                                 <td>
                                     <a href="{{ route('secciones.edit', $seccion->id) }}" class="btn btn-warning">Editar</a>
                                     <form action="{{ route('secciones.destroy', $seccion->id) }}" method="POST"
-                                        style="display:inline;">
+                                        id="delete-form-{{ $seccion->id }}" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                                        <button type="button" class="btn btn-danger"
+                                            onclick="confirmarEliminacion('delete-form-{{ $seccion->id }}' , '¿Estás seguro de eliminar esta sección?')">Eliminar</button>
                                     </form>
                                 </td>
                             </tr>
@@ -80,10 +81,12 @@
                                         <a href="{{ route('menus.edit', $menu->id) }}" class="btn btn-warning btn-sm">
                                             Editar
                                         </a>
-                                        <form action="{{ route('menus.destroy', $menu->id) }}" method="POST">
+                                        <form action="{{ route('menus.destroy', $menu->id) }}" method="POST"
+                                            id="delete-form-{{ $menu->id }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">
+                                            <button type="button" class="btn btn-danger btn-sm"
+                                                onclick="confirmarEliminacion('delete-form-{{ $menu->id }}' , '¿Estás seguro de eliminar este menú?')">
                                                 Eliminar
                                             </button>
                                         </form>

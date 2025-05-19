@@ -26,11 +26,15 @@ class MenuRepository extends BaseRepository implements MenuInterface
             'accion_usuario' => Auth::user()->na
         ]);
 
-        Permission::create([
-            'name' => $menu->nombre,
-            'tipo' => 'menu',
-            'id_relacion' => $menu->id
-        ]);
+        Permission::firstOrCreate(
+            [
+                'name' => $menu->nombre,
+                'tipo' => 'menu'
+            ],
+            [
+                'id_relacion' => $menu->id
+            ]
+        );
     }
     public function CrearSeccion($request)
     {
@@ -41,10 +45,21 @@ class MenuRepository extends BaseRepository implements MenuInterface
                 'accion_usuario' => Auth::user()->name,
             ]
         );
-        Permission::create([
-            'name' => $seccion->titulo,
-            'tipo' => 'seccion',
-            'id_relacion' => $seccion->id
-        ]);
+
+        Permission::firstOrCreate(
+            [
+                'name' => $seccion->titulo,
+                'tipo' => 'seccion'
+            ],
+            [
+                'id_relacion' => $seccion->id
+            ]
+        );
+    }
+
+    public function ObtenerMenuPorSeccion($seccion_id)
+    {
+        $menus = Menu::Where('seccion_id', $seccion_id)->orderBy('orden')->get();
+        return $menus;
     }
 }

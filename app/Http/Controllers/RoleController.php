@@ -8,6 +8,7 @@ use App\Interfaces\RoleInterface;
 use App\Interfaces\PermisoInterface;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+
 class RoleController extends Controller
 {
 
@@ -34,10 +35,6 @@ class RoleController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name',
-            'permissions' => 'array',
-        ]);
 
         $this->RoleRepository->CrearRol($request);
 
@@ -60,6 +57,7 @@ class RoleController extends Controller
 
         return view('roles.create', compact('role', 'permisosPorTipo', 'breadcrumb'));
     }
+
 
     public function edit($id)
     {
@@ -87,21 +85,9 @@ class RoleController extends Controller
 
     }
 
-
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name,' . $id,
-            'permissions' => 'array',
-        ]);
-
-        $role = Role::findOrFail($id);
-        $role->name = $request->name;
-        $role->save();
-
-        // Asignar o eliminar permisos según lo que se haya seleccionado
-        $role->syncPermissions($request->permissions);
-
+        $this->RoleRepository->EditarRol($request, $id);
         return redirect()->back()->with('success', 'Rol actualizado correctamente.');
     }
 
@@ -113,4 +99,6 @@ class RoleController extends Controller
 
         return redirect()->route('roles.index')->with('success', 'Rol eliminado correctamente.');
     }
+
+
 }

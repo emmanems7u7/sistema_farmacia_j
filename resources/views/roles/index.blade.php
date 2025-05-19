@@ -39,7 +39,8 @@
                             id="delete-form-{{ $role->id }}">
                             @csrf
                             @method('DELETE')
-                            <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $role->id }})">
+                            <button type="button" class="btn btn-sm btn-danger"
+                                onclick="confirmarEliminacion('delete-form-{{ $role->id }}' , '¿Estás seguro de eliminar este rol?')">
                                 <i class="fas fa-trash-alt"></i> Eliminar
                             </button>
                         </form>
@@ -55,6 +56,7 @@
 
 
     <script>
+        /*
         function confirmDelete(roleId) {
             alertify.confirm(
                 'Confirmar Eliminación',
@@ -68,7 +70,7 @@
                     alertify.error('Eliminación cancelada');
                 }
             ).set('labels', { ok: 'Eliminar', cancel: 'Cancelar' }); // Opcional: Cambia los textos de los botones
-        }
+        }*/
     </script>
 
 @endsection
