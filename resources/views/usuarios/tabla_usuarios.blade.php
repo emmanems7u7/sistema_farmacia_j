@@ -10,11 +10,11 @@
             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ultimo
                 acceso
             </th>
-            @if($export == 0)
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                    Acciones
-                </th>
-            @endif
+
+            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                Acciones
+            </th>
+
         </tr>
     </thead>
     <tbody>
@@ -55,27 +55,27 @@
                 <td class="align-middle text-center">
                     <span class="text-secondary text-xs font-weight-bold">{{ $usuario->usuario_fecha_ultimo_acceso }}</span>
                 </td>
-                @if($export == 0)
 
-                    <td class="align-middle">
-                        @can('usuarios.editar')
-                            <a href="{{ route('users.edit', ['id' => $usuario->id]) }}"
-                                class="text-secondary font-weight-bold text-xs" id="modal_edit_usuario_button">Editar
-                                Usuario</a>
-                        @endcan
-                        @can('usuarios.eliminar')
-                            <a type="button" class="text-secondary font-weight-bold text-xs" id="modal_edit_usuario_button"
-                                onclick="confirmarEliminacion('eliminarUsuarioForm', '¿Estás seguro de que deseas eliminar este usuario?')">Eliminar
-                                Usuario</a>
 
-                            <form id="eliminarUsuarioForm" method="POST"
-                                action="{{ route('users.destroy', ['user' => $usuario->id]) }}" style="display: none;">
-                                @csrf
-                                @method('DELETE')
-                            </form>
-                        @endcan
-                    </td>
-                @endif
+                <td class="align-middle">
+                    @can('usuarios.editar')
+                        <a href="{{ route('users.edit', ['id' => $usuario->id]) }}"
+                            class="text-secondary font-weight-bold text-xs" id="modal_edit_usuario_button">Editar
+                            Usuario</a>
+                    @endcan
+                    @can('usuarios.eliminar')
+                        <a type="button" class="text-secondary font-weight-bold text-xs" id="modal_edit_usuario_button"
+                            onclick="confirmarEliminacion('eliminarUsuarioForm', '¿Estás seguro de que deseas eliminar este usuario?')">Eliminar
+                            Usuario</a>
+
+                        <form id="eliminarUsuarioForm" method="POST"
+                            action="{{ route('users.destroy', ['user' => $usuario->id]) }}" style="display: none;">
+                            @csrf
+                            @method('DELETE')
+                        </form>
+                    @endcan
+                </td>
+
             </tr>
         @endforeach
 

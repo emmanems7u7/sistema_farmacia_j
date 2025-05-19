@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+
 class UserRepository extends BaseRepository implements UserInterface
 {
     public function __construct()
@@ -22,7 +23,7 @@ class UserRepository extends BaseRepository implements UserInterface
         $user = User::create(attributes: [
             'name' => $this->cleanHtml($request->input('name')),
             'email' => $this->cleanHtml($request->input('email')),
-            'password' => Hash::make('COD123'),
+            'password' => Hash::make($this->configuracion->conf_defecto),
             'usuario_fecha_ultimo_acceso' => now(),
             'usuario_fecha_ultimo_password' => now(),
             'usuario_nombres' => $this->cleanHtml($request->input('usuario_nombres')),

@@ -7,6 +7,7 @@ use App\Models\Menu;
 use Illuminate\Support\Facades\Route;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ConfiguracionCredenciales;
 class HomeController extends Controller
 {
     /**
@@ -26,6 +27,7 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $config = ConfiguracionCredenciales::first();
         $breadcrumb = [
             ['name' => 'Inicio', 'url' => route('home')],
         ];
@@ -35,7 +37,7 @@ class HomeController extends Controller
 
             $diferenciaDias = (int) $ultimoCambio->diffInDays(Carbon::now());
 
-            if ($diferenciaDias >= 100) {
+            if ($diferenciaDias >= $config->conf_duracion_max) {
                 $tiempo_cambio_contraseña = 1;
             } else {
                 $tiempo_cambio_contraseña = 2;

@@ -6,8 +6,10 @@ use App\Interfaces\UserInterface;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use App\Exports\ExportExcel;
+use App\Exports\ExportPDF;
 
-use App\Exports\UsuariosExport;
 use Maatwebsite\Excel\Facades\Excel;
 class UserController extends Controller
 {
@@ -17,7 +19,6 @@ class UserController extends Controller
     {
         $this->userRepository = $userInterface;
     }
-
 
     public function index()
     {
@@ -36,6 +37,7 @@ class UserController extends Controller
         $breadcrumb = [
             ['name' => 'Inicio', 'url' => route('home')],
             ['name' => 'Usuarios', 'url' => route('users.index')],
+            ['name' => 'Crear', 'url' => route('users.create')],
         ];
         return view('usuarios.create', compact('breadcrumb'));
     }
@@ -46,7 +48,7 @@ class UserController extends Controller
 
         $breadcrumb = [
             ['name' => 'Inicio', 'url' => route('home')],
-            ['name' => 'Usuarios', 'url' => route('users.index')],
+            ['name' => 'Perfil', 'url' => route('users.index')],
         ];
 
         return view('usuarios.perfil', compact('user', 'breadcrumb'));
@@ -79,6 +81,7 @@ class UserController extends Controller
         $breadcrumb = [
             ['name' => 'Inicio', 'url' => route('home')],
             ['name' => 'Usuarios', 'url' => route('users.index')],
+            ['name' => 'Ecitar ' . $user->name, 'url' => route('users.index')],
         ];
 
         return view('usuarios.edit', compact('user', 'breadcrumb'));
@@ -126,9 +129,17 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'Usuario eliminado exitosamente');
     }
 
-    public function export()
+    public function exportExcel()
     {
-        return Excel::download(new UsuariosExport, 'usuarios.xlsx');
+        $export = new ExportExcel('usuarios.export_usuarios', ['users' => User::all(), 'export' => 'Usuarios'], 'usuarios');
+        return Excel::download($export, $export->getFileName());
+    }
+
+    public function exportPDF()
+    {
+        $users = User::all();
+
+        return ExportPDF::exportPdf('usuarios.export_usuarios', ['users' => $users, 'export' => 'Usuarios'], 'usuarios', false);
     }
 
 }

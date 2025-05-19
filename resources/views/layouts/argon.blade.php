@@ -28,15 +28,16 @@
     @php
         use App\Models\Seccion;
         use Carbon\Carbon;
+        use App\Models\ConfiguracionCredenciales;
         $secciones = Seccion::with('menus')->get();
-
+        $config = ConfiguracionCredenciales::first();
 
         if (Auth::user()->usuario_fecha_ultimo_password) {
             $ultimoCambio = Carbon::parse(Auth::user()->usuario_fecha_ultimo_password);
 
             $diferenciaDias = (int) $ultimoCambio->diffInDays(Carbon::now());
 
-            if ($diferenciaDias >= 100) {
+            if ($diferenciaDias >= $config->conf_duracion_max) {
                 $tiempo_cambio_contraseña = 1;
             } else {
                 $tiempo_cambio_contraseña = 2;
@@ -44,7 +45,6 @@
         } else {
             $tiempo_cambio_contraseña = 1;
         }
-
 
     @endphp
 </head>
@@ -210,6 +210,14 @@
         <!-- End Navbar -->
         <div class="container">
         <div class="main-content position-relative max-height-vh-100 h-100">
+        @foreach (['status', 'error', 'warning'] as $msg)
+            @if(session($msg))
+                <div class="alert alert-{{ $msg }} alert-dismissible fade show" role="alert">
+                    {{ session($msg) }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            @endif
+        @endforeach
         @yield('content')
           </div>
            

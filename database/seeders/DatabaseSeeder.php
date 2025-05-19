@@ -28,8 +28,10 @@ class DatabaseSeeder extends Seeder
         // $this->call(PermissionSeeder::class);
         // $this->call(ConfiguracionSeeder::class);
         // $this->call(ConfCorreoSeeder::class);
-        $this->call(SeccionesSeeder::class);
-        $this->call(MenusSeeder::class);
+        //$this->call(SeccionesSeeder::class);
+        // $this->call(MenusSeeder::class);
+
+        $this->call(ConfiguracionCredencialesSeeder::class);
 
     }
 }

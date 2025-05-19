@@ -23,7 +23,8 @@ class ConfiguracionController extends Controller
 
         $config->update([
             'doble_factor_autenticacion' => $request->has('doble_factor_autenticacion'),
-            'limite_de_sesiones' => $request->input('limite_de_sesiones')
+            'limite_de_sesiones' => $request->input('limite_de_sesiones'),
+            'GROQ_API_KEY' => $request->input('GROQ_API_KEY'),
         ]);
 
         return redirect()->back()->with('success', 'Configuración actualizada.');

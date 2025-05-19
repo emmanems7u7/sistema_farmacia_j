@@ -21,19 +21,23 @@
                         @can('usuarios.crear')
                             <a class="btn btn-primary mb-3" href="{{ route('users.create') }}">Crear Usuario</a>
                         @endcan
-                        <a href="{{ route('usuarios.exportar') }}" class="btn btn-success mb-3">Exportar a Excel</a>
+
+                        @can('usuarios.exportar_excel')
+                            <a href="{{ route('usuarios.exportar_excel') }}" class="btn btn-success mb-3">Exportar a Excel</a>
+                        @endcan
+                        @can('usuarios.exportar_pdf')
+                            <a href="{{ route('usuarios.exportar_pdf') }}" class="btn btn-success mb-3" target="_blank">Exportar
+                                a PDF</a>
+                        @endcan
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-
-
-
     <div class="card mt-3">
         <div class="table-responsive">
-            @include('usuarios.tabla_usuarios', ['usuarios' => $users, 'export' => 0])
+            @include('usuarios.tabla_usuarios', ['usuarios' => $users])
         </div>
         <div class="d-flex justify-content-center">
             <nav>
@@ -86,9 +90,7 @@
 
     <script>
 
-
         var ModalEditar = new bootstrap.Modal(document.getElementById('modal_edit_usuario'));
-
         function editarModal(user_id) {
 
             fetch(`/datos/usuario/${user_id}`)
