@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Interfaces;
-
+use Spatie\Permission\Models\Permission;
 interface PermisoInterface
 {
     public function GetPermisosTipo($tipo);
@@ -10,4 +10,6 @@ interface PermisoInterface
     public function CrearPermiso($request);
 
     public function EditarPermiso($request, $permission);
+    function eliminarDeSeeder(Permission $permiso);
+
 }

@@ -217,8 +217,10 @@ Route::post('/2fa/resend', [TwoFactorController::class, 'resend'])->name('verify
 //Catalogo
 
 
-Route::middleware(['auth', 'role:admin', 'can:Configuración General'])->group(function () {
+Route::middleware(['auth'])->group(function () {
 
+
+    Route::post('/secciones/ordenar', [SeccionController::class, 'ordenar'])->name('secciones.ordenar');
 
 });
 Route::middleware(['auth', 'can:Administración y Parametrización'])->group(function () {

@@ -8,15 +8,20 @@ use App\Interfaces\MenuInterface;
 use App\Models\Configuracion;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Interfaces\PermisoInterface;
+use Spatie\Permission\Models\Permission;
+
+
 class SeccionController extends Controller
 {
     protected $menuRepository;
-    public function __construct(MenuInterface $MenuInterface)
+    protected $PermisoRepository;
+    public function __construct(MenuInterface $MenuInterface, PermisoInterface $PermisoInterface)
     {
-
+        $this->PermisoRepository = $PermisoInterface;
         $this->menuRepository = $MenuInterface;
     }
-    // Mostrar todas las secciones
+
     public function index()
     {
         $secciones = Seccion::all();  // Obtener todas las secciones
@@ -80,7 +85,17 @@ class SeccionController extends Controller
     public function destroy($id)
     {
         $seccion = Seccion::findOrFail($id);
-        $seccion->delete();  // Eliminar la sección
+
+        $permiso = Permission::where('id_relacion', $seccion->id)->where('name', $seccion->titulo)->first();
+
+
+        if ($permiso != null) {
+            $this->PermisoRepository->eliminarDeSeeder($permiso);
+            $permiso->delete();
+
+        }
+
+        $seccion->delete();
         return redirect()->back()->with('success', 'Sección eliminada exitosamente.');
     }
 
@@ -133,4 +148,21 @@ class SeccionController extends Controller
             return response()->json(['error' => 'Servicio no disponible'], 503);
         }
     }
+
+    public function ordenar(Request $request)
+    {
+        $configuracion = Configuracion::first();
+        if ($configuracion->mantenimiento == 1) {
+            foreach ($request->orden as $item) {
+                Seccion::where('id', $item['id'])->update(['posicion' => $item['posicion']]);
+            }
+
+            return response()->json(['status' => 'success', 'message' => 'Secciones reordenadas correctamente.']);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'El sistema no esta en modo mantenimiento para realizar el ordenamiento, sus cambios no se guardarán']);
+
+        }
+
+    }
+
 }

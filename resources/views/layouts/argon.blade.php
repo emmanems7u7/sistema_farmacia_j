@@ -20,6 +20,25 @@
     <!-- CSS Files -->
     <link id="pagestyle" href="{{ asset('argon/css/argon-dashboard.css?v=2.1.0')  }}" rel="stylesheet" />
 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" crossorigin="" />
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- jQuery (si aún no está incluido) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+
     @vite(['resources/js/app.js'])
 
     <link href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" rel="stylesheet">
@@ -29,9 +48,12 @@
         use App\Models\Seccion;
         use Carbon\Carbon;
         use App\Models\ConfiguracionCredenciales;
-        $secciones = Seccion::with('menus')->get();
-        $config = ConfiguracionCredenciales::first();
+        use App\Models\Configuracion;
 
+        $secciones = Seccion::with('menus')->orderBy('posicion')->get();
+        $config = ConfiguracionCredenciales::first();
+        $configuracion = Configuracion::first();
+       
         if (Auth::user()->usuario_fecha_ultimo_password) {
             $ultimoCambio = Carbon::parse(Auth::user()->usuario_fecha_ultimo_password);
 
@@ -115,28 +137,31 @@
                     </a>
                 </li>
                 @endrole
-                @foreach ($secciones as $seccion)
-                @can($seccion->titulo)
-                    <li class="nav-item mt-3 d-flex align-items-center position-relative">
-                        <!-- Icono detrás del texto, movido a la derecha -->
-                        <i class=" {{ $seccion->icono }} text-dark text-sm opacity-10 position-absolute"
-                            style="z-index: -1; left: 10px;"></i>
-                        <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6 mb-0">
-                            {{ $seccion->titulo }}
-                        </h6>
-                    </li>
 
-                    @foreach ($seccion->menus as $menu)
-                    @can($menu->nombre)
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route($menu->ruta) }}">
-                                <span class="ps-3 ms-3 nav-link-text ms-1">{{ $menu->nombre }}</span>
-                            </a>
-                        </li>
+                <ul id="secciones-list" class="list-unstyled" {{ $configuracion->mantenimiento ? 'data-draggable="false"' : 'data-draggable="true"' }}>
+                    @foreach ($secciones as $seccion)
+                        @can($seccion->titulo)
+                            <li class="seccion-item mb-3 p-2" data-id="{{ $seccion->id }}">
+                                <div class="d-flex align-items-center {{ $configuracion->mantenimiento ? 'text-warning' : '' }}">
+                                    <i class="{{ $seccion->icono }} me-2"></i>
+                                    <h6 class="m-0 text-uppercase text-xs font-weight-bolder  {{ $configuracion->mantenimiento ? 'text-warning' : '' }}">{{ $seccion->titulo }}</h6>
+                                </div>
+
+                                <ul class="list-unstyled ms-4 mt-2">
+                                    @foreach ($seccion->menus as $menu)
+                                        @can($menu->nombre)
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="{{ route($menu->ruta) }}">
+                                                    <span class="nav-link-text">{{ $menu->nombre }}</span>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                    @endforeach
+                                </ul>
+                            </li>
                         @endcan
                     @endforeach
-                @endcan
-                @endforeach     
+                </ul>
         @endif
 
         <li class="nav-item">
@@ -156,8 +181,42 @@
            
 </ul>
         </div>
+<!-- CDN de SortableJS -->
+@if($configuracion->mantenimiento == 1)
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+    const lista = document.getElementById('secciones-list');
+
+    new Sortable(lista, {
+        animation: 150,
+        onEnd: function () {
+            const orden = Array.from(document.querySelectorAll('.seccion-item'))
+                .map((el, index) => ({
+                    id: el.dataset.id,
+                    posicion: index + 1
+                }));
+
+            fetch('{{ route("secciones.ordenar") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ orden })
+            }).then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alertify.success(data.message);
+                } else {
+                    alertify.error(data.message || 'Ocurrió un error al ordenar');
+                }
+            })
+        }
+    });
 
 
+</script>
+@endif
     </aside>
     <main class="main-content position-relative border-radius-lg ">
         <!-- Navbar -->
@@ -210,14 +269,17 @@
         <!-- End Navbar -->
         <div class="container">
         <div class="main-content position-relative max-height-vh-100 h-100">
-        @foreach (['status', 'error', 'warning'] as $msg)
+        @foreach (['status' => 'success', 'error' => 'error', 'warning' => 'warning'] as $msg => $type)
             @if(session($msg))
-                <div class="alert alert-{{ $msg }} alert-dismissible fade show" role="alert">
-                    {{ session($msg) }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        alertify.set('notifier','position', 'top-right');
+                        alertify.{{ $type }}(@json(session($msg)));
+                    });
+                </script>
             @endif
         @endforeach
+
         @yield('content')
           </div>
            
@@ -315,7 +377,7 @@
             </div>
         </div>
     </div>
-
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" crossorigin=""></script>
     <!--   Core JS Files   -->
     <script src="{{asset('argon/js/core/popper.min.js')}}"></script>
     <script src="{{asset('argon/js/core/bootstrap.min.js')}}"></script>

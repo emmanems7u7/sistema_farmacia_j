@@ -15,21 +15,22 @@ class DatabaseSeeder extends Seeder
     {
 
 
-        /*
-                User::factory()->create([
-                    'name' => 'admin',
-                    'email' => 'admin@admin.com',
-                    'password' => Hash::make('admin'),
-                ]);*/
 
-        // $this->call(class: RolesPermissionsSeeder::class);
-        // $this->call(UserSeeder::class);
-        // $this->call(CatalogoSeeder::class);
-        // $this->call(PermissionSeeder::class);
-        // $this->call(ConfiguracionSeeder::class);
-        // $this->call(ConfCorreoSeeder::class);
-        //$this->call(SeccionesSeeder::class);
-        // $this->call(MenusSeeder::class);
+        User::factory()->create([
+            'name' => 'admin',
+            'email' => 'admin@admin.com',
+            'password' => Hash::make('admin'),
+        ]);
+
+        $this->call(class: RolesPermissionsSeeder::class);
+        $this->call(UserSeeder::class);
+        $this->call(class: CategoriaSeeeder::class);
+        $this->call(CatalogoSeeder::class);
+        $this->call(PermissionSeeder::class);
+        $this->call(ConfiguracionSeeder::class);
+        $this->call(ConfCorreoSeeder::class);
+        $this->call(SeccionesSeeder::class);
+        $this->call(MenusSeeder::class);
 
         $this->call(ConfiguracionCredencialesSeeder::class);
 

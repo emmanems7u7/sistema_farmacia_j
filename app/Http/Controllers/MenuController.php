@@ -8,12 +8,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 use App\Interfaces\MenuInterface;
+use App\Interfaces\PermisoInterface;
+use Spatie\Permission\Models\Permission;
 class MenuController extends Controller
 {
     protected $menuRepository;
-    public function __construct(MenuInterface $MenuInterface)
+    protected $PermisoRepository;
+    public function __construct(MenuInterface $MenuInterface, PermisoInterface $permisoInterface)
     {
-
+        $this->PermisoRepository = $permisoInterface;
         $this->menuRepository = $MenuInterface;
     }
     public function index()
@@ -60,7 +63,7 @@ class MenuController extends Controller
 
         $this->menuRepository->CrearMenu($request);
 
-        return redirect()->route('menus.index')->with('success', 'Menú creado exitosamente.');
+        return redirect()->route('menus.index')->with('status', 'Menú creado exitosamente.');
     }
 
 
@@ -84,14 +87,25 @@ class MenuController extends Controller
         $menu = Menu::findOrFail($id);
         $menu->update($request->all());
 
-        return redirect()->route('menus.index')->with('success', 'Menú actualizado exitosamente.');
+        return redirect()->route('menus.index')->with('status', 'Menú actualizado exitosamente.');
     }
 
 
     public function destroy($id)
     {
-        $menu = Menu::findOrFail($id);
-        $menu->delete();
-        return redirect()->route('menus.index')->with('success', 'Menú eliminado exitosamente.');
+        $menu = Menu::where('id', $id)->first();
+
+        $permiso = Permission::where('id_relacion', $menu->id)->where('name', $menu->nombre)->first();
+
+        if ($permiso != null) {
+            $this->PermisoRepository->eliminarDeSeeder($permiso);
+            $permiso->delete();
+
+        }
+        if ($menu != null) {
+            $this->menuRepository->eliminarDeSeederMenu($menu);
+            $menu->delete();
+        }
+        return redirect()->route('menus.index')->with('status', 'Menú eliminado exitosamente.');
     }
 }
