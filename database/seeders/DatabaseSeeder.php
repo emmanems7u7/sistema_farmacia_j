@@ -19,8 +19,10 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'admin',
             'email' => 'admin@admin.com',
-            'password' => Hash::make('admin'),
+            'password' => Hash::make('1'),
         ]);
+
+        //Contenido minimo para levantar sistema
 
         $this->call(class: RolesPermissionsSeeder::class);
         $this->call(UserSeeder::class);
@@ -31,8 +33,14 @@ class DatabaseSeeder extends Seeder
         $this->call(ConfCorreoSeeder::class);
         $this->call(SeccionesSeeder::class);
         $this->call(MenusSeeder::class);
-
         $this->call(ConfiguracionCredencialesSeeder::class);
 
+        // Contenido minimo para levantar sistema
+
+
     }
+
+
+
+
 }

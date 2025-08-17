@@ -10,15 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('secciones', function (Blueprint $table) {
+        Schema::create('user_personalizacions', function (Blueprint $table) {
             $table->id();
-            $table->integer('posicion');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('sidebar_color')->default('primary');
+            $table->string('sidebar_type')->default('bg-white');
+            $table->boolean('dark_mode')->default(false);
 
-            $table->string('titulo')->nullable()
-                ->comment('Titulo de la sección de menu');
-            $table->string('icono', 20)
-                ->nullable()
-                ->comment('icono para identificar la seccion');
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('secciones');
+        Schema::dropIfExists('user_personalizacions');
     }
 };

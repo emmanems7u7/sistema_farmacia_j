@@ -19,9 +19,7 @@ return new class extends Migration {
             $table->string('ruta')->nullable();
             $table->foreign('seccion_id')->references('id')->on('secciones')->onDelete('cascade');
             $table->foreign('padre_id')->references('id')->on('menus')->onDelete('cascade');
-            $table->string('accion_usuario', 20)
-                ->nullable()
-                ->comment('Usuario que realizó la acción');
+
             $table->timestamps();
         });
     }

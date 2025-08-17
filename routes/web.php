@@ -14,11 +14,28 @@ use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ConfiguracionCredencialesController;
-
+use App\Http\Controllers\ArtisanController;
+use App\Http\Controllers\UserPersonalizacionController;
 
 Route::get('/', function () {
     return redirect('/login');
 });
+
+
+//RUTAS PARA EJECUTAR ARTISAN EN PRODUCCION
+
+Route::middleware(['auth', 'can:ejecutar-artisan'])->group(function () {
+
+    Route::get('/artisan-panel', [ArtisanController::class, 'verificacion'])->name('artisan.admin');
+
+    Route::post('/artisan-panel', [ArtisanController::class, 'index'])->name('artisan.verificar');
+
+    Route::post('/artisan/run', [ArtisanController::class, 'run'])->name('artisan.run');
+});
+
+Route::post('/guardar-color-sidebar', [UserPersonalizacionController::class, 'guardarSidebarColor'])->middleware('auth');
+Route::post('/user/personalizacion/sidebar-type', [UserPersonalizacionController::class, 'updateSidebarType'])->middleware('auth');
+Route::post('/user/preferences', [UserPersonalizacionController::class, 'updateDark'])->middleware('auth');
 
 
 
@@ -99,10 +116,11 @@ Route::middleware(['auth', 'can:Configuración'])->group(function () {
     Route::post('/configuracion/correo/guardar', [ConfCorreoController::class, 'store'])
         ->name('configuracion.correo.store')
         ->middleware('can:configuracion_correo.actualizar');
+    Route::put('configuracion_correo', [ConfCorreoController::class, 'update'])->name('configuracion_correo.update')->middleware('can:configuracion_correo.actualizar');
+
 
     Route::get('/correo/prueba', [ConfCorreoController::class, 'enviarPrueba'])
-        ->name('correo.prueba')
-        ->middleware('can:configuracion.correo');
+        ->name('correo.prueba');
 
     Route::get('/correos/plantillas', [CorreoController::class, 'index'])
         ->name('correos.index')
@@ -116,6 +134,7 @@ Route::middleware(['auth', 'can:Configuración'])->group(function () {
         ->name('obtener.correo');
 
 });
+
 
 //cambio de contraseña
 Route::middleware(['auth'])->group(function () {

@@ -12,34 +12,14 @@ return new class extends Migration {
     {
         Schema::create('conf_correos', function (Blueprint $table) {
             $table->id();
-
-            $table->string('conf_protocol', 20)
-                ->comment('Protocolo de envío de correo');
-
-            $table->string('conf_smtp_host', 150)
-                ->comment('Dirección del servidor SMTP.');
-
-            $table->integer('conf_smtp_port')
-                ->comment('Puerto utilizado para la conexión SMTP.');
-
-            $table->string('conf_smtp_user', 150)
-                ->comment('Usuario utilizado para autenticación SMTP.');
-
-            $table->string('conf_smtp_pass', 150)
-                ->comment('Contraseña para la autenticación SMTP.');
-
-            $table->string('conf_mailtype', 20)
-                ->comment('Tipo de formato del correo');
-
-            $table->string('conf_charset', 20)
-                ->comment('Charset utilizado en el cuerpo del correo');
-
-            $table->boolean('conf_in_background')
-                ->default(true)
-                ->comment('Establece si el envío del correo se realizará en segundo plano. 0=No; 1=Sí.');
-
-            $table->string('accion_usuario', 50)
-                ->comment('Usuario que realizó la acción.');
+            $table->string('mailer')->default('smtp');
+            $table->string('host');
+            $table->integer('port');
+            $table->string('username');
+            $table->string('password');
+            $table->string('encryption')->nullable(); // ssl, tls, null
+            $table->string('from_address');
+            $table->string('from_name');
             $table->timestamps();
         });
     }

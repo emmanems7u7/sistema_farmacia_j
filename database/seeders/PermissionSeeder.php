@@ -66,6 +66,7 @@ class PermissionSeeder extends Seeder
             ['id' => 67, 'name' => 'categoria.editar', 'tipo' => 'permiso', 'id_relacion' => null, 'guard_name' => 'web', 'created_at' => '2025-05-07 19:51:54', 'updated_at' => '2025-05-07 19:51:54'],
             ['id' => 68, 'name' => 'categoria.actualizar', 'tipo' => 'permiso', 'id_relacion' => null, 'guard_name' => 'web', 'created_at' => '2025-05-07 19:51:54', 'updated_at' => '2025-05-07 19:51:54'],
             ['id' => 69, 'name' => 'categoria.eliminar', 'tipo' => 'permiso', 'id_relacion' => null, 'guard_name' => 'web', 'created_at' => '2025-05-07 19:51:54', 'updated_at' => '2025-05-07 19:51:54'],
+            ['id' => 70, 'name' => 'ejecutar-artisan', 'tipo' => 'permiso', 'id_relacion' => null, 'guard_name' => 'web', 'created_at' => '2025-05-07 19:51:54', 'updated_at' => '2025-05-07 19:51:54'],
 
         ]);
 

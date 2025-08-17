@@ -77,4 +77,17 @@ class User extends Authenticatable
         $this->two_factor_expires_at = null;
         $this->save();
     }
+    public function preferences()
+    {
+        return $this->hasOne(UserPersonalizacion::class);
+    }
+    public function preferredNotificationChannels()
+    {
+        //  lógica para determinar los canales preferidos por usuario
+        if ($this->preferenciaNotificacion === 'mail') {
+            return ['mail'];
+        } else {
+            return ['database'];
+        }
+    }
 }

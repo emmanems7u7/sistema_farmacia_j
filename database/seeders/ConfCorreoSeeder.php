@@ -14,17 +14,17 @@ class ConfCorreoSeeder extends Seeder
     public function run(): void
     {
         DB::table('conf_correos')->insert([
-            'conf_protocol' => 'smtp',
-            'conf_smtp_host' => 'smtp.gmail.com',
-            'conf_smtp_port' => '465',
-            'conf_smtp_user' => 'emmanuelz7u7@gmail.com',
-            'conf_smtp_pass' => 'rrqibecftokaandb',
-            'conf_mailtype' => 'html',
-            'conf_charset' => 'UTF-8',
-            'conf_in_background' => '1',
-            'accion_usuario' => 'admin',
-            'created_at' => Carbon::parse('2025-04-11 15:26:20'),
-            'updated_at' => Carbon::parse('2025-04-11 15:47:15'),
+            'mailer' => 'smtp',
+            'host' => 'smtp.example.com',
+            'port' => 587,
+            'username' => 'usuario@example.com',
+            'password' => bcrypt('secret_password'),
+            'encryption' => 'tls',
+            'from_address' => 'no-reply@example.com',
+            'from_name' => 'Nombre de la App',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
+
     }
 }

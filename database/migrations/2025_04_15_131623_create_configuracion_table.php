@@ -13,7 +13,11 @@ return new class extends Migration {
         Schema::create('configuracion', function (Blueprint $table) {
             $table->id();
             $table->boolean('doble_factor_autenticacion')->default(false)->comment('Activar o desactivar el doble factor de autenticacion');
-            ;
+            $table->text('GROQ_API_KEY')->nullable();
+            $table->boolean('mantenimiento')->default(false)->comment('Activar o desactivar mantenimiento de sistema');
+            $table->integer('limite_de_sesiones')
+                ->default(1)
+                ->comment('Número máximo de sesiones activas permitidas por usuario');
             $table->timestamps();
         });
     }

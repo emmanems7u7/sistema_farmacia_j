@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('catalogos', function (Blueprint $table) {
             $table->id();
-            $table->integer('catalogo_parent')->nullable()
+            $table->string('catalogo_parent')->nullable()
                 ->comment('Si la lista depende de algún registro (p.ej. Departamento => Ciudad), se registra el ID del registro padre');
             $table->string('catalogo_codigo', 50)->unique()
 
@@ -24,7 +24,10 @@ return new class extends Migration {
             $table->string('accion_usuario', 20)->nullable()
                 ->comment('Nombre de usuario que realizó la última modificación');
             $table->timestamps();
-
+            $table->foreignId('categoria_id')
+                ->constrained('categorias')
+                ->onDelete('cascade')
+                ->comment('ID de la categoría a la que pertenece este catálogo');
 
         });
     }

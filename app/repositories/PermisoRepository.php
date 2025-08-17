@@ -86,17 +86,22 @@ class PermisoRepository extends BaseRepository implements PermisoInterface
             $permiso = Permission::create($data);
         }
 
-        $this->registrarEnSeeder($permiso);
+        $this->registrarEnSeeder($permiso, $idRelacion);
 
         return $permiso;
     }
-    protected function registrarEnSeeder(Permission $permiso)
+    protected function registrarEnSeeder(Permission $permiso, $id_relacion = 0)
     {
+
+        if ($id_relacion == null) {
+            $id_relacion = -1;
+        }
+
         $fecha = now()->format('Ymd');
-        $nombreClase = 'SeederPermisos_' . $fecha;
+        $nombreClase = 'Generado_SeederPermisos_' . $fecha;
         $rutaSeeder = database_path("seeders/{$nombreClase}.php");
 
-        $lineaPermiso = "            ['id' => {$permiso->id}, 'name' => '{$permiso->name}', 'tipo' => '{$permiso->tipo}', 'guard_name' => '{$permiso->guard_name}' ],";
+        $lineaPermiso = "            ['id' => {$permiso->id}, 'name' => '{$permiso->name}', 'tipo' => '{$permiso->tipo}', 'id_relacion' => {$id_relacion}, 'guard_name' => '{$permiso->guard_name}' ],";
 
         // Si no existe el seeder, lo creamos
         if (!File::exists($rutaSeeder)) {
@@ -139,13 +144,15 @@ class PermisoRepository extends BaseRepository implements PermisoInterface
             );
             File::put($rutaSeeder, $contenidoActual);
         }
+
+        $this->agregarSeederADatabaseSeeder($nombreClase);
     }
     function eliminarDeSeeder(Permission $permiso)
     {
         $seeders = File::files(database_path('seeders'));
 
         foreach ($seeders as $seeder) {
-            if (!Str::startsWith($seeder->getFilename(), 'SeederPermisos_')) {
+            if (!Str::startsWith($seeder->getFilename(), 'Generado_SeederPermisos_')) {
                 continue;
             }
 

@@ -4,13 +4,12 @@ namespace App\Mail;
 
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Mail\Mailable;
+
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class CorreoDesdePlantilla extends Mailable
+class CorreoDesdePlantilla extends configuracion_correo
 {
     use Queueable, SerializesModels;
 
@@ -27,6 +26,7 @@ class CorreoDesdePlantilla extends Mailable
     {
         $this->asunto = $asunto;
         $this->contenido_html = $contenido_html;
+        parent::__construct();
     }
 
     /**

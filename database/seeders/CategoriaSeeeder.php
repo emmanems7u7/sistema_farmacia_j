@@ -13,36 +13,31 @@ class CategoriaSeeeder extends Seeder
      */
     public function run(): void
     {
-        $now = Carbon::now();
-
         DB::table('categorias')->insert([
             [
-                'nombre' => 'General',
-                'descripcion' => 'Categorías sin clasificación específica',
-                'estado' => 1,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'nombre' => 'Departamentos',
-                'descripcion' => 'categoria de departamentos',
-                'estado' => 1,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
+                'id' => 1,
                 'nombre' => 'Ciudades',
                 'descripcion' => 'Listado de ciudades',
                 'estado' => 1,
-                'created_at' => $now,
-                'updated_at' => $now,
+                'created_at' => '2025-06-25 01:29:09',
+                'updated_at' => '2025-06-25 01:29:09',
             ],
             [
-                'nombre' => 'Inactiva',
-                'descripcion' => 'Ejemplo de categoría deshabilitada',
-                'estado' => 0,
-                'created_at' => $now,
-                'updated_at' => $now,
+                'id' => 2,
+                'nombre' => 'Paises',
+                'descripcion' => 'Lista de paises disponibles',
+                'estado' => 1,
+                'created_at' => '2025-06-25 02:43:10',
+                'updated_at' => '2025-06-25 02:43:10',
+            ],
+
+            [
+                'id' => 3,
+                'nombre' => 'Departamentos',
+                'descripcion' => 'Categoria de departamentos',
+                'estado' => 1,
+                'created_at' => '2025-07-02 23:03:43',
+                'updated_at' => '2025-07-02 23:03:43',
             ],
         ]);
     }
