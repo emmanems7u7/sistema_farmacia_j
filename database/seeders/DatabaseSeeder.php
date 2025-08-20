@@ -26,8 +26,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call(class: RolesPermissionsSeeder::class);
         $this->call(UserSeeder::class);
-        $this->call(class: CategoriaSeeeder::class);
-        $this->call(CatalogoSeeder::class);
+        //$this->call(class: CategoriaSeeeder::class);
+        //$this->call(CatalogoSeeder::class);
         $this->call(PermissionSeeder::class);
         $this->call(ConfiguracionSeeder::class);
         $this->call(ConfCorreoSeeder::class);
@@ -38,6 +38,23 @@ class DatabaseSeeder extends Seeder
         // Contenido minimo para levantar sistema
 
 
+
+        // Seeders creados automaticamente 20-08-2025
+        // PERMISOS
+        $this->call(Generado_SeederPermisos_20250820::class);
+
+        // FIN PERMISOS
+
+        // MENU
+        $this->call(Generado_SeederMenu_20250820::class);
+
+        // FIN MENU
+
+        // SECCION
+        $this->call(Generado_SeederSeccion_20250820::class);
+
+        // FIN SECCION
+        // Fin Seeders creados automaticamente 20-08-2025
     }
 
 

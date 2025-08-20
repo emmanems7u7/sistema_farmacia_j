@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->unsignedBigInteger('sucursal_id')->nullable();
+            $table->foreign('sucursal_id')->references('id')->on('sucursals')->onDelete('cascade'); // aquí
             $table->rememberToken();
             $table->timestamps();
         });

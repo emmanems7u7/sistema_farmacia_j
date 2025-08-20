@@ -32,6 +32,11 @@
     <!-- CSS Files -->
     <link id="pagestyle" href="{{ asset('argon/css/argon-dashboard.css?v=2.1.0')  }}" rel="stylesheet" />
 
+
+       <!-- Font Awesome Icons -->
+       <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+<script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
 </head>
 
 <body class="">
@@ -39,123 +44,154 @@
         <div class="row">
             <div class="col-12">
                 <!-- Navbar -->
-                <nav
-                    class="navbar navbar-expand-lg blur border-radius-lg top-0 z-index-3 shadow position-absolute mt-4 py-2 start-0 end-0 mx-4">
-                    <div class="container-fluid">
-                        <a class="navbar-brand font-weight-bolder ms-lg-0 ms-3 " href="../pages/dashboard.html">
-                            {{ config('app.name', 'Laravel') }}
-                        </a>
-                        <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false"
-                            aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon mt-2">
-                                <span class="navbar-toggler-bar bar1"></span>
-                                <span class="navbar-toggler-bar bar2"></span>
-                                <span class="navbar-toggler-bar bar3"></span>
-                            </span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navigation">
-                            <ul class="navbar-nav mx-auto">
-                                <li class="nav-item">
-                                    <a class="nav-link d-flex align-items-center me-2 active" aria-current="page"
-                                        href="../pages/dashboard.html">
-                                        <i class="fa fa-chart-pie opacity-6 text-dark me-1"></i>
-                                        Inicio
-                                    </a>
-                                </li>
 
-                                <li class="nav-item">
-                                    <a class="nav-link me-2" href="../pages/sign-up.html">
-                                        <i class="fas fa-user-circle opacity-6 text-dark me-1"></i>
-                                        Registrarse
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link me-2" href="../pages/sign-in.html">
-                                        <i class="fas fa-key opacity-6 text-dark me-1"></i>
-                                        Ingresar
-                                    </a>
-                                </li>
-                            </ul>
-
-                        </div>
-                    </div>
-                </nav>
                 <!-- End Navbar -->
             </div>
         </div>
     </div>
-    <main class="main-content  mt-0">
-        <section>
-            <div class="page-header min-vh-100">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column mx-lg-0 mx-auto">
-                            <div class="card card-plain">
-                                <div class="card-header pb-0 text-start">
-                                    <h4 class="font-weight-bolder">Iniciar sesión</h4>
-                                    <p class="mb-0">Ingresa tu correo electrónico y contraseña para iniciar sesión</p>
+    <main class="main-content">
+        <section class="min-vh-100" style="
+            background: url('{{ asset('assets/img/fondo4.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+        ">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-5 col-lg-6 col-md-8">
+                        <div class="card border-0" style=" 
+                            background-color: rgba(95, 87, 87, 0.5);
+                            backdrop-filter: blur(10px);
+                            border-radius: 15px;
+                            box-shadow: 0 10px 25px rgba(95, 87, 87, 0.5);
+                        ">
+                            <!-- Encabezado con logo transparente -->
+                            <div class="card-header bg-transparent text-center pt-4 pb-3">
+                                <div class="d-flex justify-content-center mb-3">
+                                    <div style="
+                                        width: 120px;
+                                        height: 120px;
+                                        background: rgba(236, 122, 7, 0.91);
+                                        border-radius: 50%;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        border: 2px solid rgba(255, 255, 255, 0.3);
+                                        backdrop-filter: blur(5px);
+                                    ">
+                                        <img src="{{ asset('assets/img/logo3.jpeg') }}" alt="Logo" 
+                                             class="img-fluid rounded-circle" 
+                                             style="width: 100px; height: 100px; object-fit: cover;">
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <form method="POST" action="{{ route('login') }}">
-                                        @csrf
-                                        <div class="mb-3">
-                                            <input type="email"
-                                                class="form-control form-control-lg @error('email') is-invalid @enderror"
-                                                placeholder="Correo electrónico" value="{{ old('email') }}"
-                                                aria-label="Correo electrónico" name="email">
-
-                                            @error('email')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-                                        </div>
-                                        <div class="mb-3">
-                                            <input type="password"
-                                                class="form-control form-control-lg  @error('password') is-invalid @enderror"
-                                                placeholder="Contraseña" name="password" aria-label="Contraseña">
-                                            @error('password')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-                                        </div>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="rememberMe">
-                                            <label class="form-check-label" for="rememberMe" name="remember"
-                                                id="remember" {{ old('remember') ? 'checked' : '' }}>Recuérdame</label>
-                                        </div>
-                                        <div class="text-center">
-                                            <button type="submit"
-                                                class="btn btn-lg btn-primary btn-lg w-100 mt-4 mb-0">Iniciar
-                                                sesión</button>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="card-footer text-center pt-0 px-lg-2 px-1">
-                                    <p class="mb-4 text-sm mx-auto">
-                                        ¿No tienes una cuenta?
-                                        <a href="javascript:;"
-                                            class="text-primary text-gradient font-weight-bold">Regístrate</a>
-                                    </p>
-                                </div>
+                                <h4 class="mb-0 text-black" style="font-weight: 600;">INGRESAR AL SISTEMA</h4>
                             </div>
-                        </div>
-                        <div
-                            class="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 end-0 text-center justify-content-center flex-column">
-                            <div class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center overflow-hidden"
-                                style="background-image: url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/signin-ill.jpg');
-      background-size: cover;">
-                                <span class="mask bg-gradient-primary opacity-6"></span>
-                                <h4 class="mt-5 text-white font-weight-bolder position-relative">"La atención es la
-                                    nueva moneda"</h4>
-                                <p class="text-white position-relative">Cuanto más fácil parece escribir, más esfuerzo
-                                    ha puesto el escritor en el proceso.</p>
+                            
+                            <!-- Cuerpo del formulario transparente -->
+                            <div class="card-body px-5 pt-4 pb-3">
+                                <form role="form" method="POST" action="{{ route('login') }}">
+                                    @csrf
+                                    @method('post')
+                                    
+                                    <!-- Campo Email -->
+                                    <div class="mb-4">
+                                        <label for="email" class="form-label text-black" style="font-weight: 500;">Correo electrónico</label>
+                                        <div class="input-group input-group-lg">
+                                            <span class="input-group-text" style="
+                                                 background: rgba(255, 255, 255, 0.15);
+                                                border: 1px solid rgba(255, 255, 255, 0.2);
+                                                color: black;
+                                            
+                                            ">
+                                                <i class="fas fa-envelope"></i>
+                                            </span>
+                                            <input type="email" name="email" id="email" 
+                                                   class="form-control text-black" 
+                                                   style="
+                                                       background: rgba(255, 255, 255, 0.15);
+                                                border: 1px solid rgba(255, 255, 255, 0.2);
+                                                       border-left: 0;
+                                                       backdrop-filter: blur(5px);
+                                                   "
+                                                   placeholder="usuario@ejemplo.com" 
+                                                   value="{{ old('email') ?? '' }}" required>
+                                        </div>
+                                        @error('email') 
+                                            <div class="text-black small mt-1" style="text-shadow: 0 0 3px rgba(255,0,0,0.5);">{{ $message }}</div> 
+                                        @enderror
+                                    </div>
+                                    
+                                    <!-- Campo Contraseña -->
+                                    <div class="mb-4">
+                                        <label for="password" class="form-label text-black" style="font-weight: 500;">Contraseña</label>
+                                        <div class="input-group input-group-lg">
+                                            <span class="input-group-text" style="
+                                                background: rgba(255, 255, 255, 0.15);
+                                                border: 1px solid rgba(255, 255, 255, 0.2);
+                                                color: black;
+                                            ">
+                                                <i class="fas fa-lock"></i>
+                                            </span>
+                                            <input type="password" name="password" id="password" 
+                                                   class="form-control text-black" 
+                                                   style="
+                                                       background: rgba(255, 255, 255, 0.1);
+                                                       border: 1px solid rgba(255, 255, 255, 0.2);
+                                                       border-left: 0;
+                                                       backdrop-filter: blur(5px);
+                                                   "
+                                                   placeholder="Ingresa tu contraseña" 
+                                                   value="" required>
+                                        </div>
+                                        @error('password') 
+                                            <div class="text-black small mt-1" style="text-shadow: 0 0 3px rgba(255,0,0,0.5);">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    
+                                    <!-- Recordar contraseña -->
+                                    <div class="mb-4 d-flex justify-content-between align-items-center">
+                                       
+                                        <a href="{{ route('reset-password') }}" class="small" style="
+                                            color: rgba(255, 255, 255, 0.8);
+                                            text-decoration: none;
+                                            transition: all 0.3s ease;
+                                        ">
+                                            ¿Olvidaste tu contraseña?
+                                        </a>
+                                    </div>
+                                    
+                                    <!-- Botón de Login -->
+                                    <div class="d-grid mb-3">
+                                        <button type="submit" class="btn btn-lg py-3" 
+                                                style="
+                                                    background: linear-gradient(135deg, rgba(230, 177, 5, 0.8) 0%, rgba(255,94,0,0.9) 100%);
+                                                    border: none;
+                                                    color: black;
+                                                    font-weight: 600;
+                                                    letter-spacing: 0.5px;
+                                                    transition: all 0.3s ease;
+                                                    box-shadow: 0 4px 15px rgba(255, 94, 0, 0.3);
+                                                ">
+                                            Iniciar sesión
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Registro -->
+                                    <div class="text-center mt-4">
+                                        <p class="small text-black-50 mb-0">¿No tienes una cuenta? 
+                                            <a href="{{ route('register') }}" class="fw-bold" style="
+                                                color: rgba(255, 255, 255, 0.9);
+                                                text-decoration: none;
+                                                transition: all 0.3s ease;
+                                            ">
+                                                Regístrate aquí
+                                            </a>
+                                        </p>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
