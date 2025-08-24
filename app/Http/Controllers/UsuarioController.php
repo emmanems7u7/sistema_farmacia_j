@@ -181,7 +181,6 @@ class UsuarioController extends Controller
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
-            'role' => 'required|exists:roles,name',
             'password' => 'nullable|min:8|confirmed',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'username' => 'required|string|max:255|unique:users,username,' . $id,
