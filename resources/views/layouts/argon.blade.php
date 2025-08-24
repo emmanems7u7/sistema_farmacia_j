@@ -162,14 +162,8 @@
                         <span class="ps-3 ms-3 nav-link-text ms-1  text-black">Perfil</span>
                     </a>
                 </li>
-                @role('admin')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('menus.index') }}">
 
-                        <span class="ps-3 ms-3 nav-link-text ms-1  text-black">Gestión de menus</span>
-                    </a>
-                </li>
-                @endrole
+             
 
                 @php
 
