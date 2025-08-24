@@ -15,10 +15,10 @@ use App\Models\Producto;
 use App\Models\MovimientoCaja;
 use Illuminate\Http\Request;
 use App\Models\TmpVenta;
-use Barryvdh\DomPDF\Facade\Pdf; 
-use Illuminate\Support\Facades\Auth; 
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB; // ¡Este es el import que faltaba!
-use Illuminate\Support\Facades\Log; 
+use Illuminate\Support\Facades\Log;
 
 
 use Illuminate\Support\Facades\Storage;
@@ -41,198 +41,216 @@ class VentaController extends Controller
      */
     public function index()
     {
-        //
+        $breadcrumb = [
+            ['name' => 'Inicio', 'url' => route('home')],
+            ['name' => 'Ventas', 'url' => route('admin.ventas.index')],
+        ];
         $cajaAbierto = Caja::whereNull('fecha_cierre')->first();
-        $ventas = Venta::with('detallesventa','cliente')
-        ->orderBy('fecha', 'desc')  // Ordenar por fecha descendente
-                ->get();
-        return view('admin.ventas.index',compact('ventas','cajaAbierto'));
+        $ventas = Venta::with('detallesventa', 'cliente')
+            ->orderBy('fecha', 'desc')  // Ordenar por fecha descendente
+            ->get();
+        return view('admin.ventas.index', compact('breadcrumb', 'ventas', 'cajaAbierto'));
 
-       
+
     }
 
-   
+
     public function create()
     {
-        //
+        $breadcrumb = [
+            ['name' => 'Inicio', 'url' => route('home')],
+            ['name' => 'Ventas', 'url' => route('admin.ventas.index')],
+            ['name' => 'Crear Venta', 'url' => route('admin.ventas.index')],
+
+        ];
         $productos = Producto::where('sucursal_id', Auth::user()->sucursal_id)->get();
         //   $proveedores = Proveedor::where('sucursal_id', Auth::user()->sucursal_id)->get();
         $clientes = cliente::where('sucursal_id', Auth::user()->sucursal_id)->get();
-       $session_id = session()->getId();
-       $tmp_ventas = TmpVenta::where('session_id',$session_id)->get();
-        return view('admin.ventas.create',compact('productos','clientes','tmp_ventas'));
+        $session_id = session()->getId();
+        $tmp_ventas = TmpVenta::where('session_id', $session_id)->get();
+        return view('admin.ventas.create', compact('breadcrumb', 'productos', 'clientes', 'tmp_ventas'));
     }
 
 
 
-    public function cliente_store(Request $request){
-        $validate = $request->validate ([
+    public function cliente_store(Request $request)
+    {
+        $validate = $request->validate([
             'nombre_cliente' => 'required',
             'nit_ci' => 'nullable',
             'celular' => 'nullable',
             'email' => 'nullable',
         ]);
-            // Crear un nuevo cliente
-       $cliente = new Cliente();
-       $cliente->nombre_cliente = $request->nombre_cliente;
-       $cliente->nit_ci = $request->nit_ci;
-       $cliente->celular = $request->celular;
-       $cliente->email = $request->email;
-       $cliente->sucursal_id = Auth::user()->sucursal_id;
-       $cliente->save();
-       return response()->json(['success'=>'cliente registrado']);
+        // Crear un nuevo cliente
+        $cliente = new Cliente();
+        $cliente->nombre_cliente = $request->nombre_cliente;
+        $cliente->nit_ci = $request->nit_ci;
+        $cliente->celular = $request->celular;
+        $cliente->email = $request->email;
+        $cliente->sucursal_id = Auth::user()->sucursal_id;
+        $cliente->save();
+        return response()->json(['success' => 'cliente registrado']);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-  public function store(Request $request)
-{
+    public function store(Request $request)
+    {
         // Validación de los datos de entrada
-    $request->validate([
-        'fecha' => 'required',
-        'precio_total' => 'required',
-    ]);
+        $request->validate([
+            'fecha' => 'required',
+            'precio_total' => 'required',
+        ]);
 
-    // Iniciar transacción para asegurar integridad de datos
-    DB::beginTransaction();
+        // Iniciar transacción para asegurar integridad de datos
+        DB::beginTransaction();
 
-    try {
-        // Crear la venta principal
-        $ventas = new Venta();
-        $ventas->fecha = $request->fecha;
-        $ventas->precio_total = $request->precio_total;
-        $ventas->sucursal_id = Auth::user()->sucursal_id;
-        $ventas->cliente_id = $request->cliente_id;
-        $ventas->save();
+        try {
+            // Crear la venta principal
+            $ventas = new Venta();
+            $ventas->fecha = $request->fecha;
+            $ventas->precio_total = $request->precio_total;
+            $ventas->sucursal_id = Auth::user()->sucursal_id;
+            $ventas->cliente_id = $request->cliente_id;
+            $ventas->save();
 
-        $session_id = session()->getId();
+            $session_id = session()->getId();
 
-        // Registrar en la caja 
-        $caja_id = Caja::whereNull('fecha_cierre')->first();
-        $movimiento = new MovimientoCaja();
-        $movimiento->tipo = "INGRESO";
-        $movimiento->monto = $request->precio_total;
-        $movimiento->descripcion = "venta de productos";
-        $movimiento->fecha_movimiento = $request->fecha_movimiento ?? now();
-        $movimiento->caja_id = $caja_id->id;
-        $movimiento->save();
+            // Registrar en la caja 
+            $caja_id = Caja::whereNull('fecha_cierre')->first();
+            $movimiento = new MovimientoCaja();
+            $movimiento->tipo = "INGRESO";
+            $movimiento->monto = $request->precio_total;
+            $movimiento->descripcion = "venta de productos";
+            $movimiento->fecha_movimiento = $request->fecha_movimiento ?? now();
+            $movimiento->caja_id = $caja_id->id;
+            $movimiento->save();
 
-        // Procesar productos temporales
-        $tmp_ventas = TmpVenta::where('session_id', $session_id)->get();
+            // Procesar productos temporales
+            $tmp_ventas = TmpVenta::where('session_id', $session_id)->get();
 
-        foreach ($tmp_ventas as $tmp_venta) {
-            // Crear detalle venta (manteniendo tu lógica actual)
-            $detalle_venta = new DetalleVenta();
-            $detalle_venta->cantidad = $tmp_venta->cantidad;
-            $detalle_venta->venta_id = $ventas->id;
-            $detalle_venta->producto_id = $tmp_venta->producto_id;
-            $detalle_venta->save();
+            foreach ($tmp_ventas as $tmp_venta) {
+                // Crear detalle venta (manteniendo tu lógica actual)
+                $detalle_venta = new DetalleVenta();
+                $detalle_venta->cantidad = $tmp_venta->cantidad;
+                $detalle_venta->venta_id = $ventas->id;
+                $detalle_venta->producto_id = $tmp_venta->producto_id;
+                $detalle_venta->save();
 
-            // PEPS para descontar de múltiples lotes
-            $cantidad_restante = $tmp_venta->cantidad;
-            
-            // Obtener lotes ordenados por fecha de ingreso (más antiguos primero)
-            $lotes = Lote::where('producto_id', $tmp_venta->producto_id)
-                        ->where('cantidad', '>', 0)
-                        ->orderBy('fecha_ingreso', 'asc')
-                        ->get();
+                // PEPS para descontar de múltiples lotes
+                $cantidad_restante = $tmp_venta->cantidad;
 
-            foreach ($lotes as $lote) {
-                if ($cantidad_restante <= 0) break;
+                // Obtener lotes ordenados por fecha de ingreso (más antiguos primero)
+                $lotes = Lote::where('producto_id', $tmp_venta->producto_id)
+                    ->where('cantidad', '>', 0)
+                    ->orderBy('fecha_ingreso', 'asc')
+                    ->get();
 
-                $cantidad_a_descontar = min($lote->cantidad, $cantidad_restante);
-                
-                $lote->cantidad -= $cantidad_a_descontar;
-                $lote->save();
+                foreach ($lotes as $lote) {
+                    if ($cantidad_restante <= 0)
+                        break;
 
-                $cantidad_restante -= $cantidad_a_descontar;
+                    $cantidad_a_descontar = min($lote->cantidad, $cantidad_restante);
+
+                    $lote->cantidad -= $cantidad_a_descontar;
+                    $lote->save();
+
+                    $cantidad_restante -= $cantidad_a_descontar;
+                }
+
+                // Validar si hay suficiente stock
+                if ($cantidad_restante > 0) {
+                    throw new \Exception("No hay suficiente stock para el producto: " . $tmp_venta->producto->nombre);
+                }
             }
 
-            // Validar si hay suficiente stock
-            if ($cantidad_restante > 0) {
-                throw new \Exception("No hay suficiente stock para el producto: ".$tmp_venta->producto->nombre);
-            }
+            // Eliminar temporales
+            TmpVenta::where('session_id', $session_id)->delete();
+
+            DB::commit();
+
+            return redirect()->route('admin.ventas.index')
+                ->with('status', 'Se registró la venta correctamente');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->with('status', 'Error al registrar la venta: ' . $e->getMessage());
         }
-
-        // Eliminar temporales
-        TmpVenta::where('session_id', $session_id)->delete();
-
-        DB::commit();
-
-        return redirect()->route('admin.ventas.index')
-            ->with('mensaje', 'Se registró la venta correctamente')
-            ->with('icono', 'success');
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return redirect()->back()
-            ->with('mensaje', 'Error al registrar la venta: '.$e->getMessage())
-            ->with('icono', 'error');
     }
-}
 
 
 
 
 
-public function pdf($id)
-{
-    $id_sucursal = Auth::user()->sucursal_id;
-    $sucursal = Sucursal::where('id', $id_sucursal)->first();
-    
-    $venta = Venta::with(['detallesVenta.producto', 'cliente'])->findOrFail($id);
-    
-    // Calcular el total sumando los subtotales
-    $total = $venta->detallesVenta->sum(function($detalle) {
-        $lote = $detalle->producto->lotes()->latest()->first();
-        $precio = $lote ? $lote->precio_venta : $detalle->producto->precio_venta;
-        return $detalle->cantidad * $precio;
-    });
-    
-    // Convertir a letras (variable ya contiene el string)
-    $literal = $this->numerosALetrasConDecimales($total);
-    
-    return PDF::loadView('admin.ventas.pdf', [
-        'sucursal' => $sucursal,
-        'venta' => $venta,
-        'literal' => $literal, // String con el monto en letras
-        'total' => $total
-    ])->setPaper([0, 0, 250.77, 600], 'portrait')->stream();
-}
-
-private function numerosALetrasConDecimales($numero)
-{
-    $formatter = new NumberFormatter("es", NumberFormatter::SPELLOUT);
-    $partes = explode('.', number_format(abs($numero), 2, '.', ''));
-    
-    $entero = $partes[0] == 1 ? 'un boliviano' : $formatter->format($partes[0]) . ' bolivianos';
-    $decimal = $partes[1] == '00' ? 'exactos' : $formatter->format($partes[1]) . ' centavos';
-    
-    return ($numero < 0 ? 'Menos ' : '') . ucfirst("$entero con $decimal");
-}
-
-
-
-
-
-
-
-    public function show( $id)
+    public function pdf($id)
     {
-        //
-        $venta = Venta::with('detallesVenta','cliente')->findOrfail($id);
-        return view('admin.ventas.show',compact('venta'));
+        $id_sucursal = Auth::user()->sucursal_id;
+        $sucursal = Sucursal::where('id', $id_sucursal)->first();
+
+        $venta = Venta::with(['detallesVenta.producto', 'cliente'])->findOrFail($id);
+
+        // Calcular el total sumando los subtotales
+        $total = $venta->detallesVenta->sum(function ($detalle) {
+            $lote = $detalle->producto->lotes()->latest()->first();
+            $precio = $lote ? $lote->precio_venta : $detalle->producto->precio_venta;
+            return $detalle->cantidad * $precio;
+        });
+
+        // Convertir a letras (variable ya contiene el string)
+        $literal = $this->numerosALetrasConDecimales($total);
+
+        return PDF::loadView('admin.ventas.pdf', [
+            'sucursal' => $sucursal,
+            'venta' => $venta,
+            'literal' => $literal, // String con el monto en letras
+            'total' => $total
+        ])->setPaper([0, 0, 250.77, 600], 'portrait')->stream();
+    }
+
+    private function numerosALetrasConDecimales($numero)
+    {
+        $formatter = new NumberFormatter("es", NumberFormatter::SPELLOUT);
+        $partes = explode('.', number_format(abs($numero), 2, '.', ''));
+
+        $entero = $partes[0] == 1 ? 'un boliviano' : $formatter->format($partes[0]) . ' bolivianos';
+        $decimal = $partes[1] == '00' ? 'exactos' : $formatter->format($partes[1]) . ' centavos';
+
+        return ($numero < 0 ? 'Menos ' : '') . ucfirst("$entero con $decimal");
+    }
+
+
+
+
+
+
+
+    public function show($id)
+    {
+        $breadcrumb = [
+            ['name' => 'Inicio', 'url' => route('home')],
+            ['name' => 'Ventas', 'url' => route('admin.ventas.index')],
+            ['name' => 'Ver Venta', 'url' => route('admin.ventas.index')],
+
+        ];
+        $venta = Venta::with('detallesVenta', 'cliente')->findOrfail($id);
+        return view('admin.ventas.show', compact('breadcrumb', 'venta'));
 
     }
 
-    public function edit( $id)
+    public function edit($id)
     {
-        //
+        $breadcrumb = [
+            ['name' => 'Inicio', 'url' => route('home')],
+            ['name' => 'Ventas', 'url' => route('admin.ventas.index')],
+            ['name' => 'Editar Venta', 'url' => route('admin.ventas.index')],
+
+        ];
         $productos = Producto::all();
         $clientes = Cliente::all();
-        $venta = Venta::with('detallesVenta','cliente')->findOrfail($id);
-        return view('admin.ventas.edit',compact('venta','productos','clientes'));
+        $venta = Venta::with('detallesVenta', 'cliente')->findOrfail($id);
+        return view('admin.ventas.edit', compact('breadcrumb', 'venta', 'productos', 'clientes'));
 
     }
 
@@ -242,159 +260,162 @@ private function numerosALetrasConDecimales($numero)
     public function update(Request $request, $id)
     {
         //
-         // Validación de los datos de entrada
-         $request->validate([
+        // Validación de los datos de entrada
+        $request->validate([
             'fecha' => 'required',
 
             'precio_total' => 'required', //
         ]);
-    
+
         // Crear un nuevo laboratorio
         $venta = Venta::find($id);
         $venta->fecha = $request->fecha;
-    
+
         $venta->precio_total = $request->precio_total;
-    
+
         $venta->sucursal_id = Auth::user()->sucursal_id;
         $venta->cliente_id = $request->cliente_id;
         $venta->save();
-    
+
         $session_id = session()->getId();
-    
-    
-          
-        
-            return redirect()->route('admin.ventas.index')
-            ->with('mensaje', 'Venta actualizada correctamente')
-            ->with('icono','success');
-    
+
+
+
+
+        return redirect()->route('admin.ventas.index')
+            ->with('status', 'Venta actualizada correctamente');
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-public function destroy($id)
-{
-    DB::beginTransaction();
-    try {
-        $venta = Venta::with(['detallesVenta.producto.lotes'])->findOrFail($id);
+    public function destroy($id)
+    {
+        DB::beginTransaction();
+        try {
+            $venta = Venta::with(['detallesVenta.producto.lotes'])->findOrFail($id);
 
-        // 1. Restaurar stock en lotes
-        foreach ($venta->detallesVenta as $detalle) {
-            $lote = $detalle->producto->lotes->first();
-            if ($lote) {
-                $lote->increment('cantidad', $detalle->cantidad);
+            // 1. Restaurar stock en lotes
+            foreach ($venta->detallesVenta as $detalle) {
+                $lote = $detalle->producto->lotes->first();
+                if ($lote) {
+                    $lote->increment('cantidad', $detalle->cantidad);
+                }
             }
+
+            // 2. Eliminar en cascada
+            $venta->delete();
+
+            DB::commit();
+
+            return redirect()->route('admin.ventas.index')
+                ->with('status', 'Venta anulada y stock restaurado');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Error eliminando venta {$id}: " . $e->getMessage());
+
+            return redirect()->back()
+                ->with('status', 'No se pudo anular la venta: ' . $e->getMessage());
+        }
+    }
+    //reportes
+
+    public function reporte($tipo, Request $request)
+    {
+        // Validar el tipo de reporte
+        if (!in_array($tipo, ['pdf', 'excel', 'csv'])) {
+            abort(400, 'Tipo de reporte no válido');
         }
 
-        // 2. Eliminar en cascada
-        $venta->delete();
+        // Obtener filtros
+        $fecha_inicio = $request->input('fecha_inicio');
+        $fecha_fin = $request->input('fecha_fin');
+        $cliente_id = $request->input('cliente_id');
 
-        DB::commit();
+        // Consulta base
+        $query = Venta::with(['detallesVenta', 'cliente'])
+            ->where('sucursal_id', Auth::user()->sucursal_id);
 
-        return redirect()->route('admin.ventas.index')
-               ->with('success', 'Venta anulada y stock restaurado');
+        // Aplicar filtros
+        if ($fecha_inicio && $fecha_fin) {
+            $query->whereBetween('fecha', [$fecha_inicio, $fecha_fin]);
+        }
 
-    } catch (\Exception $e) {
-        DB::rollBack();
-        Log::error("Error eliminando venta {$id}: " . $e->getMessage());
-        
-        return redirect()->back()
-               ->with('error', 'No se pudo anular la venta: ' . $e->getMessage());
-    }
-}
-//reportes
+        if ($cliente_id) {
+            $query->where('cliente_id', $cliente_id);
+        }
 
-public function reporte($tipo, Request $request)
-{
-    // Validar el tipo de reporte
-    if (!in_array($tipo, ['pdf', 'excel', 'csv'])) {
-        abort(400, 'Tipo de reporte no válido');
-    }
+        $ventas = $query->get();
 
-    // Obtener filtros
-    $fecha_inicio = $request->input('fecha_inicio');
-    $fecha_fin = $request->input('fecha_fin');
-    $cliente_id = $request->input('cliente_id');
+        // Verificar si hay datos
+        if ($ventas->isEmpty()) {
+            return back()->with('error', 'No hay ventas con los filtros seleccionados');
+        }
 
-    // Consulta base
-    $query = Venta::with(['detallesVenta', 'cliente'])
-                ->where('sucursal_id', Auth::user()->sucursal_id);
-
-    // Aplicar filtros
-    if ($fecha_inicio && $fecha_fin) {
-        $query->whereBetween('fecha', [$fecha_inicio, $fecha_fin]);
+        switch ($tipo) {
+            case 'pdf':
+                return $this->generarPDF($ventas);
+            case 'excel':
+                return $this->generarExcel($ventas);
+            case 'csv':
+                return $this->generarCSV($ventas);
+        }
     }
 
-    if ($cliente_id) {
-        $query->where('cliente_id', $cliente_id);
+    private function generarPDF($ventas)
+    {
+        $pdf = PDF::loadView('admin.ventas.reporte', [
+            'ventas' => $ventas,
+            'fecha_generacion' => now()->format('d/m/Y H:i:s')
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->download('reporte_ventas_' . now()->format('YmdHis') . '.pdf');
+
+
     }
 
-    $ventas = $query->get();
+    private function generarExcel($ventas)
+    {
+        $data = $ventas->map(function ($venta) {
+            return [
+                'Fecha' => $venta->fecha,
+                'N° Factura' => $venta->numero_factura ?? 'N/A',
+                'Cliente' => $venta->cliente->nombre_cliente ?? 'Sin cliente',
+                'CI/NIT' => $venta->cliente->nit_ci ?? 'N/A',
+                'Total (Bs)' => number_format($venta->precio_total, 2),
+                'Productos' => $venta->detallesVenta->count(),
+                'Cantidad Total' => $venta->detallesVenta->sum('cantidad'),
+                'Método Pago' => $venta->metodo_pago ?? 'No especificado'
+            ];
+        });
 
-    // Verificar si hay datos
-    if ($ventas->isEmpty()) {
-        return back()->with('error', 'No hay ventas con los filtros seleccionados');
-    }
+        return Excel::download(
+            new class ($data) implements
+                \Maatwebsite\Excel\Concerns\FromCollection,
+                \Maatwebsite\Excel\Concerns\WithHeadings,
+                \Maatwebsite\Excel\Concerns\WithStyles,
+                \Maatwebsite\Excel\Concerns\ShouldAutoSize,
+                \Maatwebsite\Excel\Concerns\WithColumnWidths {
 
-    switch ($tipo) {
-        case 'pdf':
-            return $this->generarPDF($ventas);
-        case 'excel':
-            return $this->generarExcel($ventas);
-        case 'csv':
-            return $this->generarCSV($ventas);
-    }
-}
-
-private function generarPDF($ventas)
-{
-    $pdf = PDF::loadView('admin.ventas.reporte', [
-        'ventas' => $ventas,
-        'fecha_generacion' => now()->format('d/m/Y H:i:s')
-    ])->setPaper('a4', 'landscape');
-    
-    return $pdf->download('reporte_ventas_'.now()->format('YmdHis').'.pdf');
-
-    
-}
-
-private function generarExcel($ventas)
-{
-    $data = $ventas->map(function ($venta) {
-        return [
-            'Fecha' => $venta->fecha,
-            'N° Factura' => $venta->numero_factura ?? 'N/A',
-            'Cliente' => $venta->cliente->nombre_cliente ?? 'Sin cliente',
-            'CI/NIT' => $venta->cliente->nit_ci ?? 'N/A',
-            'Total (Bs)' => number_format($venta->precio_total, 2),
-            'Productos' => $venta->detallesVenta->count(),
-            'Cantidad Total' => $venta->detallesVenta->sum('cantidad'),
-            'Método Pago' => $venta->metodo_pago ?? 'No especificado'
-        ];
-    });
-
-    return Excel::download(
-        new class($data) implements \Maatwebsite\Excel\Concerns\FromCollection,
-                               \Maatwebsite\Excel\Concerns\WithHeadings,
-                               \Maatwebsite\Excel\Concerns\WithStyles,
-                               \Maatwebsite\Excel\Concerns\ShouldAutoSize,
-                               \Maatwebsite\Excel\Concerns\WithColumnWidths {
-            
             private $data;
-            
-            public function __construct($data) {
+
+            public function __construct($data)
+            {
                 $this->data = collect($data);
             }
-            
-            public function collection() {
+
+            public function collection()
+            {
                 return $this->data;
             }
-            
-            public function headings(): array {
+
+            public function headings(): array
+            {
                 return [
                     'Fecha',
-                    'N° Factura', 
+                    'N° Factura',
                     'Cliente',
                     'CI/NIT',
                     'Total (Bs)',
@@ -403,8 +424,9 @@ private function generarExcel($ventas)
                     'Método Pago'
                 ];
             }
-            
-            public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet) {
+
+            public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
+            {
                 return [
                     // Estilo encabezados
                     1 => [
@@ -447,8 +469,9 @@ private function generarExcel($ventas)
                     ]
                 ];
             }
-            
-            public function columnWidths(): array {
+
+            public function columnWidths(): array
+            {
                 return [
                     'A' => 12,  // Fecha
                     'B' => 15,   // N° Factura
@@ -460,40 +483,40 @@ private function generarExcel($ventas)
                     'H' => 20    // Método Pago
                 ];
             }
-        },
-        'reporte_ventas_' . now()->format('YmdHis') . '.xlsx'
-    );
-}
+            },
+            'reporte_ventas_' . now()->format('YmdHis') . '.xlsx'
+        );
+    }
 
-private function generarCSV($ventas): BinaryFileResponse
-{
-    $headers = [
-        'Content-Type' => 'text/csv',
-        'Content-Disposition' => 'attachment; filename="reporte_ventas_'.now()->format('YmdHis').'.csv"',
-    ];
+    private function generarCSV($ventas): BinaryFileResponse
+    {
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="reporte_ventas_' . now()->format('YmdHis') . '.csv"',
+        ];
 
-    $callback = function() use ($ventas) {
-        $file = fopen('php://output', 'w');
-        
-        // Encabezados
-        fputcsv($file, ['Fecha', 'Cliente', 'Total', 'Productos', 'Cantidad Total']);
-        
-        // Datos
-        foreach ($ventas as $venta) {
-            fputcsv($file, [
-                $venta->fecha,
-                $venta->cliente->nombre_cliente ?? 'Sin cliente',
-                $venta->precio_total,
-                $venta->detallesVenta->count(),
-                $venta->detallesVenta->sum('cantidad')
-            ]);
-        }
-        
-        fclose($file);
-    };
+        $callback = function () use ($ventas) {
+            $file = fopen('php://output', 'w');
 
-    return Response::stream($callback, 200, $headers);
-}
+            // Encabezados
+            fputcsv($file, ['Fecha', 'Cliente', 'Total', 'Productos', 'Cantidad Total']);
+
+            // Datos
+            foreach ($ventas as $venta) {
+                fputcsv($file, [
+                    $venta->fecha,
+                    $venta->cliente->nombre_cliente ?? 'Sin cliente',
+                    $venta->precio_total,
+                    $venta->detallesVenta->count(),
+                    $venta->detallesVenta->sum('cantidad')
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return Response::stream($callback, 200, $headers);
+    }
 
 
 

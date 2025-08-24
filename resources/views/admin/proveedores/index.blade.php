@@ -104,268 +104,266 @@
                                 <tbody>
                                     <?php $contador = 1;?>
                                     @foreach($proveedores as $proveedor)
-                                                            <tr>
-                                                                <td style="text-align: center; vertical-align: middle">{{$contador++}}</td>
-                                                                <td style="vertical-align: middle">
-                                                                    <span class="badge bg-gradient-primary p-2">
-                                                                        <i class="ni ni-building me-1"></i> {{$proveedor->empresa}}
-                                                                    </span>
-                                                                </td>
-                                                                <td style="vertical-align: middle">{{$proveedor->direccion}}</td>
-                                                                <td style="vertical-align: middle">{{$proveedor->telefono}}</td>
-                                                                <td style="vertical-align: middle">{{$proveedor->email}}</td>
-                                                                <td style="vertical-align: middle">{{$proveedor->nombre}}</td>
-                                                                <td style="vertical-align: middle; text-align: center">
-                                                                    <a href="https://wa.me/591{{ $proveedor->celular }}" target="_blank"
-                                                                        class="btn btn-sm fw-bold shadow-sm transition-all"
-                                                                        style="background-color: #25D366; color: white; border-radius: 8px; border: none;"
-                                                                        onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)';"
-                                                                        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)';"
-                                                                        title="Contactar por WhatsApp">
-                                                                        <i class="fab fa-whatsapp me-2 fs-5 align-middle"></i>
-                                                                        <span class="align-middle">{{ $proveedor->celular }}</span>
-                                                                    </a>
-                                                                </td>
-                                                                <td style="text-align: center; vertical-align: middle">
-                                                                    <div class="btn-group" proveedor="group">
-                                                                        <!-- Contenedor para agrupar los botones  -->
-                                                                        <div class="d-inline-flex gap-2">
-                                                                            <!-- Botón Ver -->
-                                                                            <button type="button"
-                                                                                class="btn btn-sm bg-gradient-info text-white d-flex justify-content-center align-items-center"
-                                                                                style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
-                                                                                data-bs-toggle="modal"
-                                                                                data-bs-target="#verModal{{ $proveedor->id }}" title="Ver detalles">
-                                                                                <i class="fas fa-eye" style="font-size: 0.8rem;"></i>
-                                                                            </button>
+                                        <tr>
+                                            <td style="text-align: center; vertical-align: middle">{{$contador++}}</td>
+                                            <td style="vertical-align: middle">
+                                                <span class="badge bg-gradient-primary p-2">
+                                                    <i class="ni ni-building me-1"></i> {{$proveedor->empresa}}
+                                                </span>
+                                            </td>
+                                            <td style="vertical-align: middle">{{$proveedor->direccion}}</td>
+                                            <td style="vertical-align: middle">{{$proveedor->telefono}}</td>
+                                            <td style="vertical-align: middle">{{$proveedor->email}}</td>
+                                            <td style="vertical-align: middle">{{$proveedor->nombre}}</td>
+                                            <td style="vertical-align: middle; text-align: center">
+                                                <a href="https://wa.me/591{{ $proveedor->celular }}" target="_blank"
+                                                    class="btn btn-sm fw-bold shadow-sm transition-all"
+                                                    style="background-color: #25D366; color: white; border-radius: 8px; border: none;"
+                                                    onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)';"
+                                                    onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)';"
+                                                    title="Contactar por WhatsApp">
+                                                    <i class="fab fa-whatsapp me-2 fs-5 align-middle"></i>
+                                                    <span class="align-middle">{{ $proveedor->celular }}</span>
+                                                </a>
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle">
+                                                <div class="btn-group" proveedor="group">
+                                                    <!-- Contenedor para agrupar los botones  -->
+                                                    <div class="d-inline-flex gap-2">
+                                                        <!-- Botón Ver -->
+                                                        <button type="button"
+                                                            class="btn btn-sm bg-gradient-info text-white d-flex justify-content-center align-items-center"
+                                                            style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#verModal{{ $proveedor->id }}" title="Ver detalles">
+                                                            <i class="fas fa-eye" style="font-size: 0.8rem;"></i>
+                                                        </button>
 
-                                                                            <!-- Botón Eliminar -->
-                                                                            <form action="{{ route('admin.proveedores.destroy', $proveedor->id) }}"
-                                                                                method="POST" class="d-inline"
-                                                                                data-proveedor='{"nombre":"{{ $proveedor->nombre }}"}'>
-                                                                                @csrf
-                                                                                @method('DELETE')
-                                                                                <button type="button"
-                                                                                    class="btn btn-sm bg-gradient-danger text-white d-flex justify-content-center align-items-center btn-eliminar-proveedor"
-                                                                                    style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
-                                                                                    title="Eliminar proveedor" data-bs-toggle="tooltip">
-                                                                                    <i class="fas fa-trash-alt" style="font-size: 0.8rem;"></i>
-                                                                                </button>
-                                                                            </form>
-                                                                        </div>
+                                                        <!-- Botón Eliminar -->
+                                                        <form action="{{ route('admin.proveedores.destroy', $proveedor->id) }}"
+                                                            method="POST" class="d-inline"
+                                                            data-proveedor='{"nombre":"{{ $proveedor->nombre }}"}'>
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="button"
+                                                                class="btn btn-sm bg-gradient-danger text-white d-flex justify-content-center align-items-center btn-eliminar-proveedor"
+                                                                style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
+                                                                title="Eliminar proveedor" data-bs-toggle="tooltip">
+                                                                <i class="fas fa-trash-alt" style="font-size: 0.8rem;"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
 
-                                                                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                                                                        <script>
-                                                                            function confirmarEliminacionSucursal(event) {
-                                                                                event.preventDefault();
-                                                                                const form = event.target.closest('form');
-                                                                                const proveedor = JSON.parse(form.dataset.proveedor || '{}');
+                                                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                                                    <script>
+                                                        function confirmarEliminacionSucursal(event) {
+                                                            event.preventDefault();
+                                                            const form = event.target.closest('form');
+                                                            const proveedor = JSON.parse(form.dataset.proveedor || '{}');
 
-                                                                                Swal.fire({
-                                                                                    title: `<span class="swal2-title">Confirmar Eliminación</span>`,
-                                                                                    html: `<div class="swal2-content-container">
+                                                            Swal.fire({
+                                                                title: `<span class="swal2-title">Confirmar Eliminación</span>`,
+                                                                html: `<div class="swal2-content-container">
 
-                                             <div class="swal2-text-content">
-                                                 <h3 class="swal2-subtitle">¿Eliminar rol permanentemente?</h3>
-                                                 <div class="swal2-user-info mt-3">
-                                                     <i></i> ${proveedor.nombre || 'Este rol'}
-                                                 </div>
-                                                 <div class="swal2-warning-text">
-                                                     <i class="fas fa-exclamation-triangle me-2"></i>
-                                                     Esta acción no se puede deshacer
-                                                 </div>
-                                             </div>
-                                           </div>`,
-                                                                                    showCancelButton: true,
-                                                                                    focusConfirm: false,
-                                                                                    confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Confirmar Eliminación`,
-                                                                                    cancelButtonText: `<i class="fas fa-times me-2"></i> Cancelar`,
-                                                                                    buttonsStyling: false,
-                                                                                    customClass: {
-                                                                                        popup: 'swal2-container-premium',
-                                                                                        confirmButton: 'swal2-confirm-btn-premium',
-                                                                                        cancelButton: 'swal2-cancel-btn-premium',
-                                                                                        actions: 'swal2-actions-premium'
-                                                                                    },
-                                                                                    background: 'rgba(255,255,255,0.98)',
-                                                                                    showClass: {
-                                                                                        popup: 'animate__animated animate__zoomIn animate__faster'
-                                                                                    },
-                                                                                    hideClass: {
-                                                                                        popup: 'animate__animated animate__zoomOut animate__faster'
-                                                                                    },
-                                                                                    allowOutsideClick: false,
-                                                                                    reverseButtons: true
-                                                                                }).then((result) => {
-                                                                                    if (result.isConfirmed) {
-                                                                                        Swal.fire({
-                                                                                            title: 'Procesando...',
-                                                                                            html: `<div class="swal2-loader-container">
-                                                     <div class="swal2-loader-circle"></div>
-                                                     <div class="swal2-loader-bar-container">
-                                                         <div class="swal2-loader-bar"></div>
+                                                     <div class="swal2-text-content">
+                                                         <h3 class="swal2-subtitle">¿Eliminar rol permanentemente?</h3>
+                                                         <div class="swal2-user-info mt-3">
+                                                             <i></i> ${proveedor.nombre || 'Este rol'}
+                                                         </div>
+                                                         <div class="swal2-warning-text">
+                                                             <i class="fas fa-exclamation-triangle me-2"></i>
+                                                             Esta acción no se puede deshacer
+                                                         </div>
                                                      </div>
                                                    </div>`,
-                                                                                            showConfirmButton: false,
-                                                                                            allowOutsideClick: false,
-                                                                                            didOpen: () => {
-                                                                                                const loaderBar = document.querySelector('.swal2-loader-bar');
-                                                                                                loaderBar.style.width = '100%';
-                                                                                                loaderBar.style.transition = 'width 1s ease-in-out';
-                                                                                            }
-                                                                                        });
+                                                                showCancelButton: true,
+                                                                focusConfirm: false,
+                                                                confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Confirmar Eliminación`,
+                                                                cancelButtonText: `<i class="fas fa-times me-2"></i> Cancelar`,
+                                                                buttonsStyling: false,
+                                                                customClass: {
+                                                                    popup: 'swal2-container-premium',
+                                                                    confirmButton: 'swal2-confirm-btn-premium',
+                                                                    cancelButton: 'swal2-cancel-btn-premium',
+                                                                    actions: 'swal2-actions-premium'
+                                                                },
+                                                                background: 'rgba(255,255,255,0.98)',
+                                                                showClass: {
+                                                                    popup: 'animate__animated animate__zoomIn animate__faster'
+                                                                },
+                                                                hideClass: {
+                                                                    popup: 'animate__animated animate__zoomOut animate__faster'
+                                                                },
+                                                                allowOutsideClick: false,
+                                                                reverseButtons: true
+                                                            }).then((result) => {
+                                                                if (result.isConfirmed) {
+                                                                    Swal.fire({
+                                                                        title: 'Procesando...',
+                                                                        html: `<div class="swal2-loader-container">
+                                                             <div class="swal2-loader-circle"></div>
+                                                             <div class="swal2-loader-bar-container">
+                                                                 <div class="swal2-loader-bar"></div>
+                                                             </div>
+                                                           </div>`,
+                                                                        showConfirmButton: false,
+                                                                        allowOutsideClick: false,
+                                                                        didOpen: () => {
+                                                                            const loaderBar = document.querySelector('.swal2-loader-bar');
+                                                                            loaderBar.style.width = '100%';
+                                                                            loaderBar.style.transition = 'width 1s ease-in-out';
+                                                                        }
+                                                                    });
 
-                                                                                        setTimeout(() => {
-                                                                                            form.submit();
-                                                                                        }, 1200);
-                                                                                    }
-                                                                                });
-                                                                            }
+                                                                    setTimeout(() => {
+                                                                        form.submit();
+                                                                    }, 1200);
+                                                                }
+                                                            });
+                                                        }
 
-                                                                            document.querySelectorAll('.btn-eliminar-proveedor').forEach(button => {
-                                                                                button.addEventListener('click', confirmarEliminacionSucursal);
-                                                                            });
-                                                                        </script>
+                                                        document.querySelectorAll('.btn-eliminar-proveedor').forEach(button => {
+                                                            button.addEventListener('click', confirmarEliminacionSucursal);
+                                                        });
+                                                    </script>
 
-                                                                        <style>
-                                                                            /* Estilos Premium */
-                                                                            .swal2-container-premium {
-                                                                                border-radius: 18px !important;
-                                                                                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18) !important;
-                                                                                border: 1px solid rgba(0, 0, 0, 0.08) !important;
-                                                                                max-width: 480px !important;
-                                                                                padding: 2.5rem !important;
-                                                                            }
+                                                    <style>
+                                                        /* Estilos Premium */
+                                                        .swal2-container-premium {
+                                                            border-radius: 18px !important;
+                                                            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18) !important;
+                                                            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+                                                            max-width: 480px !important;
+                                                            padding: 2.5rem !important;
+                                                        }
 
-                                                                            .swal2-icon-wrapper {
-                                                                                text-align: center;
-                                                                                margin: 1.5rem 0;
-                                                                            }
+                                                        .swal2-icon-wrapper {
+                                                            text-align: center;
+                                                            margin: 1.5rem 0;
+                                                        }
 
-                                                                            .swal2-icon-svg {
-                                                                                width: 72px;
-                                                                                height: 72px;
-                                                                                opacity: 0.9;
-                                                                            }
+                                                        .swal2-icon-svg {
+                                                            width: 72px;
+                                                            height: 72px;
+                                                            opacity: 0.9;
+                                                        }
 
-                                                                            .swal2-content-container {
-                                                                                text-align: center;
-                                                                                padding: 0 1.5rem;
-                                                                            }
+                                                        .swal2-content-container {
+                                                            text-align: center;
+                                                            padding: 0 1.5rem;
+                                                        }
 
-                                                                            .swal2-title {
-                                                                                font-size: 1.8rem !important;
-                                                                                font-weight: 600 !important;
-                                                                                color: #2f3542 !important;
-                                                                                letter-spacing: -0.5px;
-                                                                                margin-bottom: 0 !important;
-                                                                            }
+                                                        .swal2-title {
+                                                            font-size: 1.8rem !important;
+                                                            font-weight: 600 !important;
+                                                            color: #2f3542 !important;
+                                                            letter-spacing: -0.5px;
+                                                            margin-bottom: 0 !important;
+                                                        }
 
-                                                                            .swal2-subtitle {
-                                                                                font-size: 1.25rem;
-                                                                                color: #57606f;
-                                                                                font-weight: 500;
-                                                                                margin: 1rem 0;
-                                                                            }
+                                                        .swal2-subtitle {
+                                                            font-size: 1.25rem;
+                                                            color: #57606f;
+                                                            font-weight: 500;
+                                                            margin: 1rem 0;
+                                                        }
 
-                                                                            .swal2-user-info {
-                                                                                background: #f8f9fa;
-                                                                                padding: 0.75rem;
-                                                                                border-radius: 10px;
-                                                                                font-size: 1.1rem;
-                                                                                color: #2f3542;
-                                                                                border-left: 4px solid #ff4757;
-                                                                            }
+                                                        .swal2-user-info {
+                                                            background: #f8f9fa;
+                                                            padding: 0.75rem;
+                                                            border-radius: 10px;
+                                                            font-size: 1.1rem;
+                                                            color: #2f3542;
+                                                            border-left: 4px solid #ff4757;
+                                                        }
 
-                                                                            .swal2-warning-text {
-                                                                                font-size: 0.95rem;
-                                                                                color: #ff6b81;
-                                                                                margin-top: 1.5rem;
-                                                                                padding-top: 1rem;
-                                                                                border-top: 1px dashed #dfe4ea;
-                                                                            }
+                                                        .swal2-warning-text {
+                                                            font-size: 0.95rem;
+                                                            color: #ff6b81;
+                                                            margin-top: 1.5rem;
+                                                            padding-top: 1rem;
+                                                            border-top: 1px dashed #dfe4ea;
+                                                        }
 
-                                                                            .swal2-confirm-btn-premium {
-                                                                                background: linear-gradient(135deg, #ff4757, #ff6b81) !important;
-                                                                                border: none !important;
-                                                                                padding: 12px 28px !important;
-                                                                                font-weight: 600 !important;
-                                                                                font-size: 1rem !important;
-                                                                                border-radius: 10px !important;
-                                                                                color: white !important;
-                                                                                box-shadow: 0 4px 12px rgba(255, 71, 87, 0.25) !important;
-                                                                                transition: all 0.3s ease !important;
-                                                                            }
+                                                        .swal2-confirm-btn-premium {
+                                                            background: linear-gradient(135deg, #ff4757, #ff6b81) !important;
+                                                            border: none !important;
+                                                            padding: 12px 28px !important;
+                                                            font-weight: 600 !important;
+                                                            font-size: 1rem !important;
+                                                            border-radius: 10px !important;
+                                                            color: white !important;
+                                                            box-shadow: 0 4px 12px rgba(255, 71, 87, 0.25) !important;
+                                                            transition: all 0.3s ease !important;
+                                                        }
 
-                                                                            .swal2-confirm-btn-premium:hover {
-                                                                                transform: translateY(-2px) !important;
-                                                                                box-shadow: 0 6px 16px rgba(255, 71, 87, 0.3) !important;
-                                                                            }
+                                                        .swal2-confirm-btn-premium:hover {
+                                                            transform: translateY(-2px) !important;
+                                                            box-shadow: 0 6px 16px rgba(255, 71, 87, 0.3) !important;
+                                                        }
 
-                                                                            .swal2-cancel-btn-premium {
-                                                                                background: white !important;
-                                                                                border: 1px solid #dfe4ea !important;
-                                                                                padding: 12px 28px !important;
-                                                                                font-weight: 500 !important;
-                                                                                font-size: 1rem !important;
-                                                                                border-radius: 10px !important;
-                                                                                color: #57606f !important;
-                                                                                transition: all 0.3s ease !important;
-                                                                            }
+                                                        .swal2-cancel-btn-premium {
+                                                            background: white !important;
+                                                            border: 1px solid #dfe4ea !important;
+                                                            padding: 12px 28px !important;
+                                                            font-weight: 500 !important;
+                                                            font-size: 1rem !important;
+                                                            border-radius: 10px !important;
+                                                            color: #57606f !important;
+                                                            transition: all 0.3s ease !important;
+                                                        }
 
-                                                                            .swal2-cancel-btn-premium:hover {
-                                                                                background: #f8f9fa !important;
-                                                                                border-color: #ced6e0 !important;
-                                                                            }
+                                                        .swal2-cancel-btn-premium:hover {
+                                                            background: #f8f9fa !important;
+                                                            border-color: #ced6e0 !important;
+                                                        }
 
-                                                                            .swal2-actions-premium {
-                                                                                margin: 2rem 0 0 0 !important;
-                                                                                gap: 1rem !important;
-                                                                            }
+                                                        .swal2-actions-premium {
+                                                            margin: 2rem 0 0 0 !important;
+                                                            gap: 1rem !important;
+                                                        }
 
-                                                                            /* Loader premium */
-                                                                            .swal2-loader-container {
-                                                                                width: 100%;
-                                                                                padding: 1.5rem 0;
-                                                                            }
+                                                        /* Loader premium */
+                                                        .swal2-loader-container {
+                                                            width: 100%;
+                                                            padding: 1.5rem 0;
+                                                        }
 
-                                                                            .swal2-loader-circle {
-                                                                                width: 60px;
-                                                                                height: 60px;
-                                                                                border: 4px solid rgba(255, 71, 87, 0.2);
-                                                                                border-top-color: #ff4757;
-                                                                                border-radius: 50%;
-                                                                                margin: 0 auto 1.5rem;
-                                                                                animation: swal2-spin 1s linear infinite;
-                                                                            }
+                                                        .swal2-loader-circle {
+                                                            width: 60px;
+                                                            height: 60px;
+                                                            border: 4px solid rgba(255, 71, 87, 0.2);
+                                                            border-top-color: #ff4757;
+                                                            border-radius: 50%;
+                                                            margin: 0 auto 1.5rem;
+                                                            animation: swal2-spin 1s linear infinite;
+                                                        }
 
-                                                                            .swal2-loader-bar-container {
-                                                                                width: 100%;
-                                                                                height: 6px;
-                                                                                background: rgba(255, 71, 87, 0.1);
-                                                                                border-radius: 3px;
-                                                                                overflow: hidden;
-                                                                            }
+                                                        .swal2-loader-bar-container {
+                                                            width: 100%;
+                                                            height: 6px;
+                                                            background: rgba(255, 71, 87, 0.1);
+                                                            border-radius: 3px;
+                                                            overflow: hidden;
+                                                        }
 
-                                                                            .swal2-loader-bar {
-                                                                                height: 100%;
-                                                                                width: 0;
-                                                                                background: linear-gradient(90deg, #ff4757, #ff6b81);
-                                                                                border-radius: 3px;
-                                                                            }
+                                                        .swal2-loader-bar {
+                                                            height: 100%;
+                                                            width: 0;
+                                                            background: linear-gradient(90deg, #ff4757, #ff6b81);
+                                                            border-radius: 3px;
+                                                        }
 
-                                                                            @keyframes swal2-spin {
-                                                                                0% {
-                                                                                    transform: rotate(0deg);
-                                                                                }
+                                                        @keyframes swal2-spin {
+                                                            0% {
+                                                                transform: rotate(0deg);
+                                                            }
 
-                                                                                100% {
-                                                                                    transform: rotate(360deg);
-                                                                                }
-                                                                            }
-                                                                        </style>
-
-
+                                                            100% {
+                                                                transform: rotate(360deg);
+                                                            }
+                                                        }
+                                                    </style>
 
 
 
@@ -373,9 +371,11 @@
 
 
 
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
+
+
+                                                </div>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -686,7 +686,6 @@
         </div>
     @endforeach
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endsection
 

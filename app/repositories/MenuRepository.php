@@ -59,7 +59,6 @@ class MenuRepository extends BaseRepository implements MenuInterface
                                         'padre_id' => {$padreId},
                                         'seccion_id' => {$seccionId},
                                         'ruta' => '{$ruta}',
-                                        'accion_usuario' => '{$accionUsuario}',
                                     ],
                         PHP;
 
@@ -159,7 +158,6 @@ class MenuRepository extends BaseRepository implements MenuInterface
                                     'titulo' => '{$titulo}',
                                     'icono' => '{$icono}',
                                     'posicion' => {$posicion},
-                                    'accion_usuario' => '{$accionUsuario}',
                                 ],
                     PHP;
 

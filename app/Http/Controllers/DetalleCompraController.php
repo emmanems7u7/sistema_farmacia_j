@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DetalleCompra;
-use App\Models\Producto; 
+use App\Models\Producto;
 use Illuminate\Http\Request;
 
 class DetalleCompraController extends Controller
@@ -29,46 +29,55 @@ class DetalleCompraController extends Controller
      */
     public function store(Request $request)
     {
+        // Validar entrada
+        $request->validate([
+            'codigo' => 'required|string',
+            'cantidad' => 'required|numeric|min:1',
+            'id_compra' => 'required|exists:compras,id',
+        ]);
 
-      // Buscar el producto según el código
-      $producto = Producto::where('codigo', $request->codigo)->first();
-      $compra_id = $request->id_compra;
-  
-      if ($producto) {
-        
-  
-          // Verificar si el producto ya está en la venta
-          $detalle_compra_existe = DetalleCompra::where('producto_id', $producto->id)
-                                                ->where('compra_id', $compra_id)
-                                                ->first();
-  
-          // Si ya existe, actualizar la cantidad
-          if ($detalle_compra_existe) {
-              $detalle_compra_existe->cantidad += $request->cantidad;
-              $detalle_compra_existe->save();
-  
-              $producto->stock -= $request->cantidad;
-              $producto->save();
-  
-              return response()->json(['success' => true, 'message' => 'Cantidad del producto actualizada']);
-          } else {
-              // Si no existe, crear un nuevo detalle de venta
-              $detalle_compra = new DetalleCompra();
-              $detalle_compra->cantidad = $request->cantidad;
-              $detalle_compra->compra_id = $compra_id;
-              $detalle_compra->producto_id = $producto->id;
-              $detalle_compra->save();
-  
-              $producto->stock -= $request->cantidad;
-              $producto->save();
-  
-              return response()->json(['success' => true, 'message' => 'Producto agregado al detalle de venta']);
-          }
-      } else {
-          return response()->json(['success' => false, 'message' => 'Producto no encontrado']);
-      }
-  }
+        // Buscar el producto según el código
+        $producto = Producto::where('codigo', $request->codigo)->first();
 
+        if (!$producto) {
+            return response()->json(['success' => false, 'message' => 'Producto no encontrado']);
+        }
+
+        $compra_id = $request->id_compra;
+
+        // Validar stock disponible
+        if ($request->cantidad > $producto->stock) {
+            return response()->json(['success' => false, 'message' => 'Stock insuficiente']);
+        }
+
+        // Verificar si el producto ya está en la compra
+        $detalle_compra = DetalleCompra::where('producto_id', $producto->id)
+            ->where('compra_id', $compra_id)
+            ->first();
+
+        if ($detalle_compra) {
+            // Actualizar cantidad
+            $detalle_compra->cantidad += $request->cantidad;
+            $detalle_compra->save();
+
+            $producto->stock -= $request->cantidad;
+            $producto->save();
+
+            return response()->json(['success' => true, 'message' => 'Cantidad del producto actualizada']);
+        } else {
+            // Crear nuevo detalle de compra
+            $detalle_compra = new DetalleCompra();
+            $detalle_compra->cantidad = $request->cantidad;
+            $detalle_compra->compra_id = $compra_id;
+            $detalle_compra->producto_id = $producto->id;
+            $detalle_compra->save();
+
+            $producto->stock -= $request->cantidad;
+            $producto->save();
+
+            return response()->json(['success' => true, 'message' => 'Producto agregado al detalle de compra']);
+        }
+    }
     public function show(detalleCompra $detalleCompra)
     {
         //
@@ -93,19 +102,19 @@ class DetalleCompraController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy( $id)
+    public function destroy($id)
     {
         //
         $detalleCompra = DetalleCompra::find($id);
         $producto = Producto::find($detalleCompra->producto_id);
-      
-            $producto->stock += $detalleCompra->cantidad;
-            $producto->save();
-        
-       
-        DetalleCompra::destroy($id); // Buscar el usuario por ID
-      
 
-        return response()->json(['success'=>true]);
+        $producto->stock += $detalleCompra->cantidad;
+        $producto->save();
+
+
+        DetalleCompra::destroy($id); // Buscar el usuario por ID
+
+
+        return response()->json(['success' => true]);
     }
 }

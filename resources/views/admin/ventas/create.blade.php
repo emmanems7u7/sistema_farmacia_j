@@ -1,7 +1,270 @@
-@extends('layouts.app', ['title' => 'Nueva venta'])
+@extends('layouts.argon')
 
 @section('content')
-@include('layouts.navbars.auth.topnav', ['title' => 'Nueva venta'])
+
+
+<style>
+    .card {
+        border: none;
+        border-radius: 0.5rem;
+    }
+    
+    .card-header {
+        border-radius: 0.5rem 0.5rem 0 0 !important;
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .bg-gradient-primary {
+        background: linear-gradient(87deg, #2dce89 0, #2dcecc 100%) !important;
+    }
+    
+    .table th {
+        border-top: none;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+    }
+    
+    .form-control-lg {
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+    }
+    
+    .btn-lg {
+        padding: 0.8rem 1.5rem;
+        font-size: 1.05rem;
+    }
+    
+    .input-group-text {
+        background-color: #f8f9fa;
+    }
+    
+    .delete-btn {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+// REGISTRAR UN CLIENTE
+function guardar_cliente(){
+    const data = {
+        nombre_cliente: $('#nombre_cliente').val(),
+        nit_ci: $('#nit_ci').val(),
+        celular: $('#celular').val(),
+        email: $('#email').val(),
+        _token: '{{csrf_token()}}' 
+    };
+
+    $.ajax({
+        url: '{{route("admin.ventas.cliente.store")}}',
+        type: 'POST',
+        data: data,
+        success: function(response) {
+            if (response.success) {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Se agregó el cliente",
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire('Error', 'No se pudo registrar el cliente', 'error');
+            }
+        },
+        error: function(error) {
+            Swal.fire('Error', 'Ocurrió un error al registrar el cliente', 'error');
+        }
+    });
+}
+
+// Seleccionar cliente - VERSIÓN CORREGIDA
+$(document).on('click', '.seleccionar-btn-cliente', function(){
+    const id_cliente = $(this).data('id');
+    const nombre_cliente = $(this).data('nombre_cliente');
+    const nit_ci = $(this).data('nit');
+    
+    $('#nombre_cliente_select').val(nombre_cliente);
+    $('#nit_cliente_select').val(nit_ci);
+    $('#id_cliente').val(id_cliente);
+    
+    // Cerrar modal - FORMA COMPATIBLE CON BOOTSTRAP 5
+    const clienteModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('clienteModal'));
+    clienteModal.hide();
+    
+    // Limpiar posibles overlays
+    $('.modal-backdrop').remove();
+    $('body').removeClass('modal-open');
+});
+
+// Seleccionar producto - VERSIÓN CORREGIDA
+$(document).on('click', '.seleccionar-btn', function(){
+    const id_producto = $(this).data('id');
+    $('#codigo').val(id_producto);
+    
+    // Cerrar modal - FORMA COMPATIBLE CON BOOTSTRAP 5
+    const verModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('verModal'));
+    verModal.hide();
+    
+    // Limpiar posibles overlays
+    $('.modal-backdrop').remove();
+    $('body').removeClass('modal-open');
+    
+    $('#codigo').focus();
+});
+
+// Eliminar producto de la venta temporal - VERSIÓN MEJORADA
+$(document).on('click', '.delete-btn', function() {
+    const id = $(this).data('id');
+    if (id) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¡No podrás revertir esta acción!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{url('/admin/ventas/create/tmp')}}/"+id,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        _method: 'DELETE'
+                    },
+                    beforeSend: function() {
+                        // Mostrar loader
+                        Swal.showLoading();
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                position: "center",
+                                icon: "success",
+                                title: "Producto eliminado",
+                                showConfirmButton: false,
+                                timer: 1000
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Error', response.message || 'Error al eliminar', 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'Error en la conexión', 'error');
+                    }
+                });
+            }
+        });
+    }
+});
+
+// Buscar producto por código (Enter) - VERSIÓN MEJORADA
+$(document).ready(function() {
+    $('#codigo').focus();
+    
+    $('#form_venta').on('keypress', function(e) {
+        if(e.keyCode === 13) {   
+            e.preventDefault();
+        }
+    });
+
+    $('#codigo').on('keyup', function(e) {
+        if (e.which === 13) {
+            const codigo = $(this).val().trim();
+            const cantidad = $('#cantidad').val();
+            
+            if(!codigo) {
+                Swal.fire('Error', 'Por favor ingrese un código', 'warning');
+                return;
+            }
+
+            if(cantidad <= 0) {
+                Swal.fire('Error', 'La cantidad debe ser mayor a cero', 'warning');
+                return;
+            }
+
+            $.ajax({
+                url: "{{ route('admin.ventas.tmp_ventas') }}",
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    codigo: codigo,
+                    cantidad: cantidad
+                },
+                beforeSend: function() {
+                    Swal.showLoading();
+                },
+                success: function(response) {
+                    if(response.success) {
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: "Producto agregado",
+                            showConfirmButton: false,
+                            timer: 1000
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', response.message || 'Error al agregar', 'error');
+                    }
+                },
+                error: function(xhr) {
+                    let errorMsg = 'Error en la conexión';
+                    if(xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    }
+                    Swal.fire('Error', errorMsg, 'error');
+                }
+            });
+        }
+    });
+
+
+// Configuración DataTables
+    $('#mitabla, #mitabla2').DataTable({
+        "pageLength": 5,
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ registros por página",
+            "zeroRecords": "No se encontraron resultados",
+            "info": "Mostrando página _PAGE_ de _PAGES_",
+            "infoEmpty": "No hay registros disponibles",
+            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "search": "Buscar:",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        },
+        "responsive": true,
+        "autoWidth": false
+    });
+
+
+
+
+
+
+    // DataTables - CONFIGURACIÓN MEJORADA
+  
+});
+</script>
+
 <div class="container-fluid mt--6">
     <div class="row">
 
@@ -448,269 +711,3 @@
 </div>
 @endsection
 
-@section('css')
-<style>
-    .card {
-        border: none;
-        border-radius: 0.5rem;
-    }
-    
-    .card-header {
-        border-radius: 0.5rem 0.5rem 0 0 !important;
-        padding: 1.25rem 1.5rem;
-    }
-    
-    .bg-gradient-primary {
-        background: linear-gradient(87deg, #2dce89 0, #2dcecc 100%) !important;
-    }
-    
-    .table th {
-        border-top: none;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 1px;
-    }
-    
-    .form-control-lg {
-        font-size: 1rem;
-        padding: 0.75rem 1rem;
-    }
-    
-    .btn-lg {
-        padding: 0.8rem 1.5rem;
-        font-size: 1.05rem;
-    }
-    
-    .input-group-text {
-        background-color: #f8f9fa;
-    }
-    
-    .delete-btn {
-        width: 32px;
-        height: 32px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-</style>
-@endsection
-
-@section('js')
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-// REGISTRAR UN CLIENTE
-function guardar_cliente(){
-    const data = {
-        nombre_cliente: $('#nombre_cliente').val(),
-        nit_ci: $('#nit_ci').val(),
-        celular: $('#celular').val(),
-        email: $('#email').val(),
-        _token: '{{csrf_token()}}' 
-    };
-
-    $.ajax({
-        url: '{{route("admin.ventas.cliente.store")}}',
-        type: 'POST',
-        data: data,
-        success: function(response) {
-            if (response.success) {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Se agregó el cliente",
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    location.reload();
-                });
-            } else {
-                Swal.fire('Error', 'No se pudo registrar el cliente', 'error');
-            }
-        },
-        error: function(error) {
-            Swal.fire('Error', 'Ocurrió un error al registrar el cliente', 'error');
-        }
-    });
-}
-
-// Seleccionar cliente - VERSIÓN CORREGIDA
-$(document).on('click', '.seleccionar-btn-cliente', function(){
-    const id_cliente = $(this).data('id');
-    const nombre_cliente = $(this).data('nombre_cliente');
-    const nit_ci = $(this).data('nit');
-    
-    $('#nombre_cliente_select').val(nombre_cliente);
-    $('#nit_cliente_select').val(nit_ci);
-    $('#id_cliente').val(id_cliente);
-    
-    // Cerrar modal - FORMA COMPATIBLE CON BOOTSTRAP 5
-    const clienteModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('clienteModal'));
-    clienteModal.hide();
-    
-    // Limpiar posibles overlays
-    $('.modal-backdrop').remove();
-    $('body').removeClass('modal-open');
-});
-
-// Seleccionar producto - VERSIÓN CORREGIDA
-$(document).on('click', '.seleccionar-btn', function(){
-    const id_producto = $(this).data('id');
-    $('#codigo').val(id_producto);
-    
-    // Cerrar modal - FORMA COMPATIBLE CON BOOTSTRAP 5
-    const verModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('verModal'));
-    verModal.hide();
-    
-    // Limpiar posibles overlays
-    $('.modal-backdrop').remove();
-    $('body').removeClass('modal-open');
-    
-    $('#codigo').focus();
-});
-
-// Eliminar producto de la venta temporal - VERSIÓN MEJORADA
-$(document).on('click', '.delete-btn', function() {
-    const id = $(this).data('id');
-    if (id) {
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "¡No podrás revertir esta acción!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: "{{url('/admin/ventas/create/tmp')}}/"+id,
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        _method: 'DELETE'
-                    },
-                    beforeSend: function() {
-                        // Mostrar loader
-                        Swal.showLoading();
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            Swal.fire({
-                                position: "center",
-                                icon: "success",
-                                title: "Producto eliminado",
-                                showConfirmButton: false,
-                                timer: 1000
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire('Error', response.message || 'Error al eliminar', 'error');
-                        }
-                    },
-                    error: function() {
-                        Swal.fire('Error', 'Error en la conexión', 'error');
-                    }
-                });
-            }
-        });
-    }
-});
-
-// Buscar producto por código (Enter) - VERSIÓN MEJORADA
-$(document).ready(function() {
-    $('#codigo').focus();
-    
-    $('#form_venta').on('keypress', function(e) {
-        if(e.keyCode === 13) {   
-            e.preventDefault();
-        }
-    });
-
-    $('#codigo').on('keyup', function(e) {
-        if (e.which === 13) {
-            const codigo = $(this).val().trim();
-            const cantidad = $('#cantidad').val();
-            
-            if(!codigo) {
-                Swal.fire('Error', 'Por favor ingrese un código', 'warning');
-                return;
-            }
-
-            if(cantidad <= 0) {
-                Swal.fire('Error', 'La cantidad debe ser mayor a cero', 'warning');
-                return;
-            }
-
-            $.ajax({
-                url: "{{ route('admin.ventas.tmp_ventas') }}",
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    codigo: codigo,
-                    cantidad: cantidad
-                },
-                beforeSend: function() {
-                    Swal.showLoading();
-                },
-                success: function(response) {
-                    if(response.success) {
-                        Swal.fire({
-                            position: "center",
-                            icon: "success",
-                            title: "Producto agregado",
-                            showConfirmButton: false,
-                            timer: 1000
-                        }).then(() => {
-                            location.reload();
-                        });
-                    } else {
-                        Swal.fire('Error', response.message || 'Error al agregar', 'error');
-                    }
-                },
-                error: function(xhr) {
-                    let errorMsg = 'Error en la conexión';
-                    if(xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMsg = xhr.responseJSON.message;
-                    }
-                    Swal.fire('Error', errorMsg, 'error');
-                }
-            });
-        }
-    });
-
-
-// Configuración DataTables
-    $('#mitabla, #mitabla2').DataTable({
-        "pageLength": 5,
-        "language": {
-            "lengthMenu": "Mostrar _MENU_ registros por página",
-            "zeroRecords": "No se encontraron resultados",
-            "info": "Mostrando página _PAGE_ de _PAGES_",
-            "infoEmpty": "No hay registros disponibles",
-            "infoFiltered": "(filtrado de _MAX_ registros totales)",
-            "search": "Buscar:",
-            "paginate": {
-                "first": "Primero",
-                "last": "Último",
-                "next": "Siguiente",
-                "previous": "Anterior"
-            }
-        },
-        "responsive": true,
-        "autoWidth": false
-    });
-
-
-
-
-
-
-    // DataTables - CONFIGURACIÓN MEJORADA
-  
-});
-</script>
-@endsection

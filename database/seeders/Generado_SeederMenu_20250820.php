@@ -17,7 +17,6 @@ class Generado_SeederMenu_20250820 extends Seeder
                 'padre_id' => null,
                 'seccion_id' => 13,
                 'ruta' => 'admin.catalogo.index',
-                'accion_usuario' => '',
             ],
             [
                 'id' => '25',
@@ -26,7 +25,6 @@ class Generado_SeederMenu_20250820 extends Seeder
                 'padre_id' => null,
                 'seccion_id' => 13,
                 'ruta' => 'admin.inventario.index',
-                'accion_usuario' => '',
             ],
             [
                 'id' => '24',
@@ -35,7 +33,6 @@ class Generado_SeederMenu_20250820 extends Seeder
                 'padre_id' => null,
                 'seccion_id' => 13,
                 'ruta' => 'admin.reporte.egresos.index',
-                'accion_usuario' => '',
             ],
             [
                 'id' => '23',
@@ -44,7 +41,6 @@ class Generado_SeederMenu_20250820 extends Seeder
                 'padre_id' => null,
                 'seccion_id' => 13,
                 'ruta' => 'admin.reporte.ingresos.index',
-                'accion_usuario' => '',
             ],
             [
                 'id' => '21',
@@ -53,7 +49,6 @@ class Generado_SeederMenu_20250820 extends Seeder
                 'padre_id' => null,
                 'seccion_id' => 12,
                 'ruta' => 'admin.cajas.index',
-                'accion_usuario' => '',
             ],
             [
                 'id' => '20',
@@ -62,7 +57,6 @@ class Generado_SeederMenu_20250820 extends Seeder
                 'padre_id' => null,
                 'seccion_id' => 12,
                 'ruta' => 'admin.ventas.index',
-                'accion_usuario' => '',
             ],
             [
                 'id' => '19',
@@ -71,7 +65,6 @@ class Generado_SeederMenu_20250820 extends Seeder
                 'padre_id' => null,
                 'seccion_id' => 12,
                 'ruta' => 'admin.compras.index',
-                'accion_usuario' => '',
             ],
             [
                 'id' => '18',
@@ -80,7 +73,6 @@ class Generado_SeederMenu_20250820 extends Seeder
                 'padre_id' => null,
                 'seccion_id' => 11,
                 'ruta' => 'admin.clientes.index',
-                'accion_usuario' => '',
             ],
             [
                 'id' => '17',
@@ -89,7 +81,6 @@ class Generado_SeederMenu_20250820 extends Seeder
                 'padre_id' => null,
                 'seccion_id' => 11,
                 'ruta' => 'admin.lotes.index',
-                'accion_usuario' => '',
             ],
             [
                 'id' => '16',
@@ -98,7 +89,6 @@ class Generado_SeederMenu_20250820 extends Seeder
                 'padre_id' => null,
                 'seccion_id' => 11,
                 'ruta' => 'admin.productos.index',
-                'accion_usuario' => '',
             ],
             [
                 'id' => '15',
@@ -107,7 +97,6 @@ class Generado_SeederMenu_20250820 extends Seeder
                 'padre_id' => null,
                 'seccion_id' => 11,
                 'ruta' => 'admin.proveedores.index',
-                'accion_usuario' => '',
             ],
             [
                 'id' => '14',
@@ -116,16 +105,16 @@ class Generado_SeederMenu_20250820 extends Seeder
                 'padre_id' => null,
                 'seccion_id' => 11,
                 'ruta' => 'admin.laboratorios.index',
-                'accion_usuario' => '',
-            ],            [
+            ],
+            [
                 'id' => '12',
                 'nombre' => 'Categorias',
                 'orden' => 1,
                 'padre_id' => null,
                 'seccion_id' => 10,
                 'ruta' => 'categorias.index',
-                'accion_usuario' => '',
-            ],];
+            ],
+        ];
 
         foreach ($menus as $data) {
             Menu::firstOrCreate(

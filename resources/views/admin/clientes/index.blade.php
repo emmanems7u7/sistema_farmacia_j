@@ -245,8 +245,7 @@
 
                                                     </form>
                                                     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-                                                    <script
-                                                        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
                                                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
                                                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -260,17 +259,17 @@
                                                                 title: `<span class="swal2-title">Confirmar Eliminación</span>`,
                                                                 html: `<div class="swal2-content-container">
 
-                                                     <div class="swal2-text-content">
-                                                         <h3 class="swal2-subtitle">¿Eliminar cliente permanentemente?</h3>
-                                                         <div class="swal2-user-info mt-3">
-                                                             <i></i> ${cliente.nombre || 'Este cliente'}
-                                                         </div>
-                                                         <div class="swal2-warning-text">
-                                                             <i class="fas fa-exclamation-triangle me-2"></i>
-                                                             Esta acción no se puede deshacer
-                                                         </div>
-                                                     </div>
-                                                   </div>`,
+                                                             <div class="swal2-text-content">
+                                                                 <h3 class="swal2-subtitle">¿Eliminar cliente permanentemente?</h3>
+                                                                 <div class="swal2-user-info mt-3">
+                                                                     <i></i> ${cliente.nombre || 'Este cliente'}
+                                                                 </div>
+                                                                 <div class="swal2-warning-text">
+                                                                     <i class="fas fa-exclamation-triangle me-2"></i>
+                                                                     Esta acción no se puede deshacer
+                                                                 </div>
+                                                             </div>
+                                                           </div>`,
                                                                 showCancelButton: true,
                                                                 focusConfirm: false,
                                                                 confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Confirmar Eliminación`,
@@ -296,11 +295,11 @@
                                                                     Swal.fire({
                                                                         title: 'Procesando...',
                                                                         html: `<div class="swal2-loader-container">
-                                                             <div class="swal2-loader-circle"></div>
-                                                             <div class="swal2-loader-bar-container">
-                                                                 <div class="swal2-loader-bar"></div>
-                                                             </div>
-                                                           </div>`,
+                                                                     <div class="swal2-loader-circle"></div>
+                                                                     <div class="swal2-loader-bar-container">
+                                                                         <div class="swal2-loader-bar"></div>
+                                                                     </div>
+                                                                   </div>`,
                                                                         showConfirmButton: false,
                                                                         allowOutsideClick: false,
                                                                         didOpen: () => {
