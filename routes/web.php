@@ -237,7 +237,7 @@ Route::middleware(['auth', 'role:admin', 'can:Configuración General'])->group(f
 
 });
 
-Route::middleware(['auth', 'role:admin', 'can:Configuración Credenciales'])->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/configuracion/credenciales', [ConfiguracionCredencialesController::class, 'index'])->name('configuracion.credenciales.index')->middleware('can:configuracion.credenciales_ver');
     Route::post('/configuracion/credenciales/actualizar', [ConfiguracionCredencialesController::class, 'actualizar'])->name('configuracion.credenciales.actualizar')->middleware('can:configuracion.credenciales_actualizar');
