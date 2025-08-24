@@ -90,4 +90,8 @@ class User extends Authenticatable
             return ['database'];
         }
     }
+    public function sucursal()
+    {
+        return $this->belongsTo(Sucursal::class);
+    }
 }
