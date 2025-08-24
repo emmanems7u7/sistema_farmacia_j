@@ -40,20 +40,24 @@ class DatabaseSeeder extends Seeder
 
 
         // Seeders creados automaticamente 20-08-2025
-        // PERMISOS
-        $this->call(Generado_SeederPermisos_20250820::class);
 
-        // FIN PERMISOS
+        // SECCION
+        $this->call(Generado_SeederSeccion_20250820::class);
+
+        // FIN SECCION
+
 
         // MENU
         $this->call(Generado_SeederMenu_20250820::class);
 
         // FIN MENU
 
-        // SECCION
-        $this->call(Generado_SeederSeccion_20250820::class);
+        // PERMISOS
+        $this->call(Generado_SeederPermisos_20250820::class);
 
-        // FIN SECCION
+        // FIN PERMISOS
+
+
         // Fin Seeders creados automaticamente 20-08-2025
     }
 

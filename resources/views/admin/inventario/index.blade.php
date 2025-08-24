@@ -1,7 +1,6 @@
-@extends('layouts.app', ['title' => 'Gestión de Inventario'])
+@extends('layouts.argon')
 
 @section('content')
-@include('layouts.navbars.auth.topnav', ['title' => 'Gestion de Inventario'])
 
 <div class="container-fluid py-4">
     <!-- Tarjeta de título mejorada -->
