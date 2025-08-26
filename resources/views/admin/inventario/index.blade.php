@@ -188,7 +188,7 @@
                             TOTAL COMPRADO
                         </div>
                         <div class="h4 font-weight-bold text-primary">
-                            ${{ number_format($totalComprasMes, 2) }}
+                            Bs{{ number_format($totalComprasMes, 2) }}
                         </div>
                     </div>
                 </div>
@@ -292,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             TOTAL VENDIDO
                         </div>
                         <div class="h4 font-weight-bold text-success">
-                            ${{ number_format($totalVentasMes, 2) }}
+                            Bs{{ number_format($totalVentasMes, 2) }}
                         </div>
                     </div>
                 </div>

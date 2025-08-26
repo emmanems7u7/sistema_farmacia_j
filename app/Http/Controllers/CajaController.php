@@ -147,7 +147,7 @@ class CajaController extends Controller
         $caja->fecha_apertura = $request->fecha_apertura;
         $caja->monto_inicial = $request->monto_inicial;
         $caja->descripcion = $request->descripcion;
-        $caja->sucursal_id = Auth::user()->sucursal_id; // asignar sucursal_id
+        $caja->sucursal_id = 1; // asignar sucursal_id
 
         $caja->save(); // guardar la nueva caja en la base de datos
 

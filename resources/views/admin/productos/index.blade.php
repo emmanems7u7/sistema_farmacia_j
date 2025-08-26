@@ -249,7 +249,7 @@
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <span class="text-xs text-muted">Stock:</span>
                                         <span
-                                            class="badge badge-{{ $producto->stock < $producto->stock_minimo ? 'danger' : 'success' }} text-black ">
+                                            class="badge badge-{{ $producto->stock < $producto->stock_minimo ? 'danger' : 'success' }} text-success ">
                                             {{ $producto->stock }} / {{ $producto->stock_maximo }}
                                         </span>
                                     </div>

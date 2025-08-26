@@ -27,7 +27,7 @@
                 }
 
                 // Validar laboratorio seleccionado
-                if (!$('#id_laboratorio').val()) {
+                if (!$('#laboratorio_id').val()) {
                     alertify.error('Debes seleccionar un laboratorio');
                     formularioValido = false;
                 }

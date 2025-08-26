@@ -61,7 +61,7 @@ class ProductoController extends Controller
         $producto->stock_maximo = $request->stock_maximo;
         $producto->categoria_id = $request->categoria_id;
         $producto->laboratorio_id = $request->laboratorio_id;
-        $producto->sucursal_id = Auth::user()->sucursal_id;
+        $producto->sucursal_id = 1;
 
         if ($request->hasFile('imagen')) {
             $file = $request->file('imagen');
@@ -126,19 +126,17 @@ class ProductoController extends Controller
         // Manejar la imagen si se subió una nueva
         if ($request->hasFile('imagen')) {
             // Eliminar imagen anterior si existe
-            if ($producto->imagen && file_exists(public_path('storage/productos/' . basename($producto->imagen)))) {
-                unlink(public_path('storage/productos/' . basename($producto->imagen)));
+            if ($producto->imagen && file_exists(public_path('storage/' . $producto->imagen))) {
+                unlink(public_path('storage/' . $producto->imagen));
             }
 
-            // Guardar la nueva imagen
             $file = $request->file('imagen');
             $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-
             $file->move(public_path('storage/productos'), $filename);
-
-            // Guardar la ruta relativa en la BD
             $producto->imagen = 'productos/' . $filename;
         }
+        // Guardar cambios en producto (incluye imagen)
+        $producto->save();
 
         // Manejar el lote del producto
         $loteData = [

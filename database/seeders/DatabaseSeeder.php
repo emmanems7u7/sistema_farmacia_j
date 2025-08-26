@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
     {
 
 
-        /*
+        
                 User::factory()->create([
                     'name' => 'admin',
                     'email' => 'admin@admin.com',
@@ -62,7 +62,7 @@ class DatabaseSeeder extends Seeder
 
 
 
-        */
+        
         // Seeders creados automaticamente 24-08-2025
 
         // MENU
