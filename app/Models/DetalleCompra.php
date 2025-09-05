@@ -11,9 +11,9 @@ class DetalleCompra extends Model
      protected $fillable = [
         'cantidad',
         'compra_id',
+       'lote_id',
         'producto_id',
-        // Agrega aquí cualquier otro campo que necesites asignar masivamente
-        // 'lote_id', // Solo si decidiste agregar este campo
+        
     ];
     //
     public function compra(){

@@ -225,30 +225,34 @@
                                         <tr>
                                             <td class="text-center align-middle">{{ $index + 1 }}</td>
                                             <td class="align-middle">
+
+                                            
                                                 <button class="btn btn-sm btn-outline-primary toggle-details"
                                                     data-target="#details-{{ $venta->id }}">
                                                     <i class="fas fa-chevron-down mr-1"></i>
                                                     Productos ({{ count($venta->detallesVenta) }})
                                                 </button>
-                                                <div id="details-{{ $venta->id }}"
-                                                    class="details-content bg-light rounded mt-2 p-3" style="display: none;">
-                                                    <table class="table table-sm table-hover mb-0">
-                                                        <thead>
-                                                            <tr class="bg-gradient-primary text-white">
-                                                                <th>Producto</th>
-                                                                <th class="text-center">Cantidad</th>
+                                              <div id="details-{{ $venta->id }}" class="details-content" style="display: none;">
+                                                <div class="mt-3 bg-soft-info p-3 rounded">
+                                                    <table class="table table-sm" style="font-size: 0.85rem;">
+                                                        <thead class="bg-gradient-primary  text-black">
+                                                            <tr>
+                                                                <th style="padding: 0.3rem;">Producto</th>
+                                                                <th class="text-center" style="padding: 0.3rem;">Cantidad</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             @foreach($venta->detallesVenta as $detalle)
                                                                 <tr>
-                                                                    <td>{{ $detalle->producto->nombre }}</td>
-                                                                    <td class="text-center">{{ $detalle->cantidad }}</td>
+                                                                    <td style="padding: 0.3rem;">{{ $detalle->producto->nombre }}</td>
+                                                                    <td class="text-center" style="padding: 0.3rem;">{{ $detalle->cantidad }}</td>
                                                                 </tr>
                                                             @endforeach
                                                         </tbody>
                                                     </table>
                                                 </div>
+                                            </div>
+
                                             </td>
                                             <td class="align-middle">{{ \Carbon\Carbon::parse($venta->fecha)->format('d/m/Y') }}
                                             </td>
@@ -297,17 +301,17 @@
                                                                 title: `<span class="swal2-title">Confirmar Eliminación</span>`,
                                                                 html: `<div class="swal2-content-container">
 
-                                                     <div class="swal2-text-content">
-                                                         <h3 class="swal2-subtitle">¿Eliminar venta permanentemente?</h3>
-                                                         <div class="swal2-user-info mt-3">
-                                                             <i></i> ${venta.nombre || 'Esta venta'}
-                                                         </div>
-                                                         <div class="swal2-warning-text">
-                                                             <i class="fas fa-exclamation-triangle me-2"></i>
-                                                             Esta acción no se puede deshacer
-                                                         </div>
-                                                     </div>
-                                                   </div>`,
+                                                                <div class="swal2-text-content">
+                                                                    <h3 class="swal2-subtitle">¿Eliminar venta permanentemente?</h3>
+                                                                    <div class="swal2-user-info mt-3">
+                                                                        <i></i> ${venta.nombre || 'Esta venta'}
+                                                                    </div>
+                                                                    <div class="swal2-warning-text">
+                                                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                                                        Esta acción no se puede deshacer
+                                                                    </div>
+                                                                </div>
+                                                            </div>`,
                                                                 showCancelButton: true,
                                                                 focusConfirm: false,
                                                                 confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Confirmar Eliminación`,
@@ -510,6 +514,23 @@
     </div>
     </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const buttons = document.querySelectorAll('.toggle-details');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const content = document.querySelector(targetId);
+                if (content.style.display === 'none' || content.style.display === '') {
+                    content.style.display = 'block';
+                } else {
+                    content.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
 
 
 

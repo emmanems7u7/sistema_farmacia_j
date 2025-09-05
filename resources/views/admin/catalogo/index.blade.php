@@ -10,16 +10,18 @@
             <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2"></button>
         </div>
         
+
+
         <div class="carousel-inner">
         <div class="carousel-item active" 
-     style="background-image: url('{{ asset('storage/imagen/banner.jpg') }}'); background-size: cover;">
+     style="background-image: url('{{ asset('assets/img/banner.jpg') }}'); background-size: cover;">
                 <div class="carousel-caption d-none d-md-block">
                     <h5>Productos Destacados</h5>
                     <p>Los medicamentos más vendidos este mes</p>
                 </div>
             </div>
             <div class="carousel-item" 
-            style="background-image: url('{{ asset('storage/imagen/banner2.jpg') }}'); background-size: cover;">
+            style="background-image: url('{{ asset('assets/img/banner2.jpg') }}'); background-size: cover;">
                 <div class="carousel-caption d-none d-md-block">
                     <h5>Nuevos Lanzamientos</h5>
                     <p>Descubre nuestras novedades</p>
@@ -490,7 +492,7 @@
             <!-- Detalles del producto -->
             <div class="card-body p-3">
                 <h6 class="product-title mb-2">
-                    {{ Str::limit($producto->nombre, 30) }}
+                   <b> {{ Str::limit($producto->nombre, 30) }}</b>
                     @if($producto->stock == 0)
                         <span class="out-of-stock-badge">AGOTADO</span>
                     @endif
@@ -502,11 +504,7 @@
 
                 </div>
                 
-                <div class="product-meta d-flex justify-content-between align-items-center">
-                    <span class="stock-badge {{ $producto->stock > 10 ? 'in-stock' : ($producto->stock > 0 ? 'low-stock' : 'no-stock') }}">
-                        {{ $producto->stock }}u disponible{{ $producto->stock != 1 ? 's' : '' }}
-                    </span>
-                </div>
+              
             </div>
 
             <!-- Botón de acción -->

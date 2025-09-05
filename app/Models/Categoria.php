@@ -16,4 +16,9 @@ class Categoria extends Model
     {
         return $this->hasMany(Producto::class);
     }
+     // Relación 1 a 1 con CategoriaIcono
+    public function icono()
+    {
+        return $this->hasOne(CategoriaIcono::class, 'categoria_id');
+    }
 }

@@ -5,9 +5,13 @@
     <div class="row justify-content-center">
         <div class="col-lg-8"> <!-- Aumenté el ancho para acomodar el nuevo diseño -->
             <!-- Botón para volver -->
-            <a href="{{ route('admin.catalogo.index') }}" class="btn btn-outline-primary mb-4 rounded-pill">
-                <i class="fas fa-arrow-left me-2"></i> Volver al catálogo
+            <a href="{{ route('admin.catalogo.index') }}" class="text-decoration-none text-primary fw-bold">
+                Inicio
             </a>
+
+
+<span class="mx-2 fw-bold">/ {{ $producto->categoria->nombre }}</span>
+
 
             <!-- Tarjeta principal con diseño horizontal -->
             <div class="card border-0 shadow-lg rounded-3 overflow-hidden">

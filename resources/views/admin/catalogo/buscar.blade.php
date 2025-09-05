@@ -9,7 +9,7 @@
             <small class="text-muted fs-6">({{ $productos->total() }} productos)</small>
         </h2>
         <a href="{{ route('admin.catalogo.index') }}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-1"></i> Volver al catálogo
+            <i class="fas fa-arrow-left me-1"></i> Volver al Inicio
         </a>
     </div>
 

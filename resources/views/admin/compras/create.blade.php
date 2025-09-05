@@ -488,9 +488,9 @@
                                                                         <option value="">Ver lote</option>
                                                                         @foreach($tmp_compra->producto->lotes as $lote)
                                                                             <option value="{{ $lote->id }}"
-                                                                                data-precio="{{ $lote->precio_compra }}" {{ $lote->id == optional($lotesPorProducto[$tmp_compra->producto_id]->first())->id ? 'selected' : '' }}>
+                                                                                data-precio="{{ $lote->precio_venta }}" {{ $lote->id == optional($lotesPorProducto[$tmp_compra->producto_id]->first())->id ? 'selected' : '' }}>
                                                                                 {{ $lote->numero_lote }} (Bs
-                                                                                {{ number_format($lote->precio_compra, 2) }})
+                                                                                {{ number_format($lote->precio_venta, 2) }})
                                                                             </option>
                                                                         @endforeach
                                                                     </select>
@@ -503,14 +503,22 @@
                                                                     </button>
                                                                 </td>
 
-                                                                @php
-                                                                    $lote = isset($lotesPorProducto[$tmp_compra->producto_id])
-                                                                        ? $lotesPorProducto[$tmp_compra->producto_id]->first()
-                                                                        : null;
+                                                                
+                                                                    @php
+                                                                        $lote = isset($lotesPorProducto[$tmp_compra->producto_id])
+                                                                            ? $lotesPorProducto[$tmp_compra->producto_id]->first()
+                                                                            : null;
 
-                                                                    $precio = $lote ? $lote->precio_compra : 0;
-                                                                    $costo = $tmp_compra->cantidad * $precio;
-                                                                   @endphp
+                                                                        if ($lote) {
+                                                                            $precio = $lote->precio_compra_unitario;
+                                                                            $costo = $lote->cantidad * $precio;
+                                                                        } else {
+                                                                            $precio = 0;
+                                                                            $costo = 0;
+                                                                        }
+                                                                    @endphp
+
+
 
                                                                 <td class="text-end">
                                                                     @if($lote)
@@ -576,87 +584,142 @@
 
     @include('admin.compras.selector_productos')
 
-    <!-- Modal para creación de lote -->
-    <div class="modal fade" id="loteModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">
-                        <i class="fas fa-boxes me-2"></i>Registro de Lote para: <span id="nombre-producto-modal"></span>
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formLote" method="POST" action="{{ route('compras.agregarLote') }}">
+ 
+   <!-- Modal para creación de lote -->
+<div class="modal fade" id="loteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-boxes me-2"></i>Registro de Lote para: 
+                    <span id="nombre-producto-modal"></span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formLote" method="POST" action="{{ route('compras.agregarLote') }}">
+                    @csrf
+                    <input type="hidden" name="producto_id" id="modalProductoId" value="">
 
-                        @csrf
-                        <input type="hidden" name="producto_id" id="modalProductoId" value="">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Número de Lote*</label>
+                            <input type="text" class="form-control" name="numero_lote" required
+                                placeholder="Ej: LT-2023-001" pattern="[A-Za-z0-9-]+"
+                                title="Solo letras, números y guiones">
+                            <small class="text-muted">Código único para identificar este lote</small>
+                        </div>
 
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Cantidad (Unidades)*</label>
+                            <input type="number" class="form-control" name="cantidad" min="1" required
+                                placeholder="Ej: 60" id="cantidadInput">
+                            <div class="form-text">Unidades reales contenidas en este lote</div>
+                        </div>
 
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Fecha de Ingreso*</label>
+                            <input type="date" class="form-control" name="fecha_ingreso" required
+                                min="{{ date('Y-m-d') }}">
+                        </div>
 
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Número de Lote*</label>
-                                <input type="text" class="form-control" name="numero_lote" required
-                                    placeholder="Ej: LT-2023-001" pattern="[A-Za-z0-9-]+"
-                                    title="Solo letras, números y guiones">
-                                <small class="text-muted">Código único para identificar este lote</small>
-                            </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Fecha de Vencimiento*</label>
+                            <input type="date" class="form-control" name="fecha_vencimiento" required
+                                  min="{{ date('Y-m-d') }}">
+                        </div>
 
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Cantidad*</label>
-                                <input type="number" class="form-control" name="cantidad" min="1" required
-                                    placeholder="Ej: 100" id="cantidadInput">
-                                <div class="form-text">Stock inicial de este lote</div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Fecha de Ingreso*</label>
-                                <input type="date" class="form-control" name="fecha_ingreso" required
-                                    min="{{ date('Y-m-d', strtotime('+1 day')) }}">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Fecha de Vencimiento*</label>
-                                <input type="date" class="form-control" name="fecha_vencimiento" required
-                                    min="{{ date('Y-m-d', strtotime('+1 day')) }}">
-
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Precio de Compra (Bs)*</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">Bs</span>
-                                    <input type="number" step="0.01" class="form-control" name="precio_compra"
-                                        placeholder="0.00" required min="0" id="precioCompraInput">
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Precio de Venta (Bs)*</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">Bs</span>
-                                    <input type="number" step="0.01" class="form-control" name="precio_venta"
-                                        placeholder="0.00" required min="0" id="precioVentaInput">
-                                </div>
-                                <div class="form-text" id="gananciaText"></div>
+                        <!-- Precio de compra total (Caja) -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Precio de Compra (Bs)*</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Bs</span>
+                                <input type="number" step="0.01" class="form-control" 
+                                    name="precio_compra" placeholder="0.00" required min="0" 
+                                    id="precioCompraInput">
                             </div>
                         </div>
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-2"></i> Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-primary" id="btnGuardarLote">
-                        <i class="fas fa-save me-2"></i> Guardar Lote
-                    </button>
-                    </form>
-                </div>
+                        <!-- Precio unitario de compra (calculado) -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Precio de Compra Unitario (Bs)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Bs</span>
+                                <input type="number" step="0.01" class="form-control" 
+                                    name="precio_compra_unitario" id="precioCompraUnitarioInput" readonly>
+                            </div>
+                            <small class="text-muted">Se calcula automáticamente</small>
+                        </div>
+
+                        <!-- Precio unitario de venta -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Precio de Venta Unitario (Bs)*</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Bs</span>
+                                <input type="number" step="0.01" class="form-control" 
+                                    name="precio_venta" placeholder="0.00" required min="0" 
+                                    id="precioVentaInput">
+                            </div>
+                            <div class="form-text" id="gananciaText"></div>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i> Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary" id="btnGuardarLote">
+                    <i class="fas fa-save me-2"></i> Guardar Lote
+                </button>
+                </form>
             </div>
         </div>
     </div>
+</div>
+
+<!-- Cálculo automático -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const cantidadInput = document.getElementById("cantidadInput");
+    const precioCompraInput = document.getElementById("precioCompraInput");
+    const precioUnitarioInput = document.getElementById("precioCompraUnitarioInput");
+    const precioVentaInput = document.getElementById("precioVentaInput");
+    const gananciaText = document.getElementById("gananciaText");
+
+    function calcularUnitario() {
+        let cantidad = parseFloat(cantidadInput.value) || 0;
+        let precioCompra = parseFloat(precioCompraInput.value) || 0;
+
+        if (cantidad > 0 && precioCompra > 0) {
+            let precioUnitario = (precioCompra / cantidad).toFixed(2);
+            precioUnitarioInput.value = precioUnitario;
+        } else {
+            precioUnitarioInput.value = "";
+        }
+    }
+
+    function calcularGanancia() {
+        let costoUnitario = parseFloat(precioUnitarioInput.value) || 0;
+        let precioVenta = parseFloat(precioVentaInput.value) || 0;
+
+        if (costoUnitario > 0 && precioVenta > 0) {
+            let ganancia = (precioVenta - costoUnitario).toFixed(2);
+            let porcentaje = ((ganancia / costoUnitario) * 100).toFixed(2);
+            gananciaText.innerHTML = `Ganancia: Bs ${ganancia} (${porcentaje}%)`;
+        } else {
+            gananciaText.innerHTML = "";
+        }
+    }
+
+    cantidadInput.addEventListener("input", calcularUnitario);
+    precioCompraInput.addEventListener("input", () => {
+        calcularUnitario();
+        calcularGanancia();
+    });
+    precioVentaInput.addEventListener("input", calcularGanancia);
+});
+</script>
 
 
 

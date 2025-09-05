@@ -99,15 +99,15 @@
             
             <!-- Contenido del navbar -->
             <div class="collapse navbar-collapse" id="navbarContent">
-                <!-- Botón para categorías (izquierda) -->
+              
                 <div class="d-flex me-3">
     <div class="dropdown">
-        <!-- Botón que abre el menú (igual estilo que tu botón original) -->
+   
         <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownCategorias" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="fas fa-list-ul me-2"></i> Categorías
         </button>
         
-        <!-- Menú desplegable (contenido adaptado de tu modal) -->
+       
         <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="dropdownCategorias" style="width: 280px;">
             <!-- Encabezado del menú -->
             <li class="px-3 py-2 bg-primary text-white">
@@ -152,10 +152,8 @@
 
                 
                 
-                <!-- Buscador (centro) -->
-                <!-- Buscador Avanzado con Autocompletado -->
-                    <!-- Buscador Avanzado Mejorado -->
-                    <div class="search-container flex-grow-1 mx-3 position-relative">
+               
+<div class="search-container flex-grow-1 mx-3 position-relative">
     <form action="{{ route('admin.catalogo.buscar') }}" method="GET" class="w-100" id="search-form">
         @if(request()->has('categoria'))
             <input type="hidden" name="categoria" value="{{ request('categoria') }}">
@@ -186,6 +184,11 @@
             
         </div>
     </form>
+</div>
+<div>
+    <a href="https://wa.me/59112345678" target="_blank" class="text-decoration-none">
+    <i class="fab fa-whatsapp fa-2x" style="color: #25D366;"></i>
+</a>
 </div>
 
 <!-- Añade estos estilos -->
@@ -222,8 +225,6 @@
 
 <!-- Añade este JavaScript -->
 <script>
-
-
 
 
 
@@ -357,14 +358,14 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const name = item.name || item.nombre || '';
         const url = item.url || '#';
-        // Obtener la URL de la imagen (asegúrate que tu backend devuelva este campo)
+       
         const imageUrl = item.image || item.imagen || item.image_url || '/img/default-product.png';
         
         const suggestionItem = document.createElement('a');
         suggestionItem.className = 'dropdown-item d-flex align-items-center gap-3 py-2';
         suggestionItem.href = url;
         
-        // Estructura con imagen y nombre (sin categoría)
+        // Estructura con imagen y nombre 
         suggestionItem.innerHTML = `
             <img src="${imageUrl}" 
                  alt="${name}" 
@@ -432,14 +433,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- Agrega esto en tu sección de scripts -->
-
-
-
-
-
-
-
         
 
 
@@ -450,35 +443,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
    
 
-    <!-- Modal de Categorías -->
-    <div class="modal fade" id="categoriasModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">
-                        <i class="fas fa-list-ul me-2"></i> Todas las Categorías
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body modal-categorias">
-                    <div class="list-group">
-                        <a href="{{ route('admin.catalogo.index') }}" class="list-group-item list-group-item-action categoria-item">
-                            <i class="fas fa-boxes me-2 text-primary"></i> Todas las categorías
-                        </a>
-                        @foreach($categorias as $categoria)
-                        <a href="{{ route('admin.catalogo.index', ['categoria' => $categoria->id]) }}" 
-                           class="list-group-item list-group-item-action categoria-item">
-                            <i class="fas fa-pills me-2 text-muted"></i> {{ $categoria->nombre }}
-                        </a>
-                        @endforeach
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+   
 
    <!-- Contenido principal -->
    <main class="py-4">

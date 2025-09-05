@@ -28,7 +28,8 @@ class Lote extends Model
         'fecha_ingreso',
         'fecha_vencimiento',
         'cantidad',
-        'precio_compra',  
+        'precio_compra', 
+         'precio_compra_unitario', 
         'precio_venta',   
 
          'created_at',

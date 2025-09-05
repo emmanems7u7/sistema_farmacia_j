@@ -100,7 +100,7 @@
                                 <tbody>
                                     @foreach($compras as $index => $compra)
                                         <tr>
-                                            <td class="text-center align-middle">{{ $index + 1 }}</td>
+                                        <td class="text-center align-middle">{{ $index + 1 }}</td>
                                             <td class="align-middle">
                                                 <button class="btn btn-sm btn-outline-primary toggle-details"
                                                     data-target="#details-{{ $compra->id }}">
@@ -134,6 +134,8 @@
                                                     </div>
                                                 </div>
                                             </td>
+
+                                            
                                             <td class="align-middle">
                                                 {{ \Carbon\Carbon::parse($compra->fecha)->format('d/m/Y') }}
                                             </td>
@@ -189,17 +191,17 @@
                                                                 title: `<span class="swal2-title">Confirmar Eliminación</span>`,
                                                                 html: `<div class="swal2-content-container">
 
-                                                     <div class="swal2-text-content">
-                                                         <h3 class="swal2-subtitle">¿Eliminar compra permanentemente?</h3>
-                                                         <div class="swal2-user-info mt-3">
-                                                             <i></i> ${compra.nombre || 'Esta compra'}
-                                                         </div>
-                                                         <div class="swal2-warning-text">
-                                                             <i class="fas fa-exclamation-triangle me-2"></i>
-                                                             Esta acción no se puede deshacer
-                                                         </div>
-                                                     </div>
-                                                   </div>`,
+                                                                    <div class="swal2-text-content">
+                                                                        <h3 class="swal2-subtitle">¿Eliminar compra permanentemente?</h3>
+                                                                        <div class="swal2-user-info mt-3">
+                                                                            <i></i> ${compra.nombre || 'Esta compra'}
+                                                                        </div>
+                                                                        <div class="swal2-warning-text">
+                                                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                                                            Esta acción no se puede deshacer
+                                                                        </div>
+                                                                    </div>
+                                                                </div>`,
                                                                 showCancelButton: true,
                                                                 focusConfirm: false,
                                                                 confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Confirmar Eliminación`,
@@ -416,6 +418,23 @@
             </div>
         </div>
     </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const buttons = document.querySelectorAll('.toggle-details');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const content = document.querySelector(targetId);
+                if (content.style.display === 'none' || content.style.display === '') {
+                    content.style.display = 'block';
+                } else {
+                    content.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
 
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -538,11 +557,7 @@
                 window.location.reload();
             });
 
-            // Botón de exportar (ejemplo básico)
-            document.getElementById('exportExcel').addEventListener('click', function () {
-                // Aquí puedes implementar la lógica de exportación a Excel
-                alert('Funcionalidad de exportación a Excel');
-            });
+            
         });
     </script>
 @endsection

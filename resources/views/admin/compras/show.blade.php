@@ -65,7 +65,7 @@
                                                         $lote = \App\Models\Lote::where('producto_id', $detalle->producto_id)
                                                             ->latest('id')
                                                             ->first();
-                                                        $precioCompra = $lote->precio_compra ?? 0;
+                                                        $precioCompra = $lote->precio_compra_unitario ?? 0;
                                                         $costo = $detalle->cantidad * $precioCompra;
                                                     @endphp
                                                     <td class="text-end px-2 py-1">Bs{{ number_format($precioCompra, 2) }}</td>

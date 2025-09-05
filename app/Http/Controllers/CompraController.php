@@ -123,16 +123,27 @@ class CompraController extends Controller
                     throw new \Exception("No se seleccionó lote para el producto ID: {$tmp_compra->producto_id}");
                 }
 
+
+                $lote = Lote::findOrFail($lote_id);
+
                 // Crear detalle de compra
                 DetalleCompra::create([
-                    'cantidad' => $tmp_compra->cantidad,
+                    'cantidad' => $lote->cantidad,
                     'compra_id' => $compra->id,
+                    'lote_id' => $lote_id,
                     'producto_id' => $tmp_compra->producto_id
                 ]);
 
-                // SOLO actualizar stock en el lote (eliminada la línea de producto)
-                Lote::where('id', $lote_id)->increment('cantidad', $tmp_compra->cantidad);
+                // SOLO actualizar stock en el lote 
+               
+                Lote::where('id', $lote_id)->increment('cantidad', $lote->cantidad);
+
             }
+
+
+
+
+            
 
             // Eliminar temporales
             TmpCompra::where('session_id', $session_id)->delete();
@@ -159,9 +170,22 @@ class CompraController extends Controller
             'fecha_ingreso' => 'required|date',
             'fecha_vencimiento' => 'required|date|after_or_equal:fecha_ingreso',
             'precio_compra' => 'required|numeric|min:0',
-            'precio_venta' => 'required|numeric|min:0|gte:precio_compra',
+            'precio_venta' => 'required|numeric|min:0',
             'producto_id' => 'required|exists:productos,id',
+            
         ]);
+
+        $precioCompraUnitario = $validated['precio_compra'] / $validated['cantidad'];
+
+
+        if ($validated['precio_venta'] <= $precioCompraUnitario) {
+            return back()->withInput()->with('alert', [
+                'type' => 'error',
+                'message' => ' El precio de venta debe ser mayor al precio de compra unitario (Bs ' . number_format($precioCompraUnitario, 2) . ').'
+            ]);
+        }
+
+
 
         try {
             DB::beginTransaction();
@@ -180,6 +204,7 @@ class CompraController extends Controller
                 'activo' => true,
                 'precio_compra' => $validated['precio_compra'],
                 'precio_venta' => $validated['precio_venta'],
+                  'precio_compra_unitario' => $precioCompraUnitario,
             ]);
 
             DB::commit();
@@ -412,17 +437,6 @@ class CompraController extends Controller
                 return $this->generarCSV($compras);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
     private function generarPDF($compras)

@@ -19,12 +19,13 @@
                 </a>
             </div>
         @else
-            <p class="lead text-muted">Explora nuestra amplia selección de productos de farmacia</p>
+            
         @endif
     </div>
 
     <!-- Listado de productos por categoría -->
     @php
+    
         $productosPorCategoria = $productos->groupBy('categoria_id');
     @endphp
 
@@ -33,14 +34,19 @@
             $categoria = $productosCategoria->first()->categoria ?? null;
             $cantidadProductos = count($productosCategoria);
             $productosMostrar = $productosCategoria->take(6);
+            
         @endphp
 
         <div class="mb-5">
             <div class="d-flex align-items-center mb-3">
+                <a href="{{ route('admin.catalogo.index') }}" class="text-decoration-none text-primary fw-bold">
+                Inicio
+            </a>
+            /
                 <h3 class="mb-0" style="font-size: 1.25rem;">
                     {{ $categoria->nombre ?? 'Sin categoría' }}
                 </h3>
-                <span class="badge bg-secondary ms-2" style="font-size: 0.7em;">
+                <span class="badge bg-secondary ms-1" style="font-size: 0.7em;">
                     {{ $cantidadProductos }} productos
                 </span>
             </div>

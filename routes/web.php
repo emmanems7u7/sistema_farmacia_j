@@ -290,6 +290,9 @@ Route::get('/admin/categorias/{id}/edit', [App\Http\Controllers\CategoriaControl
 Route::put('/admin/categorias/{id}', [App\Http\Controllers\CategoriaController::class, 'update'])->name('admin.categorias.update')->middleware('auth');
 Route::delete('/admin/categorias/{id}', [App\Http\Controllers\CategoriaController::class, 'destroy'])->name('admin.categorias.destroy')->middleware('auth');
 
+//icono
+// routes/web.php
+Route::post('/admin/categorias/{id}/generar-icono', [App\Http\Controllers\CategoriaIconoController::class, 'generarIcono']);
 
 
 
