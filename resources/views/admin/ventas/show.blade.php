@@ -25,14 +25,16 @@
     <div class="row">
         <!-- Sección de productos -->
         <div class="col-md-8">
-            <div class="card mb-4"> <!-- Añadido contenedor card para la tabla -->
-                <div class="card-body p-0"> <!-- Añadido card-body -->
+            <div class="card mb-4"> 
+                <div class="card-body p-0"> 
                     <div class="table-responsive">
-                        <div class="card-header pb-0">
+                        <div class="card-header bg-info text-white rounded">
                     <h6 class="mb-0">
                         <i class="ni ni-single-02 me-1 text-primary"></i> Información del Producto
                     </h6>
                 </div>
+
+                
                         <table class="table align-items-center mb-0">
                             <thead>
                                 <tr>
@@ -69,7 +71,8 @@
                                             <span class="text-secondary text-xs font-weight-bold">{{ $index + 1 }}</span>
                                         </td>
                                         <td>
-                                            <span class="text-secondary text-xs font-weight-bold">{{ $detalle->producto->codigo }}</span>
+                                                 
+                                            <span class="badge bg-secondary bg-opacity-10 text-dark border border-secondary border-opacity-25">{{ $detalle->producto->codigo }}</span>
                                         </td>
                                         <td class="text-center">
                                             <span class="text-secondary text-xs font-weight-bold">{{ $detalle->cantidad }}</span>
@@ -103,7 +106,7 @@
         <!-- Sección de información del cliente y totales -->
         <div class="col-md-4">
             <div class="card mb-3">
-                <div class="card-header pb-0">
+                <div class="card-header bg-info text-white rounded">
                     <h6 class="mb-0">
                         <i class="ni ni-single-02 me-1 text-primary"></i> Información del Cliente
                     </h6>

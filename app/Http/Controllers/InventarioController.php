@@ -271,6 +271,53 @@ class InventarioController extends Controller
         ]);
     }
 
+
+public function reportebajoStock(Request $request)
+{
+    $stockMinimo = $request->query('stock_minimo', 15); // valor por defecto
+    $sucursalId = $request->query('sucursal', 0);
+
+    $query = Producto::with('lotes')
+        ->withSum('lotes', 'cantidad')
+        ->having('lotes_sum_cantidad', '<=', $stockMinimo)
+        ->orderBy('lotes_sum_cantidad');
+
+    if ($sucursalId > 0) {
+        $query->where('sucursal_id', $sucursalId); // si aún tienes sucursal_id
+    }
+
+    $productos = $query->get();
+
+    // Definir niveles de alerta para cada producto
+    foreach ($productos as $producto) {
+        $stockActual = $producto->lotes_sum_cantidad;
+        if ($stockActual <= 0) {
+            $producto->nivel_alerta = 'SIN STOCK';
+        } elseif ($stockActual <= 5) {
+            $producto->nivel_alerta = 'CRÍTICO';
+        } elseif ($stockActual <= 10) {
+            $producto->nivel_alerta = 'ADVERTENCIA';
+        } elseif ($stockActual <= 15) {
+            $producto->nivel_alerta = 'PRECAUCIÓN';
+        } else {
+            $producto->nivel_alerta = 'NORMAL';
+        }
+    }
+
+    $pdf = PDF::loadView('admin.inventario.reporte_bajo_stock', [
+        'productos' => $productos,
+        'stockMinimo' => $stockMinimo,
+        'sucursalId' => $sucursalId
+    ]);
+
+    // Forzar descarga
+    return $pdf->download('reporte_bajo_stock_'.now()->format('Ymd_His').'.pdf');
+}
+
+
+
+
+
     public function productosPorVencer(Request $request)
     {
 

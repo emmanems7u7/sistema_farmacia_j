@@ -385,7 +385,8 @@
                 </div>
 
 
-                <div class="card mt-3">
+                <hr>
+
                     <div class="card-body">
 
                         <form action="{{ route('admin.compras.store') }}" id="form_compra" method="POST" autocomplete="off">
@@ -511,7 +512,7 @@
 
                                                                         if ($lote) {
                                                                             $precio = $lote->precio_compra_unitario;
-                                                                            $costo = $lote->cantidad * $precio;
+                                                                            $costo = $lote->precio_compra;
                                                                         } else {
                                                                             $precio = 0;
                                                                             $costo = 0;
@@ -545,6 +546,7 @@
                                                             @php
                                                                 $total_cantidad += $tmp_compra->cantidad;
                                                                 $total_compra += $costo;
+                                                                
                                                                @endphp
                                                         @empty
                                                             <tr>
@@ -590,7 +592,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">
+                <h5 class="modal-title text-white">
                     <i class="fas fa-boxes me-2"></i>Registro de Lote para: 
                     <span id="nombre-producto-modal"></span>
                 </h5>
@@ -626,7 +628,7 @@
 
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Fecha de Vencimiento*</label>
-                            <input type="date" class="form-control" name="fecha_vencimiento" required
+                            <input type="date" class="form-control" name="fecha_vencimiento" 
                                   min="{{ date('Y-m-d') }}">
                         </div>
 

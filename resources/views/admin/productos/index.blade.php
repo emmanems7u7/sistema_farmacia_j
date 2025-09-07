@@ -314,7 +314,7 @@
                                             <button type="button"
                                                 class="btn btn-sm btn-outline-danger text-white rounded-end shadow-sm px-4 btn-eliminar-producto"
                                                 style="width: 30px; height: 30px; min-width: 60px; padding: 0;"
-                                                title="Eliminar rol" data-bs-toggle="tooltip">
+                                                title="Eliminar producto" data-bs-toggle="tooltip">
                                                 <span class="btn-inner--icon">
                                                     <i class="fas fa-trash-alt"
                                                         style="-webkit-text-stroke: 1px #dc3545; color: transparent;"></i>
@@ -334,23 +334,28 @@
                                                 const producto = JSON.parse(form.dataset.producto || '{}');
 
                                                 Swal.fire({
-                                                    title: `<span class="swal2-title">Confirmar Eliminación</span>`,
+                                     
                                                     html: `<div class="swal2-content-container">
 
                                                                                                     <div class="swal2-text-content">
-                                                                                                        <h3 class="swal2-subtitle">¿Eliminar producto permanentemente?</h3>
-                                                                                                        <div class="swal2-user-info mt-3">
+                                                                                                        <h3 class="swal2-subtitle"style="font-size: 1rem;">¿Eliminar producto permanentemente?</h3>
+                                                                                                        
+                                                                                                        <div class="swal2-user-info mt-3"style="font-size: 0.9rem;">
                                                                                                             <i></i> ${producto.nombre || 'Este producto'}
                                                                                                         </div>
-                                                                                                        <div class="swal2-warning-text">
+                                                                                                        <div class="swal2-warning-text" style="font-size: 0.85rem;">
                                                                                                             <i class="fas fa-exclamation-triangle me-2"></i>
                                                                                                             Esta acción no se puede deshacer
                                                                                                         </div>
                                                                                                     </div>
                                                                                                 </div>`,
+
+                                                                                                   
+                                                                    width: '350px',
+                
                                                     showCancelButton: true,
                                                     focusConfirm: false,
-                                                    confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Confirmar Eliminación`,
+                                                    confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Eliminar`,
                                                     cancelButtonText: `<i class="fas fa-times me-2"></i> Cancelar`,
                                                     buttonsStyling: false,
                                                     customClass: {
@@ -557,13 +562,13 @@
 
 
 
-        <!-- Modal para Ver Detalles - V -->
+        <!-- Modal para Ver Detalles -->
         <div class="modal fade" id="verModal{{ $producto->id }}" tabindex="-1" role="dialog"
             aria-labelledby="verModalLabel{{ $producto->id }}" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                 <div class="modal-content border-0">
                     <!-- Encabezado limpio -->
-                    <div class="modal-header border-0 pb-0">
+                    <div class="modal-header bg-gradient-info">
                         <div class="d-flex align-items-center w-100">
                             <h5 class="modal-title text-dark mb-0" id="verModalLabel{{ $producto->id }}">
                                 {{ $producto->nombre }}
@@ -572,6 +577,8 @@
                                 aria-label="Close"></button>
                         </div>
                     </div>
+
+                   
 
                     <div class="modal-body pt-0">
                         <div class="row">
@@ -682,13 +689,14 @@
 
                     <!-- Pie del modal -->
                     <div class="modal-footer border-0 pt-0">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                             <i class="fas fa-times me-1"></i> Cerrar
                         </button>
-                        <button type="button" class="btn btn-primary" onclick="openModal('editarModal{{ $producto->id }}')"
+                        <button type="button" class="btn bg-gradient-success text-white" onclick="openModal('editarModal{{ $producto->id }}')"
                             data-bs-dismiss="modal">
                             Editar Producto
                         </button>
+                        
                     </div>
                 </div>
             </div>
@@ -722,7 +730,7 @@
         </style>
 
         <!-- Modal para Editar -->
-        <!-- Modal para Editar Producto -->
+     
         <div class="modal fade" id="editarModal{{ $producto->id }}" tabindex="-1" role="dialog"
             aria-labelledby="editarModalLabel{{ $producto->id }}" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -731,7 +739,7 @@
                     <div class="modal-header bg-gradient-success text-white">
                         <div class="d-flex align-items-center">
                             <i class="fas fa-pencil-alt fa-lg mr-3"></i>
-                            <h5 class="modal-title font-weight-bold" id="editarModalLabel{{ $producto->id }}">EDITAR PRODUCTO
+                            <h5 class="modal-title text-white font-weight-bold" id="editarModalLabel{{ $producto->id }}">EDITAR PRODUCTO
                             </h5>
                         </div>
                         <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">
@@ -1013,14 +1021,15 @@
 
                         <!-- Pie del Modal -->
                         <div class="modal-footer bg-light">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                <i class="ni ni-fat-remove me-1"></i> Cancelar
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-1"></i> Cancelar
                             </button>
 
-                            <button type="submit" class="btn btn-success font-weight-bold">
-                                <i class="fas fa-save mr-2"></i>Guardar Cambios
+                            <button type="submit" class="btn bg-gradient-success text-white ">
+                                <i class="fas fa-save me-1"></i>Guardar Cambios
                             </button>
                         </div>
+                        
                     </form>
 
                     <style>
@@ -1155,7 +1164,7 @@
 
     <!-- Y estos scripts al final de tu body -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-m    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function confirmarEliminacion(id) {
             Swal.fire({

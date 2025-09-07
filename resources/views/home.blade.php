@@ -107,7 +107,9 @@
                                         <p class="mb-0">
                                             <a href="{{ url('/admin/clientes') }}"
                                                 class="text-primary text-sm font-weight-bolder">
-                                                <i class="ni ni-fat-add"></i> Gestionar
+                                               <i class="ni ni-fat-add"></i> Gestionar
+                                               
+
                                             </a>
                                         </p>
                                     </div>
@@ -283,8 +285,6 @@
 @endsection
 
 
-@push('js')
-
     <script src="./assets/js/plugins/chartjs.min.js"></script>
     <script>
         var ctx1 = document.getElementById("chart-line").getContext("2d");
@@ -444,4 +444,3 @@
             }
         });
     </script>
-@endpush

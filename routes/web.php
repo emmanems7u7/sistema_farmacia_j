@@ -519,3 +519,6 @@ Route::get('/admin/inventario/reportegeneral', [App\Http\Controllers\InventarioC
 Route::get('/admin/usuarios/reporte/{tipo}', [App\Http\Controllers\UsuarioController::class, 'generarReporte'])
     ->where('tipo', 'pdf|excel|csv|print')
     ->name('admin.usuarios.reporte');
+
+    Route::get('/admin/inventario/reporte_bajo_stock', [App\Http\Controllers\InventarioController::class, 'reporteBajoStock'])
+    ->name('admin.inventario.reportebajo_stock');

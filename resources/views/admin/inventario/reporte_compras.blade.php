@@ -57,8 +57,8 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         th { 
-            background-color: #4a6bdf;
-            color: white;
+            background-color: #e8f1e8ef;
+            color: black;
             font-weight: bold;
             padding: 8px;
             text-align: left;
@@ -114,15 +114,15 @@
         
         /* Total de cada compra */
         .compra-total { 
-            background-color: #4a6bdf;
-            color: white;
+            background-color: #e8f1e8ef;
+            color: black;
             font-weight: bold;
         }
         
         /* Total general */
         .total-general { 
-            background-color: #2d3436;
-            color: white;
+            background-color: #e8f1e8ef;
+            color: black;
             font-weight: bold;
             font-size: 11pt;
         }
@@ -174,10 +174,10 @@
     <!-- Encabezados -->
     <tr>
         <th class="text-left" width="35%">Producto</th>
-        <th class="text-center" width="15%">Lote</th>
-        <th class="text-center" width="15%">Cantidad</th>
-        <th class="text-right" width="15%">P. Compra</th>
-        <th class="text-right" width="20%">Subtotal</th>
+        <th class="text-center" width="25%">Lote</th>
+        <th class="text-center" width="20%">Cantidad</th>
+        <th class="text-right" width="20%">P. Compra</th>
+        
     </tr>
     
     <!-- Detalles de productos -->
@@ -192,17 +192,19 @@
     <td class="text-center">{{ $numeroLote }}</td>
     <td class="text-center">{{ number_format($detalle->cantidad, 2) }}</td>
     <td class="text-right">Bs{{ number_format($precioCompra, 2) }}</td>
-    <td class="text-right">Bs{{ number_format($detalle->cantidad * $precioCompra, 2) }}</td>
+    
 </tr>
 @endforeach
     
     <!-- Total de la compra -->
     <tr class="compra-total">
-        <td colspan="4" class="text-right"><strong>TOTAL COMPRA:</strong></td>
+        <td colspan="3" class="text-right"><strong>TOTAL COMPRA:</strong></td>
         <td class="text-right">
-            ${{ number_format($compra->detalles->sum(function($detalle) {
-                return $detalle->cantidad * ($detalle->lote->precio_compra ?? $detalle->precio_compra ?? 0);
+            Bs{{ number_format($compra->detalles->sum(function($detalle) {
+                return ($detalle->lote->precio_compra ?? $detalle->precio_compra ?? 0);
             }), 2) }}
+
+            
         </td>
     </tr>
 </table>
@@ -228,8 +230,8 @@
     @if($compras->count() > 0)
 <table class="total-general-table">
     <tr class="total-general">
-        <td class="text-right" width="80%"><strong>TOTAL GENERAL ({{ $compras->count() }} compras):</strong></td>
-        <td class="text-right" width="20%">${{ number_format($compras->sum('precio_total'), 2) }}</td>
+        <td class="text-right" width="80%"><strong>TOTAL GENERAL :</strong></td>
+        <td class="text-right" width="20%">Bs{{ number_format($compras->sum('precio_total'), 2) }}</td>
     </tr>
 </table>
 @endif

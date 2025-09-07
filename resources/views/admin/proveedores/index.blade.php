@@ -132,7 +132,7 @@
                                                     <div class="d-inline-flex gap-2">
                                                         <!-- Botón Ver -->
                                                         <button type="button"
-                                                            class="btn btn-sm bg-gradient-info text-white d-flex justify-content-center align-items-center"
+                                                            class="btn btn-sm btn-outline-info mx-1 d-flex justify-content-center align-items-center"
                                                             style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#verModal{{ $proveedor->id }}" title="Ver detalles">
@@ -146,7 +146,7 @@
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="button"
-                                                                class="btn btn-sm bg-gradient-danger text-white d-flex justify-content-center align-items-center btn-eliminar-proveedor"
+                                                                class="btn btn-sm btn-outline-danger mx-1 d-flex justify-content-center align-items-center btn-eliminar-proveedor"
                                                                 style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
                                                                 title="Eliminar proveedor" data-bs-toggle="tooltip">
                                                                 <i class="fas fa-trash-alt" style="font-size: 0.8rem;"></i>
@@ -162,23 +162,27 @@
                                                             const proveedor = JSON.parse(form.dataset.proveedor || '{}');
 
                                                             Swal.fire({
-                                                                title: `<span class="swal2-title">Confirmar Eliminación</span>`,
+                                                              
                                                                 html: `<div class="swal2-content-container">
 
                                                      <div class="swal2-text-content">
-                                                         <h3 class="swal2-subtitle">¿Eliminar rol permanentemente?</h3>
-                                                         <div class="swal2-user-info mt-3">
-                                                             <i></i> ${proveedor.nombre || 'Este rol'}
+                                                         <h3 class="swal2-subtitle"style="font-size: 1rem;">¿Eliminar proveedor permanentemente?</h3>
+                                                         <div class="swal2-user-info mt-3 style="font-size: 0.9rem">
+                                                             <i></i> ${proveedor.nombre || 'Este proveedor'}
                                                          </div>
-                                                         <div class="swal2-warning-text">
+                                                         <div class="swal2-warning-text" style="font-size: 0.85rem;">
                                                              <i class="fas fa-exclamation-triangle me-2"></i>
                                                              Esta acción no se puede deshacer
                                                          </div>
                                                      </div>
                                                    </div>`,
+                                                        
+                                                                     
+                                                                    width: '350px',
+
                                                                 showCancelButton: true,
                                                                 focusConfirm: false,
-                                                                confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Confirmar Eliminación`,
+                                                                confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Eliminar`,
                                                                 cancelButtonText: `<i class="fas fa-times me-2"></i> Cancelar`,
                                                                 buttonsStyling: false,
                                                                 customClass: {
@@ -502,72 +506,93 @@
         </div>
     </div>
 
-    <!-- Modales para Ver y Editar (se generan dinámicamente para cada proveedor) -->
+   
     @foreach($proveedores as $proveedor)
-        <!-- Modal Ver -->
-        <div class="modal fade" id="verModal{{ $proveedor->id }}" tabindex="-1" proveedor="dialog"
-            aria-labelledby="verModalLabel{{ $proveedor->id }}" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" proveedor="document">
-                <div class="modal-content border-0 shadow-lg">
-                    <div class="modal-header bg-gradient-info">
-                        <h5 class="modal-title text-white" id="verModalLabel{{ $proveedor->id }}">
-                            <i class="ni ni-zoom-split-in me-2"></i>Detalles del Proveedor
-                        </h5>
-                        <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="card mb-3 border-0 shadow-none">
-                                    <div class="card-body">
-                                        <div class="form-group">
-                                            <label class="font-weight-bold text-primary">Empresa:</label>
-                                            <p class="form-control-static">{{$proveedor->empresa}}</p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="font-weight-bold text-primary">Dirección:</label>
-                                            <p class="form-control-static">{{$proveedor->direccion}}</p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="font-weight-bold text-primary">Teléfono:</label>
-                                            <p class="form-control-static">{{$proveedor->telefono}}</p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="font-weight-bold text-primary">Correo:</label>
-                                            <p class="form-control-static">{{$proveedor->email}}</p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="font-weight-bold text-primary">Contacto:</label>
-                                            <p class="form-control-static">{{$proveedor->nombre}}</p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="font-weight-bold text-primary">Celular:</label>
-                                            <p class="form-control-static">
-                                                <a href="https://wa.me/591{{$proveedor->celular}}" target="_blank"
-                                                    class="btn btn-sm bg-gradient-success">
-                                                    <i class="ni ni-send me-1"></i> {{$proveedor->celular}}
-                                                </a>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+        <!-- Modal Ver Proveedor -->
+<div class="modal fade" id="verModal{{ $proveedor->id }}" tabindex="-1" aria-labelledby="verModalLabel{{ $proveedor->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- más ancho -->
+        <div class="modal-content border-0 shadow-lg">
+            <!-- Encabezado -->
+            <div class="modal-header bg-gradient-info">
+                <h5 class="modal-title text-white" id="verModalLabel{{ $proveedor->id }}">
+                    <i class="ni ni-zoom-split-in me-2"></i>Detalles del Proveedor
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <!-- Cuerpo -->
+            <div class="modal-body">
+                <div class="row g-3"> <!-- separación uniforme -->
+                    <div class="col-md-6">
+                        <div class="card shadow-none border mb-2">
+                            <div class="card-body p-2">
+                                <h6 class="text-primary fw-bold mb-1">Empresa</h6>
+                                <p class="mb-0">{{$proveedor->empresa}}</p>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-sm bg-gradient-success mx-1 text-white" data-bs-toggle="modal"
-                            data-bs-target="#editModal{{ $proveedor->id }}" title="Editar">
-                            <i class="fas fa-pencil-alt"></i> Editar
-                        </button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            <i class="ni ni-fat-remove me-1"></i> Cerrar
-                        </button>
+                    <div class="col-md-6">
+                        <div class="card shadow-none border mb-2">
+                            <div class="card-body p-2">
+                                <h6 class="text-primary fw-bold mb-1">Dirección</h6>
+                                <p class="mb-0">{{$proveedor->direccion}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card shadow-none border mb-2">
+                            <div class="card-body p-2">
+                                <h6 class="text-primary fw-bold mb-1">Teléfono</h6>
+                                <p class="mb-0">{{$proveedor->telefono}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card shadow-none border mb-2">
+                            <div class="card-body p-2">
+                                <h6 class="text-primary fw-bold mb-1">Correo</h6>
+                                <p class="mb-0">{{$proveedor->email}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <h6>Informacion del contacto</h6>
+                    <div class="col-md-6">
+                        <div class="card shadow-none border mb-2">
+                            <div class="card-body p-2">
+                                <h6 class="text-primary fw-bold mb-1">Contacto</h6>
+                                <p class="mb-0">{{$proveedor->nombre}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card shadow-none border mb-2">
+                            <div class="card-body p-2 d-flex align-items-center justify-content-between">
+                                <h6 class="text-primary fw-bold mb-0">Celular</h6>
+                                <a href="https://wa.me/591{{$proveedor->celular}}" target="_blank" class="btn btn-sm bg-gradient-success">
+                                    <i class="ni ni-send me-1"></i> {{$proveedor->celular}}
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Pie de modal -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                    <i class="fas fa-times me-1"></i> Cancelar
+                                </button>
+                <button type="button"class="btn bg-gradient-success text-white" data-bs-toggle="modal" data-bs-target="#editModal{{ $proveedor->id }}" title="Editar">
+                    <i class="fas fa-save me-1"></i> Actualizar
+                </button>
+
+              
+                 
+            </div>
         </div>
+    </div>
+</div>
+
 
         <!-- Modal Editar -->
         <div class="modal fade" id="editModal{{ $proveedor->id }}" tabindex="-1" proveedor="dialog"
@@ -673,12 +698,13 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                <i class="ni ni-fat-remove me-1"></i> Cerrar
-                            </button>
-                            <button type="submit" class="btn btn-success">
-                                <i class="ni ni-check-bold me-1"></i> Actualizar
-                            </button>
+                            
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                    <i class="fas fa-times me-1"></i> Cancelar
+                                </button>
+                            <button type="submit" class="btn bg-gradient-success text-white">
+                                    <i class="fas fa-save me-1"></i> Actualizar
+                                </button>
                         </div>
                     </form>
                 </div>

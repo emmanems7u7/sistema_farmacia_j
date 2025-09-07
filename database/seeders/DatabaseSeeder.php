@@ -6,6 +6,7 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Sucursal;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -14,12 +15,20 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-
+            $Sucursal=Sucursal::create([
+                
+                'nombre'    => 'FARMACIA MARIEL',
+                'direccion' => 'ZONA VINO TINTO AV BALTAZAR',
+                'telefono'  => '75260345',
+                'email'     => 'mariel@gmail.com',
+                'imagen'    => 'assets/img/logofarmacia.jpeg',
+            ]);
         
                 User::factory()->create([
                     'name' => 'admin',
                     'email' => 'admin@admin.com',
                     'password' => Hash::make('1'),
+                    'sucursal_id'=>$Sucursal->id,
                 ]);
 
                 //Contenido minimo para levantar sistema

@@ -84,76 +84,62 @@
     </style>
 </head>
 <body>
-    <!-- Menú de navegación -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
-        <div class="container-fluid">
-            <!-- Logo y botón móvil -->
-            <a class="navbar-brand text-primary me-3" href="#">
-                
-                <img src="{{ asset('assets/img/logo2.jpeg') }}" alt="Logo" width="80" height="auto">
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <!-- Contenido del navbar -->
-            <div class="collapse navbar-collapse" id="navbarContent">
-              
-                <div class="d-flex me-3">
-    <div class="dropdown">
-   
-        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownCategorias" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="fas fa-list-ul me-2"></i> Categorías
-        </button>
-        
-       
-        <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="dropdownCategorias" style="width: 280px;">
-            <!-- Encabezado del menú -->
-            <li class="px-3 py-2 bg-primary text-white">
-                <h6 class="mb-0">
-                    <i class="fas fa-list-ul me-2"></i> Todas las Categorías
-                </h6>
-            </li>
-            
-            <!-- Elementos del menú -->
-            <li>
-                <a href="{{ route('admin.catalogo.index') }}" class="dropdown-item d-flex align-items-center py-2">
-                    <i class="fas fa-boxes me-2 text-primary"></i>
-                    <span>Todas las categorías</span>
-                </a>
-            </li>
-            
-            <li><hr class="dropdown-divider"></li>
-            
-            @foreach($categorias as $categoria)
-            <li>
-                 
-                <a href="{{ route('admin.catalogo.categoria', $categoria->id) }}" 
-                   class="dropdown-item d-flex align-items-center py-2">
-                    <i class="fas fa-pills me-2 text-muted"></i>
-                    <span>{{ $categoria->nombre }}</span>
-                </a>
-            </li>
-            @endforeach
-            
-            <li><hr class="dropdown-divider"></li>
-            
-            <!-- Opción de cerrar (similar al footer del modal) -->
-            <li>
-                <button class="dropdown-item text-center text-muted py-2" onclick="document.querySelector('.dropdown-toggle').click()">
-                    <small>Cerrar menú</small>
-                </button>
-            </li>
-        </ul>
-    </div>
+<!-- Menú de navegación -->
+<nav class="navbar navbar-expand-lg sticky-top" style="background-color: #5BC0EB;">
+    <div class="container-fluid">
+        <!-- Nombre de la farmacia en el navbar -->
+<div class="navbar-brand text-white d-flex flex-column align-items-start" style="line-height: 1;">
+    <h2 class="mb-0" style="font-weight: 500; font-size: 1.2rem;">FARMACIA</h2>
+    <h2 class="mb-0" style="font-weight: 600; font-size: 1.2rem;">MARIEL</h2>
 </div>
 
 
-                
-                
-               
-<div class="search-container flex-grow-1 mx-3 position-relative">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+        </button>
+
+        <!-- Contenido del navbar -->
+        <div class="collapse navbar-collapse" id="navbarContent">
+
+            <!-- Botón Categorías -->
+            <div class="d-flex me-3">
+                <div class="dropdown">
+                    <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownCategorias" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-list-ul me-2"></i> Categorías
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="dropdownCategorias" style="width: 280px;">
+                        <li class="px-3 py-2" style="background-color: #0077B6; color: white;">
+                            <h6 class="mb-0">
+                                <i class="fas fa-list-ul me-2"></i> Todas las Categorías
+                            </h6>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.catalogo.index') }}" class="dropdown-item d-flex align-items-center py-2 text-dark">
+                                <i class="fas fa-boxes me-2 text-dark"></i>
+                                <span>Todas las categorías</span>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        @foreach($categorias as $categoria)
+                        <li>
+                            <a href="{{ route('admin.catalogo.categoria', $categoria->id) }}" class="dropdown-item d-flex align-items-center py-2 text-dark">
+                                <i class="fas fa-pills me-2 text-muted"></i>
+                                <span>{{ $categoria->nombre }}</span>
+                            </a>
+                        </li>
+                        @endforeach
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <button class="dropdown-item text-center text-muted py-2" onclick="document.querySelector('.dropdown-toggle').click()">
+                                <small>Cerrar menú</small>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Buscador -->
+            <div class="search-container flex-grow-1 mx-3 position-relative">
     <form action="{{ route('admin.catalogo.buscar') }}" method="GET" class="w-100" id="search-form">
         @if(request()->has('categoria'))
             <input type="hidden" name="categoria" value="{{ request('categoria') }}">
@@ -185,11 +171,21 @@
         </div>
     </form>
 </div>
-<div>
-    <a href="https://wa.me/59112345678" target="_blank" class="text-decoration-none">
-    <i class="fab fa-whatsapp fa-2x" style="color: #25D366;"></i>
-</a>
+
+            <!-- Botón WhatsApp resaltado sobre un card pequeño -->
+<div class="position-relative ms-auto">
+    <div class="bg-white shadow rounded-circle p-2" style="display: inline-block;">
+        <a href="https://wa.me/59112345678" target="_blank" class="text-decoration-none d-flex align-items-center justify-content-center">
+            <i class="fab fa-whatsapp fa-2x" style="color: #25D366;"></i>
+        </a>
+    </div>
 </div>
+
+
+        </div>
+    </div>
+</nav>
+
 
 <!-- Añade estos estilos -->
 <style>
@@ -455,7 +451,7 @@ document.addEventListener('DOMContentLoaded', function() {
        <footer class="footer">
         <div class="container text-center">
             <p class="mb-0 text-muted">
-                &copy; {{ date('Y') }} Farmacia .
+                &copy; {{ date('Y') }} Farmacia Mariel 
             </p>
         </div>
     </footer>

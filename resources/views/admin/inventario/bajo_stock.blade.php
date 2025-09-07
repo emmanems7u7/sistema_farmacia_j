@@ -16,6 +16,16 @@
                                 <i class="fas fa-store me-1"></i> {{ App\Models\Sucursal::find($sucursalId)->nombre }}
                             </span>
                         @endif
+                        
+                        <div>
+                            <a href="{{ route('admin.inventario.reportebajo_stock') }}?stock_minimo=10&sucursal={{ $sucursalId }}"
+                            class="btn btn-sm btn-outline-primary d-flex align-items-center">
+                                <i class="fas fa-file-pdf me-2"></i>
+                                <span>Generar PDF</span>
+                            </a>
+
+                        </div>
+
 
                         <div>
                             <a href="{{ route('admin.inventario.index') }}?sucursal={{ $sucursalId }}"
@@ -163,17 +173,15 @@
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="legend mb-2 mb-md-0">
                                 <span class="badge bg-danger-soft text-danger me-2">
-                                    <i class="fas fa-fire me-1"></i> Crítico (≤5)
+                                    <i class="fas fa-fire me-1"></i> Crítico (-5)
                                 </span>
                                 <span class="badge bg-warning-soft text-warning me-2">
-                                    <i class="fas fa-exclamation-triangle me-1"></i> Advertencia (≤10)
+                                    <i class="fas fa-exclamation-triangle me-1"></i> Advertencia (-10)
                                 </span>
                                 <span class="badge bg-info-soft text-info me-2">
-                                    <i class="fas fa-info-circle me-1"></i> Precaución (≤15)
+                                    <i class="fas fa-info-circle me-1"></i> Precaución (-15)
                                 </span>
-                                <span class="badge bg-success-soft text-success">
-                                    <i class="fas fa-check-circle me-1"></i> Normal (>15)
-                                </span>
+                                
                             </div>
                             <div>
                                 {{ $productos->withQueryString()->links() }}
