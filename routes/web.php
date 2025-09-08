@@ -29,9 +29,7 @@ use App\Http\Controllers\ChangePassword;
 use App\Http\Controllers\SucursalController;
 
 
-Route::get('/', function () {
-    return redirect('/login');
-});
+Route::get('/', [PageController::class, 'pagina_inicial'])->name('welcome');
 
 
 Route::get('/reset-password', [ResetPassword::class, 'show'])->middleware('guest')->name('reset-password');
