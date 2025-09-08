@@ -150,7 +150,7 @@
                                                 <div class="d-flex justify-content-center">
                                                     <!--ver detalle-->
                                                     <a href="{{ url('/admin/compras', $compra->id) }}"
-                                                        class="btn btn-sm bg-gradient-success text-white mx-1 d-flex align-items-center justify-content-center"
+                                                        class="btn btn-sm btn-outline-info mx-1 d-flex align-items-center justify-content-center"
                                                         style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
                                                         title="Ver detalles" data-bs-toggle="tooltip">
                                                         <i class="fas fa-eye"></i>
@@ -166,7 +166,7 @@
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="button"
-                                                            class="btn btn-sm bg-gradient-danger text-white mx-1 btn-eliminar-compra"
+                                                            class="btn btn-sm btn-outline-danger  mx-1 btn-eliminar-compra"
                                                             style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
                                                             title="Eliminar compra" data-bs-toggle="tooltip">
                                                             <span class="btn-inner--icon me-1">
@@ -188,20 +188,24 @@
                                                             const compra = JSON.parse(form.dataset.compra || '{}');
 
                                                             Swal.fire({
-                                                                title: `<span class="swal2-title">Confirmar Eliminación</span>`,
-                                                                html: `<div class="swal2-content-container">
+                                                                
+                                                                
+                                                                 html: `<div class="swal2-content-container">
 
                                                                     <div class="swal2-text-content">
-                                                                        <h3 class="swal2-subtitle">¿Eliminar compra permanentemente?</h3>
-                                                                        <div class="swal2-user-info mt-3">
-                                                                            <i></i> ${compra.nombre || 'Esta compra'}
-                                                                        </div>
-                                                                        <div class="swal2-warning-text">
+                                                                        <h3 class="swal2-subtitle" style="font-size: 1rem;">¿Eliminar compra permanentemente?</h3>
+                                                                        
+                                                                        <div class="swal2-warning-text"  style="font-size: 0.85rem;">
                                                                             <i class="fas fa-exclamation-triangle me-2"></i>
                                                                             Esta acción no se puede deshacer
                                                                         </div>
                                                                     </div>
                                                                 </div>`,
+
+                                                                
+                                                             
+                                                             
+width: '350px',
                                                                 showCancelButton: true,
                                                                 focusConfirm: false,
                                                                 confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Confirmar Eliminación`,

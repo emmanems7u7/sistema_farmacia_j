@@ -121,7 +121,7 @@
                                                         <div class="d-flex justify-content-center">
                                                             <!-- Botón Editar -->
                                                             <button type="button"
-                                                                class="btn btn-sm bg-gradient-success text-white mx-1"
+                                                                class="btn btn-sm btn-outline-success  mx-1"
                                                                 data-bs-toggle="modal"
                                                                 style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
                                                                 data-bs-target="#editModal{{ $categoria->id }}"
@@ -129,7 +129,7 @@
                                                                 <i class="fas fa-pen"></i>
                                                             </button>
 
-
+                                            
                                                             <!-- Botón Eliminar -->
 
 
@@ -143,7 +143,8 @@
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="button"
-                                                                    class="btn btn-sm bg-gradient-danger text-white  mx-1 btn-eliminar-categoria"
+                                                                
+                                                                    class="btn btn-sm btn-outline-danger  mx-1 btn-eliminar-categoria"
                                                                     style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
                                                                     title="Eliminar categoria" data-bs-toggle="tooltip">
                                                                     <span class="btn-inner--icon me-1">
@@ -161,24 +162,24 @@
                                                                     const categoria = JSON.parse(form.dataset.categoria || '{}');
 
                                                                     Swal.fire({
-                                                                        title: `<span class="swal2-title">Confirmar Eliminación</span>`,
-                                                                        html: `<div class="swal2-content-container">
-
-                                                                                    <div class="swal2-text-content">
-                                                                                        <h3 class="swal2-subtitle">¿Eliminar rol permanentemente?</h3>
-                                                                                        <div class="swal2-user-info mt-3">
-                                                                                            <i></i> ${categoria.nombre || 'Este rol'}
-                                                                                        </div>
-                                                                                        <div class="swal2-warning-text">
-                                                                                            <i class="fas fa-exclamation-triangle me-2"></i>
-                                                                                            Esta acción no se puede deshacer
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>`,
+                                                                     
+                                                                    html: `<div class="swal2-content-container">
+                                                                            <div class="swal2-text-content">
+                                                                                <h3 class="swal2-subtitle" style="font-size: 1rem;">¿Eliminar rol permanentemente?</h3>
+                                                                                <div class="swal2-user-info mt-3" style="font-size: 0.9rem;">
+                                                                                    <i></i> ${categoria.nombre || 'Este categoria'}
+                                                                                </div>
+                                                                                <div class="swal2-warning-text" style="font-size: 0.85rem;">
+                                                                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                                                                    Esta acción no se puede deshacer
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>`,
+width: '350px',
                                                                         showCancelButton: true,
                                                                         focusConfirm: false,
-                                                                        confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Confirmar Eliminación`,
-                                                                        cancelButtonText: `<i class="fas fa-times me-2"></i> Cancelar`,
+                                                                        confirmButtonText: `<i class="fas fa-trash-alt me-"></i> Eliminar`,
+                                                                        cancelButtonText: `<i class="fas fa-times me-1"></i> Cancelar`,
                                                                         buttonsStyling: false,
                                                                         customClass: {
                                                                             popup: 'swal2-container-premium',
@@ -447,8 +448,9 @@
                     aria-labelledby="editModalLabel{{ $categoria->id }}" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content border-0 shadow-lg">
-                            <div class="modal-header bg-gradient-success text-white">
-                                <h5 class="modal-title" id="editModalLabel{{ $categoria->id }}">
+                            <div class="modal-header bg-success ">
+                                
+                                <h5 class="modal-title text-white" id="editModalLabel{{ $categoria->id }}">
                                     <i class="fas fa-edit me-2"></i> Editar Categoría
                                 </h5>
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"

@@ -117,9 +117,10 @@
 
 <!-- Encabezado con logo -->
 <div class="header">
-    @if(!empty($sucursal->imagen) && file_exists(public_path('storage/'.$sucursal->imagen)))
-    <img src="{{ public_path('storage/'.$sucursal->imagen) }}" class="logo" alt="Logo">
-    @endif
+
+
+
+    <h2 class=" text-center">Farmacia Mariel</h2>
     <div class="header-text">
         
         <div class="company-info">

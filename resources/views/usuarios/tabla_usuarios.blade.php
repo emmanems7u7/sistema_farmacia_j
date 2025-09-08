@@ -1,19 +1,22 @@
-<table class="table align-items-center mb-0">
-    <thead>
+<table id="miTabla" class="table table-hover align-items-center mb-0">
+    <thead class="bg-light">
         <tr>
-            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Usuario</th>
-            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Nombres</th>
-            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Rol</th>
+            <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder">
+                #</th>
 
-            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+            <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Nombres</th>
+            <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Rol</th>
+
+            <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                 Telefono</th>
-            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ultimo
+            <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Ultimo
                 acceso
             </th>
 
-            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                Acciones
-            </th>
+            <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder">
+                Acciones</th>
+
+
 
         </tr>
     </thead>
@@ -57,19 +60,26 @@
                 </td>
 
 
-                <td class="align-middle">
+                <td class="align-middle d-flex">
                     @can('usuarios.editar')
                         <a href="{{ route('users.edit', ['id' => $usuario->id]) }}"
-                            class="text-secondary font-weight-bold text-xs" id="modal_edit_usuario_button">Editar
-                            Usuario</a>
+                            class="btn btn-sm btn-outline-success  me-1 d-flex align-items-center justify-content-center"
+                            style="width: 30px; height: 30px; min-width: 30px; padding: 0;" title="Ver detalles"
+                            data-bs-toggle="tooltip" id="modal_edit_usuario_button">
+                            <i class="fas fa-pen"></i>
+                        </a>
                     @endcan
-                    @can('usuarios.eliminar')
-                        <a type="button" class="text-secondary font-weight-bold text-xs" id="modal_edit_usuario_button"
-                            onclick="confirmarEliminacion('eliminarUsuarioForm_{{ $usuario->id }}', '¿Estás seguro de que deseas eliminar este usuario?')">Eliminar
-                            Usuario</a>
 
-                        <form id="eliminarUsuarioForm_{{ $usuario->id }}" method="POST"
-                            action="{{ route('users.destroy', ['user' => $usuario]) }}" style="display: none;">
+                    @can('usuarios.eliminar')
+                        <a type="button"
+                            class="btn btn-sm btn-outline-danger  mx-1 d-flex align-items-center justify-content-center"
+                            style="width: 30px; height: 30px; min-width: 30px; padding: 0;" id="modal_edit_usuario_button"
+                            onclick="confirmarEliminacion('eliminarUsuarioForm_{{ $usuario->id }}', '¿Estás seguro de que deseas eliminar este usuario?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+
+                        <form id="eliminarUsuarioForm" method="POST"
+                            action="{{ route('users.destroy', ['user' => $usuario->id]) }}" style="display: none;">
                             @csrf
                             @method('DELETE')
                         </form>

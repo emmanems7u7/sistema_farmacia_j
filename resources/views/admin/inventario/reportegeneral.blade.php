@@ -14,7 +14,7 @@
 
                                 <div>
                                     <h5 class="mb-0 text-dark fw-bold">Gestión de Reportes</h5>
-                                    <p class="mb-0 text-muted small">Farmacia: {{ $sucursalNombre }}</p>
+                                   
                                 </div>
                             </div>
 

@@ -215,10 +215,10 @@
                                                     <!-- Botón Editar -->
 
 
-                                                    <button type="button" class="btn btn-sm bg-gradient-success text-white mx-1"
+                                                    <button type="button" class="btn btn-sm btn-outline-success  mx-1"
                                                         data-bs-toggle="modal"
                                                         style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
-                                                        data-bs-target="#editModal{{ $cliente->id }}" title="Editar categoría">
+                                                        data-bs-target="#editModal{{ $cliente->id }}" title="Editar cliente">
                                                         <i class="fas fa-pen"></i>
                                                     </button>
 
@@ -232,7 +232,7 @@
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="button"
-                                                            class="btn btn-sm bg-gradient-danger text-white mx-1 btn-eliminar-cliente"
+                                                            class="btn btn-sm btn-outline-danger mx-1 btn-eliminar-cliente"
                                                             style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
                                                             title="Eliminar cliente" data-bs-toggle="tooltip">
                                                             <span class="btn-inner--icon me-1">
@@ -256,23 +256,25 @@
                                                             const cliente = JSON.parse(form.dataset.cliente || '{}');
 
                                                             Swal.fire({
-                                                                title: `<span class="swal2-title">Confirmar Eliminación</span>`,
+                                              
                                                                 html: `<div class="swal2-content-container">
 
                                                              <div class="swal2-text-content">
-                                                                 <h3 class="swal2-subtitle">¿Eliminar cliente permanentemente?</h3>
-                                                                 <div class="swal2-user-info mt-3">
+                                                                 <h3 class="swal2-subtitle"style="font-size: 1rem;">¿Eliminar cliente permanentemente?</h3>
+                                                                 <div class="swal2-user-info mt-3" style="font-size: 0.9rem;">
                                                                      <i></i> ${cliente.nombre || 'Este cliente'}
                                                                  </div>
-                                                                 <div class="swal2-warning-text">
+                                                                 <div class="swal2-warning-text" style="font-size: 0.85rem;">
                                                                      <i class="fas fa-exclamation-triangle me-2"></i>
                                                                      Esta acción no se puede deshacer
                                                                  </div>
                                                              </div>
                                                            </div>`,
+                                                             
+width: '350px',
                                                                 showCancelButton: true,
                                                                 focusConfirm: false,
-                                                                confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Confirmar Eliminación`,
+                                                                confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Eliminar`,
                                                                 cancelButtonText: `<i class="fas fa-times me-2"></i> Cancelar`,
                                                                 buttonsStyling: false,
                                                                 customClass: {
@@ -491,7 +493,7 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content border-0 shadow-lg">
                     <div class="modal-header bg-gradient-success text-white">
-                        <h5 class="modal-title" id="editModalLabel{{ $cliente->id }}">
+                        <h5 class="modal-title text-white" id="editModalLabel{{ $cliente->id }}">
                             <i class="fas fa-edit me-2"></i>Editar Cliente
                         </h5>
                         <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">
@@ -548,13 +550,14 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                <i class="fas fa-times me-1"></i> Cerrar
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-1"></i> Cancelar
                             </button>
-                            <button type="submit" class="btn btn-success">
+                            <button type="submit" class="btn bg-gradient-success text-white">
                                 <i class="fas fa-save me-1"></i> Actualizar
                             </button>
                         </div>
+                       
                     </form>
                 </div>
             </div>

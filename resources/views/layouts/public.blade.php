@@ -102,68 +102,58 @@
 
 <body>
     <!-- Menú de navegación -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+    <nav class="navbar navbar-expand-lg sticky-top" style="background-color: #5BC0EB;">
         <div class="container-fluid">
-            <!-- Logo y botón móvil -->
-            <a class="navbar-brand text-primary me-3" href="#">
+            <!-- Nombre de la farmacia en el navbar -->
+            <div class="navbar-brand text-white d-flex flex-column align-items-start" style="line-height: 1;">
+                <h2 class="mb-0" style="font-weight: 500; font-size: 1.2rem;">FARMACIA</h2>
+                <h2 class="mb-0" style="font-weight: 600; font-size: 1.2rem;">MARIEL</h2>
+            </div>
 
-                <img src="{{ asset('assets/img/logo2.jpeg') }}" alt="Logo" width="80" height="auto">
-            </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
             </button>
 
             <!-- Contenido del navbar -->
             <div class="collapse navbar-collapse" id="navbarContent">
 
+                <!-- Botón Categorías -->
                 <div class="d-flex me-3">
                     <div class="dropdown">
-
-                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownCategorias"
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownCategorias"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-list-ul me-2"></i> Categorías
                         </button>
-
-
                         <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="dropdownCategorias"
                             style="width: 280px;">
-                            <!-- Encabezado del menú -->
-                            <li class="px-3 py-2 bg-primary text-white">
+                            <li class="px-3 py-2" style="background-color: #0077B6; color: white;">
                                 <h6 class="mb-0">
                                     <i class="fas fa-list-ul me-2"></i> Todas las Categorías
                                 </h6>
                             </li>
-
-                            <!-- Elementos del menú -->
                             <li>
                                 <a href="{{ route('admin.catalogo.index') }}"
-                                    class="dropdown-item d-flex align-items-center py-2">
-                                    <i class="fas fa-boxes me-2 text-primary"></i>
+                                    class="dropdown-item d-flex align-items-center py-2 text-dark">
+                                    <i class="fas fa-boxes me-2 text-dark"></i>
                                     <span>Todas las categorías</span>
                                 </a>
                             </li>
-
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-
                             @foreach($categorias as $categoria)
                                 <li>
-
                                     <a href="{{ route('admin.catalogo.categoria', $categoria->id) }}"
-                                        class="dropdown-item d-flex align-items-center py-2">
+                                        class="dropdown-item d-flex align-items-center py-2 text-dark">
                                         <i class="fas fa-pills me-2 text-muted"></i>
                                         <span>{{ $categoria->nombre }}</span>
                                     </a>
                                 </li>
                             @endforeach
-
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-
-                            <!-- Opción de cerrar (similar al footer del modal) -->
                             <li>
                                 <button class="dropdown-item text-center text-muted py-2"
                                     onclick="document.querySelector('.dropdown-toggle').click()">
@@ -174,10 +164,7 @@
                     </div>
                 </div>
 
-
-
-
-
+                <!-- Buscador -->
                 <div class="search-container flex-grow-1 mx-3 position-relative">
                     <form action="{{ route('admin.catalogo.buscar') }}" method="GET" class="w-100" id="search-form">
                         @if(request()->has('categoria'))
@@ -205,206 +192,211 @@
                         </div>
                     </form>
                 </div>
-                <div class="d-flex align-items-center gap-3">
-                    <!-- WhatsApp -->
-                    <a href="https://wa.me/59112345678" target="_blank" class="text-decoration-none">
-                        <i class="fab fa-whatsapp fa-2x" style="color: #25D366;"></i>
-                    </a>
 
-                    <!-- Login/Inicio -->
+                <div class="d-flex align-items-center gap-3 ms-auto">
+                    <!-- Botón WhatsApp resaltado sobre un card pequeño -->
+                    <div class="bg-white shadow rounded-circle p-2">
+                        <a href="https://wa.me/59112345678" target="_blank"
+                            class="text-decoration-none d-flex align-items-center justify-content-center">
+                            <i class="fab fa-whatsapp fa-2x" style="color: #25D366;"></i>
+                        </a>
+                    </div>
+
+                    <!-- Login / Inicio -->
                     <ul class="nav navbar-nav mb-0">
                         <li class="nav-item">
                             @if (Route::has('login'))
                                 @auth
-                                    <a href="{{ url('/home') }}" class="btn btn-outline-primary">
-                                        Inicio
-                                    </a>
+                                    <a href="{{ url('/home') }}" class="btn btn-outline-light">Inicio</a>
                                 @else
-                                    <a href="{{ route('login') }}" class="btn btn-outline-primary">
-                                        Ingresar
-                                    </a>
+                                    <a href="{{ route('login') }}" class="btn btn-outline-light">Ingresar</a>
                                 @endauth
                             @endif
                         </li>
                     </ul>
                 </div>
-                <!-- Añade estos estilos -->
-                <style>
-                    .search-container {
-                        max-width: 600px;
-                        margin: 0 auto;
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Añade estos estilos -->
+    <style>
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        #search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 1000;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid rgba(0, 0, 0, .15);
+            border-radius: 0.5rem;
+        }
+
+        .dropdown-item.active {
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-header,
+        .dropdown-footer {
+            padding: 0.5rem 1rem;
+        }
+    </style>
+
+    <!-- Añade este JavaScript -->
+    <script>
+
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Elementos del DOM
+            const searchInput = document.getElementById('search-input');
+            const searchSuggestions = document.getElementById('search-suggestions');
+            const suggestionsList = document.getElementById('suggestions-list');
+            const suggestionCount = document.getElementById('suggestion-count');
+
+            // Configuración
+            const minChars = parseInt(searchInput.getAttribute('data-min-chars')) || 1;
+            let currentFocus = -1;
+            let debounceTimer;
+            let lastAbortController = null;
+
+            // Event Listeners
+            searchInput.addEventListener('input', handleInput);
+            searchInput.addEventListener('keydown', handleKeyDown);
+            document.addEventListener('click', handleClickOutside);
+            searchInput.addEventListener('focus', handleFocus);
+
+            // Funciones principales
+            function handleInput(e) {
+                clearTimeout(debounceTimer);
+                const query = e.target.value.trim();
+
+                if (query.length >= minChars) {
+                    debounceTimer = setTimeout(() => fetchSuggestions(query), 300);
+                } else {
+                    hideSuggestions();
+                }
+            }
+
+            function handleKeyDown(e) {
+                const items = suggestionsList.querySelectorAll('.dropdown-item');
+
+                switch (e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        currentFocus = Math.min(currentFocus + 1, items.length - 1);
+                        setActiveItem(items);
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        currentFocus = Math.max(currentFocus - 1, -1);
+                        setActiveItem(items);
+                        break;
+                    case 'Enter':
+                        if (currentFocus > -1 && items[currentFocus]) {
+                            e.preventDefault();
+                            items[currentFocus].click();
+                        }
+                        break;
+                    case 'Escape':
+                        hideSuggestions();
+                        break;
+                }
+            }
+
+            function handleClickOutside(e) {
+                if (!searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
+                    hideSuggestions();
+                }
+            }
+
+            function handleFocus() {
+                if (this.value.trim().length >= minChars) {
+                    fetchSuggestions(this.value.trim());
+                }
+            }
+
+            async function fetchSuggestions(query) {
+                // Cancelar petición anterior si existe
+                if (lastAbortController) {
+                    lastAbortController.abort();
+                }
+
+                const controller = new AbortController();
+                lastAbortController = controller;
+
+                try {
+                    const response = await fetch(
+                        `{{ route('admin.catalogo.search') }}?query=${encodeURIComponent(query)}`,
+                        {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            signal: controller.signal
+                        }
+                    );
+
+                    if (!response.ok) {
+                        throw new Error(`Error HTTP: ${response.status}`);
                     }
 
-                    #search-suggestions {
-                        position: absolute;
-                        top: 100%;
-                        left: 0;
-                        z-index: 1000;
-                        max-height: 400px;
-                        overflow-y: auto;
-                        border: 1px solid rgba(0, 0, 0, .15);
-                        border-radius: 0.5rem;
+                    const data = await response.json();
+                    console.debug('Datos recibidos:', data);
+
+                    if (!data) {
+                        throw new Error('No se recibieron datos');
                     }
 
-                    .dropdown-item.active {
-                        background-color: #f8f9fa;
-                        color: #212529;
+                    // Manejar diferentes formatos de respuesta
+                    const results = Array.isArray(data) ? data :
+                        (data.results ? data.results : []);
+
+                    displaySuggestions(results);
+
+                } catch (error) {
+                    if (error.name !== 'AbortError') {
+                        console.error('Error al obtener sugerencias:', error);
+                        showError();
                     }
-
-                    .dropdown-item:hover {
-                        background-color: #f8f9fa;
-                    }
-
-                    .dropdown-header,
-                    .dropdown-footer {
-                        padding: 0.5rem 1rem;
-                    }
-                </style>
-
-                <!-- Añade este JavaScript -->
-                <script>
+                }
+            }
 
 
 
-                    document.addEventListener('DOMContentLoaded', function () {
-                        // Elementos del DOM
-                        const searchInput = document.getElementById('search-input');
-                        const searchSuggestions = document.getElementById('search-suggestions');
-                        const suggestionsList = document.getElementById('suggestions-list');
-                        const suggestionCount = document.getElementById('suggestion-count');
+            function displaySuggestions(items) {
+                if (!items || items.length === 0) {
+                    showNoResults();
+                    return;
+                }
 
-                        // Configuración
-                        const minChars = parseInt(searchInput.getAttribute('data-min-chars')) || 1;
-                        let currentFocus = -1;
-                        let debounceTimer;
-                        let lastAbortController = null;
+                suggestionsList.innerHTML = '';
 
-                        // Event Listeners
-                        searchInput.addEventListener('input', handleInput);
-                        searchInput.addEventListener('keydown', handleKeyDown);
-                        document.addEventListener('click', handleClickOutside);
-                        searchInput.addEventListener('focus', handleFocus);
+                items.forEach(item => {
+                    if (!item) return;
 
-                        // Funciones principales
-                        function handleInput(e) {
-                            clearTimeout(debounceTimer);
-                            const query = e.target.value.trim();
+                    const name = item.name || item.nombre || '';
+                    const url = item.url || '#';
 
-                            if (query.length >= minChars) {
-                                debounceTimer = setTimeout(() => fetchSuggestions(query), 300);
-                            } else {
-                                hideSuggestions();
-                            }
-                        }
+                    const imageUrl = item.image || item.imagen || item.image_url || '/img/default-product.png';
 
-                        function handleKeyDown(e) {
-                            const items = suggestionsList.querySelectorAll('.dropdown-item');
+                    const suggestionItem = document.createElement('a');
+                    suggestionItem.className = 'dropdown-item d-flex align-items-center gap-3 py-2';
+                    suggestionItem.href = url;
 
-                            switch (e.key) {
-                                case 'ArrowDown':
-                                    e.preventDefault();
-                                    currentFocus = Math.min(currentFocus + 1, items.length - 1);
-                                    setActiveItem(items);
-                                    break;
-                                case 'ArrowUp':
-                                    e.preventDefault();
-                                    currentFocus = Math.max(currentFocus - 1, -1);
-                                    setActiveItem(items);
-                                    break;
-                                case 'Enter':
-                                    if (currentFocus > -1 && items[currentFocus]) {
-                                        e.preventDefault();
-                                        items[currentFocus].click();
-                                    }
-                                    break;
-                                case 'Escape':
-                                    hideSuggestions();
-                                    break;
-                            }
-                        }
-
-                        function handleClickOutside(e) {
-                            if (!searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
-                                hideSuggestions();
-                            }
-                        }
-
-                        function handleFocus() {
-                            if (this.value.trim().length >= minChars) {
-                                fetchSuggestions(this.value.trim());
-                            }
-                        }
-
-                        async function fetchSuggestions(query) {
-                            // Cancelar petición anterior si existe
-                            if (lastAbortController) {
-                                lastAbortController.abort();
-                            }
-
-                            const controller = new AbortController();
-                            lastAbortController = controller;
-
-                            try {
-                                const response = await fetch(
-                                    `{{ route('admin.catalogo.search') }}?query=${encodeURIComponent(query)}`,
-                                    {
-                                        headers: {
-                                            'Accept': 'application/json',
-                                            'X-Requested-With': 'XMLHttpRequest'
-                                        },
-                                        signal: controller.signal
-                                    }
-                                );
-
-                                if (!response.ok) {
-                                    throw new Error(`Error HTTP: ${response.status}`);
-                                }
-
-                                const data = await response.json();
-                                console.debug('Datos recibidos:', data);
-
-                                if (!data) {
-                                    throw new Error('No se recibieron datos');
-                                }
-
-                                // Manejar diferentes formatos de respuesta
-                                const results = Array.isArray(data) ? data :
-                                    (data.results ? data.results : []);
-
-                                displaySuggestions(results);
-
-                            } catch (error) {
-                                if (error.name !== 'AbortError') {
-                                    console.error('Error al obtener sugerencias:', error);
-                                    showError();
-                                }
-                            }
-                        }
-
-
-
-                        function displaySuggestions(items) {
-                            if (!items || items.length === 0) {
-                                showNoResults();
-                                return;
-                            }
-
-                            suggestionsList.innerHTML = '';
-
-                            items.forEach(item => {
-                                if (!item) return;
-
-                                const name = item.name || item.nombre || '';
-                                const url = item.url || '#';
-
-                                const imageUrl = item.image || item.imagen || item.image_url || '/img/default-product.png';
-
-                                const suggestionItem = document.createElement('a');
-                                suggestionItem.className = 'dropdown-item d-flex align-items-center gap-3 py-2';
-                                suggestionItem.href = url;
-
-                                // Estructura con imagen y nombre 
-                                suggestionItem.innerHTML = `
+                    // Estructura con imagen y nombre 
+                    suggestionItem.innerHTML = `
             <img src="${imageUrl}" 
                  alt="${name}" 
                  class="rounded" 
@@ -412,71 +404,71 @@
             <span>${highlightMatch(name, searchInput.value.trim())}</span>
         `;
 
-                                suggestionItem.addEventListener('click', function (e) {
-                                    e.preventDefault();
-                                    searchInput.value = name;
-                                    hideSuggestions();
-                                });
-
-                                suggestionsList.appendChild(suggestionItem);
-                            });
-
-                            suggestionCount.textContent = items.length;
-                            searchSuggestions.style.display = 'block';
-                            currentFocus = -1;
-                        }
-
-
-
-
-                        // Funciones auxiliares
-                        function highlightMatch(text, query) {
-                            if (!text || !query) return text;
-                            try {
-                                const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-                                return text.replace(regex, '<span class="text-primary fw-bold">$1</span>');
-                            } catch (e) {
-                                return text;
-                            }
-                        }
-
-                        function showNoResults() {
-                            suggestionsList.innerHTML = '<div class="dropdown-item text-muted">No se encontraron resultados</div>';
-                            suggestionCount.textContent = '0';
-                            searchSuggestions.style.display = 'block';
-                        }
-
-                        function showError() {
-                            suggestionsList.innerHTML = '<div class="dropdown-item text-danger">Error al cargar sugerencias</div>';
-                            suggestionCount.textContent = '0';
-                            searchSuggestions.style.display = 'block';
-                        }
-
-                        function hideSuggestions() {
-                            searchSuggestions.style.display = 'none';
-                            currentFocus = -1;
-                        }
-
-                        function setActiveItem(items) {
-                            items.forEach(item => item.classList.remove('active'));
-
-                            if (currentFocus >= 0 && items[currentFocus]) {
-                                items[currentFocus].classList.add('active');
-                                items[currentFocus].scrollIntoView({
-                                    block: 'nearest',
-                                    behavior: 'smooth'
-                                });
-                            }
-                        }
+                    suggestionItem.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        searchInput.value = name;
+                        hideSuggestions();
                     });
-                </script>
+
+                    suggestionsList.appendChild(suggestionItem);
+                });
+
+                suggestionCount.textContent = items.length;
+                searchSuggestions.style.display = 'block';
+                currentFocus = -1;
+            }
+
+
+
+
+            // Funciones auxiliares
+            function highlightMatch(text, query) {
+                if (!text || !query) return text;
+                try {
+                    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                    return text.replace(regex, '<span class="text-primary fw-bold">$1</span>');
+                } catch (e) {
+                    return text;
+                }
+            }
+
+            function showNoResults() {
+                suggestionsList.innerHTML = '<div class="dropdown-item text-muted">No se encontraron resultados</div>';
+                suggestionCount.textContent = '0';
+                searchSuggestions.style.display = 'block';
+            }
+
+            function showError() {
+                suggestionsList.innerHTML = '<div class="dropdown-item text-danger">Error al cargar sugerencias</div>';
+                suggestionCount.textContent = '0';
+                searchSuggestions.style.display = 'block';
+            }
+
+            function hideSuggestions() {
+                searchSuggestions.style.display = 'none';
+                currentFocus = -1;
+            }
+
+            function setActiveItem(items) {
+                items.forEach(item => item.classList.remove('active'));
+
+                if (currentFocus >= 0 && items[currentFocus]) {
+                    items[currentFocus].classList.add('active');
+                    items[currentFocus].scrollIntoView({
+                        block: 'nearest',
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
+    </script>
 
 
 
 
 
-            </div>
-        </div>
+    </div>
+    </div>
     </nav>
 
 
@@ -493,7 +485,7 @@
     <footer class="footer">
         <div class="container text-center">
             <p class="mb-0 text-muted">
-                &copy; {{ date('Y') }} Farmacia .
+                &copy; {{ date('Y') }} Farmacia Mariel
             </p>
         </div>
     </footer>

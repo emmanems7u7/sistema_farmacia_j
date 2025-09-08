@@ -57,8 +57,8 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         th { 
-            background-color: #4CAF50;
-            color: white;
+            background-color: #e8f1e8ef;
+            color: black;
             font-weight: bold;
             padding: 8px;
             text-align: left;
@@ -114,15 +114,15 @@
         
         /* Total de cada venta */
         .venta-total { 
-            background-color: #4CAF50;
-            color: white;
+            background-color: #e8f1e8ef;
+            color: black;
             font-weight: bold;
         }
         
         /* Total general */
         .total-general { 
-            background-color: #2d3436;
-            color: white;
+            background-color: #e8f1e8ef;
+            color: black;
             font-weight: bold;
             font-size: 11pt;
         }
@@ -195,9 +195,9 @@
                 <td>{{ $detalle->producto->nombre ?? 'Producto eliminado' }}</td>
                 <td class="text-center">{{ $detalle->producto->codigo ?? 'N/A' }}</td>
                 <td class="text-center">{{ number_format($detalle->cantidad, 2) }}</td>
-                <td class="text-right">${{ number_format($precioVenta, 2) }}</td>
+                <td class="text-right">Bs{{ number_format($precioVenta, 2) }}</td>
               
-                <td class="text-right">${{ number_format(($precioVenta * $detalle->cantidad) - ($detalle->descuento ?? 0), 2) }}</td>
+                <td class="text-right">Bs{{ number_format(($precioVenta * $detalle->cantidad) - ($detalle->descuento ?? 0), 2) }}</td>
             </tr>
             @endforeach
             
@@ -205,7 +205,7 @@
             <tr class="venta-total">
                 <td colspan="4" class="text-right"><strong>TOTAL VENTA:</strong></td>
                 <td class="text-right">
-                    ${{ number_format($venta->precio_total, 2) }}
+                    Bs{{ number_format($venta->precio_total, 2) }}
                 </td>
             </tr>
         </table>
@@ -229,7 +229,7 @@
     <table class="total-general-table">
         <tr class="total-general">
             <td class="text-right" width="80%"><strong>TOTAL GENERAL ({{ $ventas->count() }} ventas):</strong></td>
-            <td class="text-right" width="20%">${{ number_format($totalVentas, 2) }}</td>
+            <td class="text-right" width="20%">Bs{{ number_format($totalVentas, 2) }}</td>
         </tr>
     </table>
     @endif

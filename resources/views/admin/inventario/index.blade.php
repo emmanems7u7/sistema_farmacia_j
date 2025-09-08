@@ -20,26 +20,19 @@
                             
                         </div>
                     </div>
-                    <form id="filtroSucursal">
-                        <div class="row align-items-center">
-                            <div class="col-md-4">
-                                <label class="form-label">Seleccionar Sucursal</label>
-                                <select class="form-select" id="selectSucursal" name="sucursal">
-                                    <option value="0">Todas las Sucursales</option>
-                                    @foreach($sucursales as $sucursal)
-                                        <option value="{{ $sucursal->id }}" {{ $sucursalId == $sucursal->id ? 'selected' : '' }}>
-                                            {{ $sucursal->nombre }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-2 mt-md-0 mt-2">
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="ni ni-filter"></i> Filtrar
-                                </button>
-                            </div>
+                   
+                    @php
+                        $sucursalUnica = $sucursales->first(); // Obtiene la única sucursal
+                    @endphp
+
+                    <input type="hidden" name="sucursal" value="{{ $sucursalUnica->id }}">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <label class="form-label">Sucursal</label>
+                            <input type="text" class="form-control" value="{{ $sucursalUnica->nombre }}" disabled>
                         </div>
-                    </form>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -352,12 +345,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 Reportes Generales
                             </div>
                             <div class="h6 mb-0 font-weight-bold text-gray-800">
-                                @if($sucursalId > 0)
-                                    Sucursal: {{ $sucursales->firstWhere('id', $sucursalId)->nombre ?? 'Seleccionada' }}
-                                @else
-                                    Todas las sucursales
-                                @endif
+                             {{ $sucursales->first()->nombre ?? 'N/A' }}
                             </div>
+
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-file-alt fa-2x text-gray-300"></i>

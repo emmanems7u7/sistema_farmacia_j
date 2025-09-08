@@ -132,7 +132,8 @@
     <div class="d-flex justify-content-center gap-1">
         <!-- Botón ingresos/egresos -->
         @if(!$caja->fecha_cierre)
-        <button type="button" class="btn btn-action btn-warning"
+        <button type="button" class=" btn btn-action btn-outline-warning mx-1"
+        
             data-bs-toggle="modal" data-bs-target="#ingresoEgresoModal{{$caja->id}}"
             style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
             data-bs-tooltip="tooltip" title="Registrar Movimientos">
@@ -141,7 +142,7 @@
         @endif
         <!-- Botón cerrar caja -->
         @if(!$caja->fecha_cierre)
-        <button type="button" class="btn btn-action btn-secondary"
+        <button type="button" class="btn btn-action btn-outline-secondary"
             data-bs-toggle="modal" data-bs-target="#cerrarModal{{$caja->id}}"
              style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
             data-bs-tooltip="tooltip" title="Cerrar Caja">
@@ -151,8 +152,8 @@
         
         <!-- Botón ver -->
         <button type="button" 
-        
-         class="btn btn-sm bg-gradient-info text-white mx-1 d-flex align-items-center justify-content-center"
+       
+         class="btn btn-sm btn-outline-info  mx-1 d-flex align-items-center justify-content-center"
             data-bs-toggle="modal" data-bs-target="#verModal{{$caja->id}}"
              style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
             data-bs-tooltip="tooltip" title="Ver Detalles">
@@ -169,7 +170,8 @@
         </button>-->
         
         <!-- Botón eliminar -->
-        <button type="button" class="btn btn-action btn-danger"
+           @if(!$caja->fecha_cierre)
+        <button type="button" class="btn btn-action btn-outline-danger"
             onclick="confirmDelete({{$caja->id}})"
              style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
             data-bs-tooltip="tooltip" title="Eliminar Caja">
@@ -178,6 +180,7 @@
         <form id="deleteForm{{$caja->id}}" action="{{url('/admin/cajas/'.$caja->id)}}" method="POST" class="d-none">
             @csrf @method('DELETE')
         </form>
+         @endif
     </div>
 </td>
                         </tr>
@@ -198,7 +201,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="ingresoEgresoModalLabel{{$caja->id}}">Registro de Ingresos/Egresos</h5>
+                <h5 class="modal-title text-white" id="ingresoEgresoModalLabel{{$caja->id}}">Registro de Ingresos/Egresos</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="{{url('/admin/cajas/create_ingresos_egresos')}}" method="post">
@@ -239,7 +242,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="cerrarModalLabel{{$caja->id}}">Cierre de Caja</h5>
+                <h5 class="modal-title text-white" id="cerrarModalLabel{{$caja->id}}">Cierre de Caja</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="{{url('/admin/cajas/create_cierre')}}" method="post">
@@ -278,28 +281,31 @@
     </div>
 </div>
 
-<!-- Modal Ver -->
+
 <!-- Modal Ver -->
 
 <div class="modal fade" id="verModal{{$caja->id}}" tabindex="-1" aria-labelledby="verModalLabel{{$caja->id}}" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content border-0 shadow-lg">
-            <!-- Encabezado mejorado -->
-            <div class="modal-header bg-gradient-primary text-white">
-                <div class="d-flex align-items-center">
-                    <i class="ni ni-money-coins fs-3 me-2"></i>
-                    <h5 class="modal-title mb-0" id="verModalLabel{{$caja->id}}">Reporte de Caja #{{$caja->id}}</h5>
+            <!-- Encabezado -->
+                <div class="modal-header bg-gradient-primary text-white py-3">
+                    <div class="d-flex align-items-center">
+                        <i class="ni ni-money-coins fs-3 me-2"></i>
+                        <h5 class="modal-title text-white mb-0" id="verModalLabel{{$caja->id}}">
+                            Reporte de Caja
+                        </h5>
+                    </div>
+                    <div class="d-flex align-items-center ms-auto">
+                        <span class="badge {{ $caja->fecha_cierre ? 'bg-success' : 'bg-warning text-white' }} me-2 fs-6">
+                            {{ $caja->fecha_cierre ? 'CERRADA' : 'ABIERTA' }}
+                        </span>
+                        <a href="{{ url('/admin/cajas/pdf/' . $caja->id) }}" target="_blank" class="btn btn-sm btn-danger shadow-sm me-2">
+                            <i class="ni ni-single-copy-04 me-1"></i> Exportar PDF
+                        </a>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
                 </div>
-                <div class="d-flex align-items-center">
-                    <span class="badge bg-{{$caja->fecha_cierre ? 'success' : 'warning'}} me-2 fs-6">
-                        {{$caja->fecha_cierre ? 'CERRADA' : 'ABIERTA'}}
-                    </span>
-                    <a href="{{ url('/admin/cajas/pdf/' . $caja->id) }}" target="_blank" class="btn btn-sm btn-danger shadow-sm">
-                        <i class="ni ni-single-copy-04 me-1"></i> Exportar PDF
-                    </a>
-                    <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-            </div>
+
             
             <div class="modal-body p-0">
                 <div class="row g-0">

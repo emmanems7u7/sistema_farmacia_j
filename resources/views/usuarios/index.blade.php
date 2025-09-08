@@ -6,34 +6,36 @@
     <script src="{{ asset('js/app.js') }}"></script>
 
     <div class="card card-frame card-profile-bottom">
-        <div class="card-body">
-            <div class="row">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="fas fa-user me-3 text-primary"></i>
+                <strong>GESTION DE USUARIOS</strong>
+            </h5>
+
+            @can('usuarios.crear')
+                <a class="btn btn-primary" href="{{ route('users.create') }}">
+                    Crear Usuario
+                </a>
+            @endcan
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
                 <div class="col">
-                    Acciones
-                </div>
-
-            </div>
-
-            <div class="row mt-3">
-                <div class="col">
-                    <div class="col">
-
-                        @can('usuarios.crear')
-                            <a class="btn btn-primary mb-3" href="{{ route('users.create') }}">Crear Usuario</a>
-                        @endcan
-
-                        @can('usuarios.exportar_excel')
-                            <a href="{{ route('usuarios.exportar_excel') }}" class="btn btn-success mb-3">Exportar a Excel</a>
-                        @endcan
-                        @can('usuarios.exportar_pdf')
-                            <a href="{{ route('usuarios.exportar_pdf') }}" class="btn btn-success mb-3" target="_blank">Exportar
-                                a PDF</a>
-                        @endcan
-                    </div>
+                    @can('usuarios.exportar_excel')
+                        <a href="{{ route('usuarios.exportar_excel') }}" class="btn btn-success mb-3">Exportar a Excel</a>
+                    @endcan
+                    @can('usuarios.exportar_pdf')
+                        <a href="{{ route('usuarios.exportar_pdf') }}" class="btn btn-success mb-3" target="_blank">Exportar
+                            a PDF</a>
+                    @endcan
                 </div>
             </div>
         </div>
     </div>
+</div>
+
 
     <div class="card mt-3">
         <div class="table-responsive">
@@ -71,14 +73,14 @@
                         <li class="page-item">
                             <a class="page-link" href="{{ $users->nextPageUrl() }}" aria-label="Next">
                                 <i class="fa fa-angle-right"></i>
-                                <span class="sr-only">Next</span>
+                                <span class="sr-only"><</span>
                             </a>
                         </li>
                     @else
                         <li class="page-item disabled">
                             <span class="page-link" aria-label="Next">
                                 <i class="fa fa-angle-right"></i>
-                                <span class="sr-only">Next</span>
+                                <span class="sr-only">></span>
                             </span>
                         </li>
                     @endif

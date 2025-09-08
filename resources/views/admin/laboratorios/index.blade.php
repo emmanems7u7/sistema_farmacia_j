@@ -128,7 +128,7 @@
                                                         <div class="d-inline-flex gap-2">
                                                             <!-- Botón Editar -->
                                                             <button type="button"
-                                                                class="btn btn-sm bg-gradient-success text-white mx-1"
+                                                                class="btn btn-sm btn-outline-success  mx-1"
                                                                 data-bs-toggle="modal"
                                                                 style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
                                                                 data-bs-target="#editModal{{ $laboratorio->id }}"
@@ -147,7 +147,7 @@
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="button"
-                                                                    class="btn btn-sm bg-gradient-danger text-white  mx-1  btn-eliminar-laboratorio"
+                                                                    class="btn btn-sm btn-outline-danger mx-1  btn-eliminar-laboratorio"
                                                                     style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
                                                                     title="Eliminar laboratorio" data-bs-toggle="tooltip">
                                                                     <span class="btn-inner--icon me-1">
@@ -165,23 +165,28 @@
                                                                 const laboratorio = JSON.parse(form.dataset.laboratorio || '{}');
 
                                                                 Swal.fire({
-                                                                    title: `<span class="swal2-title">Confirmar Eliminación</span>`,
+                                                                   
                                                                     html: `<div class="swal2-content-container">
 
-                                                         <div class="swal2-text-content">
-                                                             <h3 class="swal2-subtitle">¿Eliminar laboratorio permanentemente?</h3>
-                                                             <div class="swal2-user-info mt-3">
-                                                                 <i></i> ${laboratorio.nombre || 'Este laboratorio'}
-                                                             </div>
-                                                             <div class="swal2-warning-text">
-                                                                 <i class="fas fa-exclamation-triangle me-2"></i>
-                                                                 Esta acción no se puede deshacer
-                                                             </div>
-                                                         </div>
-                                                       </div>`,
+                                                                        <div class="swal2-text-content">
+                                                                            <h3 class="swal2-subtitle"style="font-size: 1rem;">¿Eliminar laboratorio permanentemente?</h3>
+                                                                            
+                                                                            <div class="swal2-user-info mt-3" style="font-size: 0.9rem;">
+                                                                                <i></i> ${laboratorio.nombre || 'Este laboratorio'}
+                                                                            </div>
+                                                                            <div class="swal2-warning-text" style="font-size: 0.85rem;">
+                                                                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                                                                Esta acción no se puede deshacer
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>`,
+
+                                                                     
+                                                                    width: '350px',
+
                                                                     showCancelButton: true,
                                                                     focusConfirm: false,
-                                                                    confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Confirmar Eliminación`,
+                                                                    confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Eliminar`,
                                                                     cancelButtonText: `<i class="fas fa-times me-2"></i> Cancelar`,
                                                                     buttonsStyling: false,
                                                                     customClass: {
@@ -464,7 +469,7 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content border-0 shadow-lg">
                         <div class="modal-header bg-gradient-success text-white">
-                            <h5 class="modal-title" id="editModalLabel{{ $laboratorio->id }}">
+                            <h5 class="modal-title text-white" id="editModalLabel{{ $laboratorio->id }}">
                                 <i class="fas fa-edit me-2"></i> Editar Laboratorio
                             </h5>
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
@@ -525,6 +530,57 @@
         @endforeach
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            $(document).ready(function () {
+                // Configuración de DataTables
+                $('#laboratorios-table').DataTable({
+                    "pageLength": 10,
+                    "responsive": true,
+                    "autoWidth": false,
+                    "language": {
+                        "lengthMenu": "Mostrar _MENU_ registros por página",
+                        "zeroRecords": "No se encontraron laboratorios",
+                        "info": "Mostrando página _PAGE_ de _PAGES_",
+                        "infoEmpty": "No hay laboratorios registrados",
+                        "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                        "search": "Buscar:",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Último",
+                            "next": "Siguiente",
+                            "previous": "Anterior"
+                        }
+                    },
+                    "dom": '<"row"<"col-md-6"l><"col-md-6"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
+                    "initComplete": function () {
+                        $('.dataTables_filter input').addClass('form-control').attr('placeholder', 'Buscar laboratorio...');
+                        $('.dataTables_length select').addClass('form-select');
+                    }
+                });
+
+                // Confirmación antes de eliminar con SweetAlert2
+                $('form[method="DELETE"]').on('submit', function (e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "¡No podrás revertir esta acción!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#5e72e4',
+                        cancelButtonColor: '#f5365c',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            this.submit();
+                        }
+                    });
+                });
+            });
+        </script>
 @endsection
 
     @push('css')
@@ -630,54 +686,6 @@
         </style>
     @endpush
 
-    @push('js')
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            $(document).ready(function () {
-                // Configuración de DataTables
-                $('#laboratorios-table').DataTable({
-                    "pageLength": 10,
-                    "responsive": true,
-                    "autoWidth": false,
-                    "language": {
-                        "lengthMenu": "Mostrar _MENU_ registros por página",
-                        "zeroRecords": "No se encontraron laboratorios",
-                        "info": "Mostrando página _PAGE_ de _PAGES_",
-                        "infoEmpty": "No hay laboratorios registrados",
-                        "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                        "search": "Buscar:",
-                        "paginate": {
-                            "first": "Primero",
-                            "last": "Último",
-                            "next": "Siguiente",
-                            "previous": "Anterior"
-                        }
-                    },
-                    "dom": '<"row"<"col-md-6"l><"col-md-6"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
-                    "initComplete": function () {
-                        $('.dataTables_filter input').addClass('form-control').attr('placeholder', 'Buscar laboratorio...');
-                        $('.dataTables_length select').addClass('form-select');
-                    }
-                });
-
-                // Confirmación antes de eliminar con SweetAlert2
-                $('form[method="DELETE"]').on('submit', function (e) {
-                    e.preventDefault();
-                    Swal.fire({
-                        title: '¿Estás seguro?',
-                        text: "¡No podrás revertir esta acción!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#5e72e4',
-                        cancelButtonColor: '#f5365c',
-                        confirmButtonText: 'Sí, eliminar',
-                        cancelButtonText: 'Cancelar'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            this.submit();
-                        }
-                    });
-                });
-            });
-        </script>
-    @endpush
+  
+       
+  

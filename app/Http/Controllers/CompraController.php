@@ -168,7 +168,7 @@ class CompraController extends Controller
             'numero_lote' => 'required|string|unique:lotes,numero_lote',
             'cantidad' => 'required|integer|min:1',
             'fecha_ingreso' => 'required|date',
-            'fecha_vencimiento' => 'required|date|after_or_equal:fecha_ingreso',
+            'fecha_vencimiento' => 'nullable|date|after_or_equal:fecha_ingreso',
             'precio_compra' => 'required|numeric|min:0',
             'precio_venta' => 'required|numeric|min:0',
             'producto_id' => 'required|exists:productos,id',
@@ -368,18 +368,25 @@ class CompraController extends Controller
         return response()->json(['success' => true]);
     }
 
+
+
     public function eliminarTmp(Request $request)
-    {
-        $request->validate([
-            'producto_id' => 'required|exists:productos,id'
-        ]);
+{
+    $request->validate([
+        'producto_id' => 'required|exists:productos,id'
+    ]);
 
-        TmpCompra::where('user_id', auth()->id())
-            ->where('producto_id', $request->producto_id)
-            ->delete();
+    // Eliminar de la tabla temporal
+    TmpCompra::where('user_id', auth()->id())
+        ->where('producto_id', $request->producto_id)
+        ->delete();
 
-        return response()->json(['success' => true]);
-    }
+    // Eliminar también de lotes
+    Lote::where('producto_id', $request->producto_id)->delete();
+
+    return response()->json(['success' => true]);
+}
+
 
     public function actualizarTmp(Request $request)
     {

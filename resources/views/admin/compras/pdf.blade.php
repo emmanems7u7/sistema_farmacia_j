@@ -21,7 +21,7 @@
 <body>
     <!-- Encabezado -->
     <div class="header">
-        <h2>Farmacia {{ $sucursal->nombre }}</h2>
+        <h2> {{ $sucursal->nombre }}</h2>
         <p>{{ $sucursal->direccion }}</p>
         <p>Teléfono: {{ $sucursal->telefono }}</p>
         <p><strong>COMPROBANTE DE COMPRA</strong></p>
@@ -31,20 +31,24 @@
     <!-- Datos del Laboratorio/Proveedor -->
  <!-- Tabla de Información del Proveedor Mejorada -->
 <table class="table" style="width: 100%; border-collapse: collapse; margin: 3px 0; font-family: 'Courier New', monospace; font-size: 10px;">
+    
     <tr>
-        <th colspan="2" style="padding: 3px; border: 1px solid #000; text-align: left; font-weight: bold;">
-            PROVEEDOR
-        </th>
-    </tr>
-    <tr>
-        <td width="30%" style="padding: 3px; border: 1px solid #000; font-weight: bold;">Nombre:</td>
+        <td width="30%" style="padding: 3px; border: 1px solid #000; font-weight: bold;">Nombre de Laboratorio:</td>
         <td style="padding: 3px; border: 1px solid #000;">
             {{ strlen($compra->laboratorio->nombre ?? '') > 25 ? substr($compra->laboratorio->nombre, 0, 22).'...' : ($compra->laboratorio->nombre ?? 'N/A') }}
         </td>
     </tr>
+     <tr>
+        <td style="padding: 3px; border: 1px solid #000; font-weight: bold;">Celular:</td>
+        <td style="padding: 3px; border: 1px solid #000;">
+            {{ Str::limit($compra->laboratorio->telefono ?? 'N/A', 25, '...') }}
+        </td>
+    </tr>
     <tr>
-        <td style="padding: 3px; border: 1px solid #000; font-weight: bold;">NIT/CI:</td>
-        <td style="padding: 3px; border: 1px solid #000;">{{ $compra->laboratorio->nit ?? 'N/A' }}</td>
+        <td style="padding: 3px; border: 1px solid #000; font-weight: bold;">Dirección:</td>
+        <td style="padding: 3px; border: 1px solid #000;">
+            {{ Str::limit($compra->laboratorio->direccion ?? 'N/A', 25, '...') }}
+        </td>
     </tr>
 </table>
 
@@ -55,7 +59,7 @@
             <th style="width: 5%; padding: 3px; border: 1px solid #000; text-align: center;">#</th>
             <th style="width: 45%; padding: 3px; border: 1px solid #000; text-align: left;">PRODUCTO</th>
             <th style="width: 15%; padding: 3px; border: 1px solid #000; text-align: center;">CANT</th>
-            <th style="width: 17%; padding: 3px; border: 1px solid #000; text-align: right;">P.UNIT</th>
+            
             <th style="width: 18%; padding: 3px; border: 1px solid #000; text-align: right;">TOTAL</th>
         </tr>
     </thead>
@@ -64,7 +68,8 @@
         @php
             $lote = $detalle->producto->lotes->first();
             $precio_compra = $lote ? $lote->precio_compra : 0;
-            $subtotal = $detalle->cantidad * $precio_compra;
+           
+            
             $nombreProducto = strlen($detalle->producto->nombre ?? '') > 25 ? substr($detalle->producto->nombre, 0, 22).'...' : ($detalle->producto->nombre ?? 'Prod.');
         @endphp
         <tr>
@@ -72,7 +77,7 @@
             <td style="padding: 3px; border: 1px solid #000;">{{ $nombreProducto }}</td>
             <td style="padding: 3px; border: 1px solid #000; text-align: center;">{{ $detalle->cantidad }}</td>
             <td style="padding: 3px; border: 1px solid #000; text-align: right;">Bs{{ number_format($precio_compra, 2) }}</td>
-            <td style="padding: 3px; border: 1px solid #000; text-align: right;">Bs{{ number_format($subtotal, 2) }}</td>
+           
         </tr>
         @endforeach
     </tbody>

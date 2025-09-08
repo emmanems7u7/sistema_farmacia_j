@@ -142,9 +142,7 @@
             box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1) !important;
         }
 
-        .bg-gradient-primary {
-            background: linear-gradient(135deg, rgb(221, 166, 121) 0%, rgb(240, 133, 72) 100%);
-        }
+        
 
         .bg-soft-light {
             background-color: #f8fafc;
@@ -261,7 +259,7 @@
                                             <td class="text-center align-middle">
                                                 <div class="d-flex justify-content-center">
                                                     <a href="{{ url('/admin/ventas', $venta->id) }}"
-                                                        class="btn btn-sm bg-gradient-success text-white mx-1 d-flex align-items-center justify-content-center"
+                                                        class="btn btn-sm btn-outline-info mx-1 d-flex align-items-center justify-content-center"
                                                         style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
                                                         title="Ver" data-toggle="tooltip">
                                                         <i class="fas fa-eye"></i>
@@ -277,7 +275,7 @@
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="button"
-                                                            class="btn btn-sm bg-gradient-danger text-white mx-1 btn-eliminar-venta"
+                                                            class="btn btn-sm btn-outline-danger mx-1 btn-eliminar-venta"
                                                             style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
                                                             title="Eliminar venta" data-bs-toggle="tooltip">
                                                             <span class="btn-inner--icon me-1">
@@ -298,23 +296,28 @@
                                                             const venta = JSON.parse(form.dataset.venta || '{}');
 
                                                             Swal.fire({
-                                                                title: `<span class="swal2-title">Confirmar Eliminación</span>`,
+                                                                
                                                                 html: `<div class="swal2-content-container">
 
                                                                 <div class="swal2-text-content">
-                                                                    <h3 class="swal2-subtitle">¿Eliminar venta permanentemente?</h3>
-                                                                    <div class="swal2-user-info mt-3">
-                                                                        <i></i> ${venta.nombre || 'Esta venta'}
-                                                                    </div>
-                                                                    <div class="swal2-warning-text">
+                                                                    <h3 class="swal2-subtitle" style="font-size: 1rem;">¿Eliminar venta permanentemente?</h3>
+                                                                   
+                                                                    <div class="swal2-warning-text" style="font-size: 0.85rem;">
                                                                         <i class="fas fa-exclamation-triangle me-2"></i>
                                                                         Esta acción no se puede deshacer
                                                                     </div>
                                                                 </div>
                                                             </div>`,
+
+                                                             
+                                                                
+                                                             
+                                                             
+width: '350px',
+
                                                                 showCancelButton: true,
                                                                 focusConfirm: false,
-                                                                confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Confirmar Eliminación`,
+                                                                confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Eliminar`,
                                                                 cancelButtonText: `<i class="fas fa-times me-2"></i> Cancelar`,
                                                                 buttonsStyling: false,
                                                                 customClass: {

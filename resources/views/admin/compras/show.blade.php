@@ -6,32 +6,38 @@
             <div class="col">
                 <div class="card">
                     <!-- Card Header -->
-                    <div class="card-header border-0">
-                        <div class="row align-items-center">
-                            <div class="col-8">
-                                <h4 class="mb-0"><i class="fas fa-shopping-cart me-2"></i> <strong>Detalle de la
-                                        Compra</strong></h4>
-                            </div>
-                            <div class="col-4 text-end">
-                                <div>
-
-                                    <a href="{{ url('/admin/compras/pdf/' . $compra->id) }}" target="_blank"
+                    <div class="card mb-4">
+                <div class="card-header pb-0 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <i class="ni ni-money-coins me-2 text-primary"></i>
+                        <h6>Detalle de Compra </h6>
+                    </div>
+                    <div>
+                        <a href="{{ url('/admin/compras') }}" class="btn btn-sm btn-outline-secondary me-2">
+                            <i class="ni ni-bold-left me-1"></i> Volver al listado
+                        </a>
+                        <a href="{{ url('/admin/compras/pdf/' . $compra->id) }}" target="_blank"
                                         class="btn btn-sm btn-danger">
-                                        <i class="ni ni-single-copy-04 me-1"></i> Exportar PDF
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                            <i class="ni ni-single-copy-04 me-1"></i> Exportar PDF
+                        </a>
                     </div>
                 </div>
+                </div>
+                
+             </div> 
                 <hr>
                 <!-- Card Body -->
                 <div class="row mb-3">
                     <div class="col-md-8">
-                        <div class="card">
-                            <div class="modal-header bg-gradient-info text-white">
-                                <h5 class="mb-0"><i class="fas fa-boxes me-2"></i> Productos Comprados</h5>
+                        <div class="card ">
+                            
+                            <div class="modal-header bg-gradient-info text-white py-3 px-4">
+                                <div class="d-flex align-items-center w-100">
+                                    <i class="fas fa-boxes fs-3 me-2"></i>
+                                    <h5 class="modal-title text-white mb-0">Productos Comprados</h5>
+                                </div>
                             </div>
+
 
 
                             <div class="card-body p-0">
@@ -66,8 +72,11 @@
                                                             ->latest('id')
                                                             ->first();
                                                         $precioCompra = $lote->precio_compra_unitario ?? 0;
-                                                        $costo = $detalle->cantidad * $precioCompra;
+                                                        $costo = $lote->precio_compra;
                                                     @endphp
+                                                    
+
+                                                    
                                                     <td class="text-end px-2 py-1">Bs{{ number_format($precioCompra, 2) }}</td>
                                                     <td class="text-end px-2 py-1 fw-semibold">Bs{{ number_format($costo, 2) }}
                                                     </td>
@@ -76,6 +85,7 @@
                                                     $total_cantidad += $detalle->cantidad;
                                                     $total_compra += $costo;
                                                 @endphp
+                                                
                                             @endforeach
                                         </tbody>
                                         <tfoot class="table-light">
@@ -95,10 +105,13 @@
                     <!-- Columna derecha (Fecha y detalles de compra) -->
                     <div class="col-md-4">
                         <div class="card border-info mb-3">
-                            <div class="modal-header bg-gradient-info text-white">
-                                <h5 class="card-title mb-0"><i class="fas fa-calendar-alt me-2"></i>Información de Compra
-                                </h5>
+                            <div class="modal-header bg-gradient-info text-white py-3 px-4">
+                                <div class="d-flex align-items-center w-100">
+                                    <i class="fas fa-calendar-alt fs-3 me-2"></i>
+                                    <h5 class="card-title mb-0">Información de Compra</h5>
+                                </div>
                             </div>
+
                             <div class="card-body">
                                 <div class="form-group mb-3">
                                     <label for="fecha" class="form-label">Fecha</label>
@@ -125,9 +138,7 @@
                                     class="btn btn-sm btn-icon   bg-gradient-success  mx-3" title="Editar">
                                     <i class="fas fa-pencil-alt"></i>Editar
                                 </a>
-                                <a href="{{url('/admin/compras')}}" class="btn btn-primary">
-                                    <i class="fas fa-arrow-left me-1"></i> Volver
-                                </a>
+                                
 
                             </div>
 

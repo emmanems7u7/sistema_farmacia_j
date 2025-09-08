@@ -15,6 +15,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+
+<!-- Nucleo Icons -->
+<link href="{{ asset('argon/css/nucleo-icons.css') }}" rel="stylesheet">
+<link href="{{ asset('argon/css/nucleo-svg.css') }}" rel="stylesheet">
+
     <!-- CSS Files -->
     <link id="pagestyle" href="{{ asset('argon/css/argon-dashboard.css?v=2.1.0')  }}" rel="stylesheet" />
 
@@ -36,22 +41,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/datatables.net-dt@1.13.4/css/jquery.dataTables.min.css">
-
-<!-- DataTables Bootstrap 5 CSS -->
-<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-<link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" rel="stylesheet">
-
-
-
-<!-- Bootstrap 5 JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- DataTables JS -->
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
 
    
 
@@ -334,9 +323,7 @@
                             </li>
 
                             <li class="nav-item px-3 d-flex align-items-center">
-                            <a href="javascript:;" class="nav-link text-white p-0">
-                                <i class="fa fa-cog fixed-plugin-button-nav cursor-pointer"></i>
-                            </a>
+                            
                         </li>
                         <li class="nav-item px-3 d-flex align-items-center">
 
@@ -353,44 +340,10 @@
     }
 @endphp
 
-<div id="notificationTrigger"
-     class="notification-icon {{ $tieneNotificaciones ? 'has-notifications' : '' }}">
-    <i class="fas fa-bell text-warning"></i>
-    @if($tieneNotificaciones)
-        <span class="badge">{{ $cantidadNotificaciones }}</span>
-    @endif
-</div>
 
 
-    <div id="notificationBox" 
-        class="notification-box {{ isset($preferencias) && $preferencias->dark_mode ? 'dark-version' : '' }}">
 
-        <ul>
-        @php
-       
-
-            $notificaciones = collect();
-            if (Schema::hasTable('notifications') && Auth::check()) {
-                $notificaciones = Auth::user()->unreadNotifications;
-            }
-        @endphp
-
-        @forelse($notificaciones as $notification)
-            <li class="list-group-item">
-                <a style="text-decoration: none;"
-                onclick="NotificacionLeida(event,'{{ $notification->id }}')"
-                href="{{ $notification->data['action_url'] }}"
-                class="text-black float-right">
-                    <strong>{{ $notification->created_at->diffForHumans() }}</strong> -
-                    {{ $notification->data['message'] }}
-                </a>
-            </li>
-        @empty
-            <li>No hay notificaciones nuevas</li>
-        @endforelse
-
-        </ul>
-    </div>
+    
 </div>
 </li>
                         

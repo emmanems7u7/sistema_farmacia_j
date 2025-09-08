@@ -71,7 +71,7 @@
                                     <div style="
                                         width: 120px;
                                         height: 120px;
-                                        background: rgba(236, 122, 7, 0.91);
+                                        background: rgba(87, 104, 250, 0.91);
                                         border-radius: 50%;
                                         display: flex;
                                         align-items: center;
@@ -126,8 +126,8 @@
                                         <label for="password" class="form-label text-black" style="font-weight: 500;">Contraseña</label>
                                         <div class="input-group input-group-lg">
                                             <span class="input-group-text" style="
-                                                background: rgba(255, 255, 255, 0.15);
-                                                border: 1px solid rgba(255, 255, 255, 0.2);
+                                                background: rgba(247, 239, 239, 0.15);
+                                                border: 1px solid rgba(243, 232, 232, 0.2);
                                                 color: black;
                                             ">
                                                 <i class="fas fa-lock"></i>
@@ -156,7 +156,7 @@
                                             text-decoration: none;
                                             transition: all 0.3s ease;
                                         ">
-                                            ¿Olvidaste tu contraseña?
+                                           
                                         </a>
                                     </div>
                                     
@@ -164,7 +164,7 @@
                                     <div class="d-grid mb-3">
                                         <button type="submit" class="btn btn-lg py-3" 
                                                 style="
-                                                    background: linear-gradient(135deg, rgba(230, 177, 5, 0.8) 0%, rgba(255,94,0,0.9) 100%);
+                                                    background: linear-gradient(135deg, rgba(93, 123, 223, 0.8) 0%, rgba(53, 23, 189, 0.9) 100%);
                                                     border: none;
                                                     color: black;
                                                     font-weight: 600;
@@ -178,13 +178,13 @@
                                     
                                     <!-- Registro -->
                                     <div class="text-center mt-4">
-                                        <p class="small text-black-50 mb-0">¿No tienes una cuenta? 
+                                        <p class="small text-black-50 mb-0">
                                             <a href="{{ route('register') }}" class="fw-bold" style="
                                                 color: rgba(255, 255, 255, 0.9);
                                                 text-decoration: none;
                                                 transition: all 0.3s ease;
                                             ">
-                                                Regístrate aquí
+                                                
                                             </a>
                                         </p>
                                     </div>
