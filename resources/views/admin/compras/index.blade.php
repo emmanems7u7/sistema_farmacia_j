@@ -3,6 +3,64 @@
 @section('content')
 
 
+  <script src="{{ asset('argon/js/argon-dashboard.js') }}"></script>
+   
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Inicializar DataTable
+            const table = $('#comprasTable').DataTable({
+                "language": {
+
+                    "url": "https://cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json"
+                },
+                "responsive": true,
+                "autoWidth": false,
+                "drawCallback": function (settings) {
+                    if (window.innerWidth < 768) {
+                        $('#comprasTable tbody td').each(function () {
+                            var header = $('#comprasTable thead th').eq($(this).index()).text();
+                            $(this).attr('data-label', header);
+                        });
+                    }
+                }
+            });
+
+            // Manejar el clic en los botones de detalles
+            document.querySelectorAll('.toggle-details').forEach(button => {
+                button.addEventListener('click', function () {
+                    const targetId = this.getAttribute('data-target');
+                    const detailsContent = document.querySelector(targetId);
+                    const isCollapsed = this.classList.contains('collapsed');
+
+                    // Cerrar todos los demás detalles abiertos
+                    document.querySelectorAll('.details-content').forEach(content => {
+                        if (content.id !== targetId.replace('#', '')) {
+                            content.style.display = 'none';
+                            const otherButton = content.closest('tr').querySelector('.toggle-details');
+                            otherButton.classList.remove('collapsed');
+                        }
+                    });
+
+                    // Alternar el contenido actual
+                    if (isCollapsed) {
+                        detailsContent.style.display = 'none';
+                        this.classList.remove('collapsed');
+                    } else {
+                        detailsContent.style.display = 'block';
+                        this.classList.add('collapsed');
+                    }
+                });
+            });
+
+            // Botón de actualizar
+            document.getElementById('refreshTable').addEventListener('click', function () {
+                window.location.reload();
+            });
+
+            
+        });
+    </script>
+
     <div class="container-fluid mt--6">
         <!-- Card de Encabezado y Botones -->
         <div class="row mb-3"> <!-- Reducido mb-4 a mb-3 -->
@@ -505,63 +563,5 @@ width: '350px',
 
 @section('js')
 
-    <script src="{{ asset('argon/js/argon-dashboard.js') }}"></script>
-    <script src="{{ asset('vendor/argon-dashboard/js/plugins/dataTables/datatables.min.js') }}"></script>
-    <script src="{{ asset('vendor/argon-dashboard/js/plugins/dataTables/dataTables.bootstrap5.min.js') }}"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Inicializar DataTable
-            const table = $('#comprasTable').DataTable({
-                "language": {
-
-                    "url": "https://cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json"
-                },
-                "responsive": true,
-                "autoWidth": false,
-                "drawCallback": function (settings) {
-                    if (window.innerWidth < 768) {
-                        $('#comprasTable tbody td').each(function () {
-                            var header = $('#comprasTable thead th').eq($(this).index()).text();
-                            $(this).attr('data-label', header);
-                        });
-                    }
-                }
-            });
-
-            // Manejar el clic en los botones de detalles
-            document.querySelectorAll('.toggle-details').forEach(button => {
-                button.addEventListener('click', function () {
-                    const targetId = this.getAttribute('data-target');
-                    const detailsContent = document.querySelector(targetId);
-                    const isCollapsed = this.classList.contains('collapsed');
-
-                    // Cerrar todos los demás detalles abiertos
-                    document.querySelectorAll('.details-content').forEach(content => {
-                        if (content.id !== targetId.replace('#', '')) {
-                            content.style.display = 'none';
-                            const otherButton = content.closest('tr').querySelector('.toggle-details');
-                            otherButton.classList.remove('collapsed');
-                        }
-                    });
-
-                    // Alternar el contenido actual
-                    if (isCollapsed) {
-                        detailsContent.style.display = 'none';
-                        this.classList.remove('collapsed');
-                    } else {
-                        detailsContent.style.display = 'block';
-                        this.classList.add('collapsed');
-                    }
-                });
-            });
-
-            // Botón de actualizar
-            document.getElementById('refreshTable').addEventListener('click', function () {
-                window.location.reload();
-            });
-
-            
-        });
-    </script>
+  
 @endsection

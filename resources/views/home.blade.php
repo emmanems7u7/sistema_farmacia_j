@@ -133,7 +133,7 @@
                 <div class="col-lg-7 mb-3">
                     @if($lowStockProducts->count() > 0)
                         <div class="card shadow-sm border-0 alert-card">
-                            <div class="card-header bg-gradient-danger text-white py-2">
+                            <div class="card-header bg-gradient-info text-white py-2">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="d-flex align-items-center">
                                         <i class="fas fa-exclamation-triangle mr-2 fs-6"></i>
@@ -254,7 +254,7 @@
                 <div class="col-lg-5 mb-4">
                     <div class="card shadow h-100">
                         <!-- Encabezado -->
-                        <div class="card-header bg-gradient-warning py-2"> <!-- py-1 reduce el padding vertical -->
+                        <div class="card-header bg-gradient-info py-2"> <!-- py-1 reduce el padding vertical -->
                             <div class="row align-items-center">
                                 <div class="col">
                                     <p class="mb-0 text-white fw-bold" style="font-size: 0.8rem; letter-spacing: 0.5px;">
@@ -389,7 +389,7 @@
 
             // Colores pastel para la gráfica
             var backgroundColors = [
-                '#ffb6c1', '#d8bfd8', '#ffdfba', '#b5ead7', '#c7ceea'
+                '#b6d6ffff', '#d8bfd8', '#ffdfba', '#94f3d0ff', '#c7ceea'
             ];
 
             // Crear la gráfica solo si hay datos

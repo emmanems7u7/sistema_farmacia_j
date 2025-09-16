@@ -34,28 +34,7 @@
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
-                    <div class="nav-wrapper position-relative end-0">
-                        <ul class="nav nav-pills nav-fill p-1" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link mb-0 px-0 py-1 active d-flex align-items-center justify-content-center" data-bs-toggle="tab" href="javascript:;" role="tab" aria-selected="true">
-                                    <i class="fas fa-mobile-alt"></i> 
-                                    <span class="ms-2">Aplicación</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link mb-0 px-0 py-1 d-flex align-items-center justify-content-center" data-bs-toggle="tab" href="javascript:;" role="tab" aria-selected="false">
-                                    <i class="fas fa-envelope"></i> 
-                                    <span class="ms-2">Mensajes</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link mb-0 px-0 py-1 d-flex align-items-center justify-content-center" data-bs-toggle="tab" href="javascript:;" role="tab" aria-selected="false">
-                                    <i class="fas fa-cogs"></i>
-                                    <span class="ms-2">Configuración</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                    
 
                     </div>
                 </div>
@@ -111,7 +90,7 @@
                                 
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="email" class="form-control-label">Email</label>
+                                        <label for="email" class="form-control-label">Correo</label>
                                         <input id="email" class="form-control @error('email') is-invalid @enderror" type="email" name="email" value="{{ old('email', $user->email) }}">
                                         @error('email')
                                             <div class="invalid-feedback" style="display: block !important;">{{ $message }}</div>

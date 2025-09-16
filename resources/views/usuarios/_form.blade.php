@@ -9,9 +9,9 @@
     </div>
 
     <div class="col-12 mb-3">
-        <label for="email">Email</label>
+        <label for="email">Correo</label>
         <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email"
-            placeholder="Email" value="{{ old('email', $user->email ?? '') }}" required>
+            placeholder="Correp" value="{{ old('email', $user->email ?? '') }}" required>
         @error('email')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror

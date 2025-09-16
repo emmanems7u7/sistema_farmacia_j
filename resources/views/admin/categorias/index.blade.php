@@ -2,6 +2,58 @@
 
 @section('content')
 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+            <script>
+                $(document).ready(function () {
+                    // Configuración de DataTables
+                    $('#miTabla').DataTable({
+                        "pageLength": 10,
+                        "responsive": true,
+                        "autoWidth": false,
+                        "language": {
+                            "lengthMenu": "Mostrar _MENU_ registros por página",
+                            "zeroRecords": "No se encontraron categorías",
+                            "info": "Mostrando página _PAGE_ de _PAGES_",
+                            "infoEmpty": "No hay categorías registradas",
+                            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                            "search": "Buscar:",
+                            "paginate": {
+                                "first": "Primero",
+                                "last": "Último",
+                                "next": "Siguiente",
+                                "previous": "Anterior"
+                            }
+                        },
+                        "dom": '<"row"<"col-md-6"l><"col-md-6"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
+                        "initComplete": function () {
+                            $('.dataTables_filter input').addClass('form-control').attr('placeholder', 'Buscar categoría...');
+                            $('.dataTables_length select').addClass('form-select');
+                        }
+                    });
+
+                    // Confirmación antes de eliminar con SweetAlert2
+                    $('form[method="DELETE"]').on('submit', function (e) {
+                        e.preventDefault();
+                        Swal.fire({
+                            title: '¿Estás seguro?',
+                            text: "¡No podrás revertir esta acción!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#5e72e4',
+                            cancelButtonColor: '#f5365c',
+                            confirmButtonText: 'Sí, eliminar',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                this.submit();
+                            }
+                        });
+                    });
+                });
+            </script>
+
     <div class="container-fluid py-4">
         <!-- Header Principal -->
         <div class="row">
@@ -499,6 +551,10 @@ width: '350px',
             @endforeach
             <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+           
 @endsection
 
         @push('css')
@@ -618,56 +674,4 @@ width: '350px',
             </style>
         @endpush
 
-        @push('js')
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-            <script>
-                $(document).ready(function () {
-                    // Configuración de DataTables
-                    $('#miTabla').DataTable({
-                        "pageLength": 10,
-                        "responsive": true,
-                        "autoWidth": false,
-                        "language": {
-                            "lengthMenu": "Mostrar _MENU_ registros por página",
-                            "zeroRecords": "No se encontraron categorías",
-                            "info": "Mostrando página _PAGE_ de _PAGES_",
-                            "infoEmpty": "No hay categorías registradas",
-                            "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                            "search": "Buscar:",
-                            "paginate": {
-                                "first": "Primero",
-                                "last": "Último",
-                                "next": "Siguiente",
-                                "previous": "Anterior"
-                            }
-                        },
-                        "dom": '<"row"<"col-md-6"l><"col-md-6"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
-                        "initComplete": function () {
-                            $('.dataTables_filter input').addClass('form-control').attr('placeholder', 'Buscar categoría...');
-                            $('.dataTables_length select').addClass('form-select');
-                        }
-                    });
-
-                    // Confirmación antes de eliminar con SweetAlert2
-                    $('form[method="DELETE"]').on('submit', function (e) {
-                        e.preventDefault();
-                        Swal.fire({
-                            title: '¿Estás seguro?',
-                            text: "¡No podrás revertir esta acción!",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#5e72e4',
-                            cancelButtonColor: '#f5365c',
-                            confirmButtonText: 'Sí, eliminar',
-                            cancelButtonText: 'Cancelar'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                this.submit();
-                            }
-                        });
-                    });
-                });
-            </script>
-        @endpush
+    
