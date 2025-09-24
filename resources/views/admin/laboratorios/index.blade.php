@@ -16,7 +16,7 @@
 
 
                             <i class="fas fa-flask  me-3 text-primary"></i>
-                            <strong>GESTION DE LABORATORIOS</strong>
+                            <strong>GESTION DE PROVEEDORES</strong>
                         </h5>
                     </div>
 
@@ -24,7 +24,7 @@
                         <span class="badge bg-gradient-info me-3">
 
 
-                            <i class="fas fa-database me-1"></i> {{ $laboratorios->count() }} Laboratorios
+                            <i class="fas fa-database me-1"></i> {{ $laboratorios->count() }} Proveedores
                         </span>
 
                         <div class="dropdown me-2">
@@ -69,7 +69,7 @@
                         <div class="card-header bg-white d-flex justify-content-between align-items-center border-bottom">
                             <h5 class="mb-0 text-black">
                                 <i class="fas fa-list-check me-2 text-primary"></i>
-                                <strong>Laboratorios Registrados</strong>
+                                <strong>Proveedores Registrados</strong>
                             </h5>
 
 
@@ -88,7 +88,10 @@
                                             </th>
                                             <th class="text-uppercase text-secondary text-xs font-weight-bolder">Teléfono
                                             </th>
-                                            <th class="text-uppercase text-secondary text-xs font-weight-bolder">Dirección
+                                            
+                                            <th class="text-uppercase text-secondary text-xs font-weight-bolder">Nombre Proveedor
+                                            </th>
+                                            <th class="text-uppercase text-secondary text-xs font-weight-bolder">Celular
                                             </th>
                                             <th
                                                 class="text-center text-uppercase text-secondary text-xs font-weight-bolder">
@@ -117,24 +120,44 @@
                                                         {{ $laboratorio->telefono }}
                                                     </span>
                                                 </td>
+                                                
                                                 <td class="align-middle">
                                                     <span class="text-dark text-sm">
-                                                        <i class="fas fa-map-marker-alt me-1 text-primary"></i>
-                                                        {{ $laboratorio->direccion }}
+                                                        <i class="fas fa-address-card me-1 text-primary"></i>
+                                                        {{ $laboratorio->nombre_proveedor }}
                                                     </span>
                                                 </td>
+
+                                                
+
+                                            <td style="vertical-align: middle; text-align: center">
+                                                <a href="https://wa.me/591{{ $laboratorio->celular }}" target="_blank"
+                                                    class="btn btn-sm fw-bold shadow-sm transition-all"
+                                                    style="background-color: #25D366; color: white; border-radius: 8px; border: none;"
+                                                    onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)';"
+                                                    onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)';"
+                                                    title="Contactar por WhatsApp">
+                                                    <i class="fab fa-whatsapp me-2 fs-5 align-middle"></i>
+                                                    <span class="align-middle">{{ $laboratorio->celular }}</span>
+                                                </a>
+                                            </td>
+
+
                                                 <td class="text-center align-middle">
                                                     <div class="d-flex justify-content-center">
                                                         <div class="d-inline-flex gap-2">
-                                                            <!-- Botón Editar -->
-                                                            <button type="button"
-                                                                class="btn btn-sm btn-outline-success  mx-1"
-                                                                data-bs-toggle="modal"
-                                                                style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
-                                                                data-bs-target="#editModal{{ $laboratorio->id }}"
-                                                                title="Editar laboratorio">
-                                                                <i class="fas fa-pen"></i>
-                                                            </button>
+                                                                <!-- Botón Ver -->
+                                                            
+                                                        <button type="button"
+                                                            class="btn btn-sm btn-outline-info mx-1 d-flex justify-content-center align-items-center"
+                                                            style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#verModal{{ $laboratorio->id }}" title="Ver detalles">
+                                                            <i class="fas fa-eye" style="font-size: 0.8rem;"></i>
+                                                        </button>
+
+
+                                                           
 
                                                             <!-- Botón Eliminar -->
 
@@ -401,165 +424,422 @@
 
         <!-- Modal para Crear Nuevo Laboratorio -->
         <div class="modal fade" id="modalCrear" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0 shadow-lg">
-                    <div class="modal-header bg-gradient-primary text-white">
-                        <h5 class="modal-title text-white" id="modalCrearLabel">
-                            <i class="fas fa-plus-circle me-2 text-white"></i> Nuevo Laboratorio
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title text-white" id="modalCrearLabel">
+                    <i class="fas fa-plus-circle me-2 text-white"></i> Nuevo Laboratorio
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <form action="{{ route('admin.laboratorios.store') }}" method="post">
+                @csrf
+                <div class="modal-body">
+                    
+                    <!-- Nombre -->
+                    <div class="form-group mb-3">
+                        <label class="form-label">Nombre del Laboratorio</label>
+                        <div class="input-group input-group-outline">
+                            <span class="input-group-text"><i class="fas fa-flask"></i></span>
+                            <input type="text" class="form-control" name="nombre" value="{{ old('nombre') }}"
+                                required placeholder="Ej: Laboratorio ">
+                        </div>
+                        @error('nombre')
+                            <div class="text-danger small mt-2">{{ $message }}</div>
+                        @enderror
                     </div>
-                    <form action="{{ url('/admin/laboratorios/create') }}" method="post">
-                        @csrf
-                        <div class="modal-body">
-                            <div class="form-group mb-3">
-                                <label class="form-label">Nombre del Laboratorio</label>
-                                <div class="input-group input-group-outline">
-                                    <span class="input-group-text"><i class="fas fa-flask"></i></span>
-                                    <input type="text" class="form-control" name="nombre" value="{{ old('nombre') }}"
-                                        required placeholder="Ej: Laboratorio Clínico Central">
-                                </div>
-                                @error('nombre')
-                                    <div class="text-danger small mt-2">{{ $message }}</div>
-                                @enderror
-                            </div>
 
-                            <div class="form-group mb-3">
-                                <label class="form-label">Teléfono</label>
-                                <div class="input-group input-group-outline">
-                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                    <input type="text" class="form-control" name="telefono" value="{{ old('telefono') }}"
-                                        required placeholder=".">
-                                </div>
-                                @error('telefono')
-                                    <div class="text-danger small mt-2">{{ $message }}</div>
-                                @enderror
-                            </div>
+                    <!-- Teléfono -->
+                    <div class="form-group mb-3">
+                        <label class="form-label">Teléfono</label>
+                        <div class="input-group input-group-outline">
+                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                            <input type="text" class="form-control" name="telefono" value="{{ old('telefono') }}"
+                                required placeholder="Ej: 22445566">
+                        </div>
+                        @error('telefono')
+                            <div class="text-danger small mt-2">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                            <div class="form-group mb-3">
-                                <label class="form-label">Dirección</label>
-                                <div class="input-group input-group-outline">
-                                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
-                                    <input type="text" class="form-control" name="direccion" value="{{ old('direccion') }}"
-                                        required placeholder="Ej: Av. Montes #123">
+                    <!-- Dirección -->
+                    <div class="form-group mb-3">
+                        <label class="form-label">Dirección</label>
+                        <div class="input-group input-group-outline">
+                            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                            <input type="text" class="form-control" name="direccion" value="{{ old('direccion') }}"
+                                required placeholder="Ej: Av. Montes #123">
+                        </div>
+                        @error('direccion')
+                            <div class="text-danger small mt-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- NIT -->
+                    <div class="form-group mb-3">
+                        <label class="form-label">NIT</label>
+                        <div class="input-group input-group-outline">
+                            <span class="input-group-text"><i class="fas fa-file-invoice"></i></span>
+                            <input type="text" class="form-control" name="nit" value="{{ old('nit') }}"
+                                placeholder="Ej: 123456789">
+                        </div>
+                        @error('nit')
+                            <div class="text-danger small mt-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Correo -->
+                    <div class="form-group mb-3">
+                        <label class="form-label">Correo</label>
+                        <div class="input-group input-group-outline">
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <input type="email" class="form-control" name="correo" value="{{ old('correo') }}"
+                                placeholder="Ej: laboratorio@gmail.com">
+                        </div>
+                        @error('correo')
+                            <div class="text-danger small mt-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Nombre del proveedor -->
+                    <div class="form-group mb-3">
+                        <label class="form-label">Nombre del Proveedor</label>
+                        <div class="input-group input-group-outline">
+                            <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
+                            <input type="text" class="form-control" name="nombre_proveedor" value="{{ old('nombre_proveedor') }}"
+                                placeholder="Ej: Distribuidora Farma S.R.L.">
+                        </div>
+                        @error('nombre_proveedor')
+                            <div class="text-danger small mt-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Celular -->
+                    <div class="form-group mb-3">
+                        <label class="form-label">Celular</label>
+                        <div class="input-group input-group-outline">
+                            <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+                            <input type="text" class="form-control" name="celular" value="{{ old('celular') }}"
+                                placeholder="Ej: 76543210">
+                        </div>
+                        @error('celular')
+                            <div class="text-danger small mt-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn bg-gradient-primary">
+                        <i class="fas fa-save me-1"></i> Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal Ver Laboratorio -->
+<div class="modal fade" id="verModal{{ $laboratorio->id }}" tabindex="-1" aria-labelledby="verModalLabel{{ $laboratorio->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- más ancho -->
+        <div class="modal-content border-0 shadow-lg">
+            
+            <!-- Encabezado -->
+            <div class="modal-header bg-gradient-info">
+                <h5 class="modal-title text-white" id="verModalLabel{{ $laboratorio->id }}">
+                    <i class="fas fa-search-plus me-2"></i> Detalles del Laboratorio
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <!-- Cuerpo -->
+            <div class="modal-body">
+                <div class="row g-3"> <!-- separación uniforme -->
+                    
+                    <!-- Nombre -->
+                    <div class="col-md-6">
+                        <div class="card shadow-none border mb-2">
+                            <div class="card-body p-2 d-flex align-items-center">
+                                <i class="fas fa-building text-primary me-2"></i>
+                                <div>
+                                    <h6 class="text-primary fw-bold mb-1">Nombre</h6>
+                                    <p class="mb-0">{{ $laboratorio->nombre }}</p>
                                 </div>
-                                @error('direccion')
-                                    <div class="text-danger small mt-2">{{ $message }}</div>
-                                @enderror
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                <i class="fas fa-times me-1"></i> Cancelar
-                            </button>
-                            <button type="submit" class="btn bg-gradient-primary">
-                                <i class="fas fa-save me-1"></i> Guardar
-                            </button>
+                    </div>
+
+                    <!-- NIT -->
+                    <div class="col-md-6">
+                        <div class="card shadow-none border mb-2">
+                            <div class="card-body p-2 d-flex align-items-center">
+                                <i class="fas fa-file-invoice text-primary me-2"></i>
+                                <div>
+                                    <h6 class="text-primary fw-bold mb-1">NIT</h6>
+                                    <p class="mb-0">{{ $laboratorio->nit }}</p>
+                                </div>
+                            </div>
                         </div>
-                    </form>
+                    </div>
+
+                    <!-- Dirección -->
+                    <div class="col-md-6">
+                        <div class="card shadow-none border mb-2">
+                            <div class="card-body p-2 d-flex align-items-center">
+                                <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                <div>
+                                    <h6 class="text-primary fw-bold mb-1">Dirección</h6>
+                                    <p class="mb-0">{{ $laboratorio->direccion }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Teléfono -->
+                    <div class="col-md-6">
+                        <div class="card shadow-none border mb-2">
+                            <div class="card-body p-2 d-flex align-items-center">
+                                <i class="fas fa-phone text-primary me-2"></i>
+                                <div>
+                                    <h6 class="text-primary fw-bold mb-1">Teléfono</h6>
+                                    <p class="mb-0">{{ $laboratorio->telefono }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Correo -->
+                    <div class="col-md-6">
+                        <div class="card shadow-none border mb-2">
+                            <div class="card-body p-2 d-flex align-items-center">
+                                <i class="fas fa-envelope text-primary me-2"></i>
+                                <div>
+                                    <h6 class="text-primary fw-bold mb-1">Correo</h6>
+                                    <p class="mb-0">{{ $laboratorio->correo }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h6 class="mt-3">Información del contacto</h6>
+
+                    <!-- Proveedor -->
+                    <div class="col-md-6">
+                        <div class="card shadow-none border mb-2">
+                            <div class="card-body p-2 d-flex align-items-center">
+                                <i class="fas fa-user-tie text-primary me-2"></i>
+                                <div>
+                                    <h6 class="text-primary fw-bold mb-1">Proveedor</h6>
+                                    <p class="mb-0">{{ $laboratorio->nombre_proveedor }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Celular con enlace WhatsApp -->
+                    <div class="col-md-6">
+                        <div class="card shadow-none border mb-2">
+                            <div class="card-body p-2 d-flex align-items-center justify-content-between">
+                                <h6 class="text-primary fw-bold mb-0"><i class="fas fa-mobile-alt me-1"></i> Celular</h6>
+                                <a href="https://wa.me/591{{ $laboratorio->celular }}" target="_blank" class="btn btn-sm bg-gradient-success">
+                                    <i class="fab fa-whatsapp me-1"></i> {{ $laboratorio->celular }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
+
+            <!-- Pie de modal -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Cerrar
+                </button>
+                <button type="button" class="btn bg-gradient-success text-white" data-bs-toggle="modal" data-bs-target="#editModal{{ $laboratorio->id }}" title="Editar">
+                    <i class="fas fa-edit me-1"></i> Actualizar
+                </button>
+            </div>
         </div>
+    </div>
+</div>
+
 
         <!-- Modales de Edición (generados dinámicamente) -->
         @foreach($laboratorios as $laboratorio)
-            <div class="modal fade" id="editModal{{ $laboratorio->id }}" tabindex="-1"
-                aria-labelledby="editModalLabel{{ $laboratorio->id }}" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content border-0 shadow-lg">
-                        <div class="modal-header bg-gradient-success text-white">
-                            <h5 class="modal-title text-white" id="editModalLabel{{ $laboratorio->id }}">
-                                <i class="fas fa-edit me-2"></i> Editar Laboratorio
-                            </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+        
+<div class="modal fade" id="editModal{{ $laboratorio->id }}" tabindex="-1"
+    aria-labelledby="editModalLabel{{ $laboratorio->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered"> {{-- MÁS ANCHO --}}
+
+        <div class="modal-content border-0 shadow-lg rounded-3">
+            
+            {{-- HEADER --}}
+            <div class="modal-header bg-gradient-success text-white">
+                <h5 class="modal-title text-white" id="editModalLabel{{ $laboratorio->id }}">
+                    <i class="fas fa-edit me-2"></i> Editar Laboratorio
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+
+            {{-- FORM --}}
+            <form action="{{ url('/admin/laboratorios', $laboratorio->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+
+                    {{-- DATOS DEL LABORATORIO --}}
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-light text-dark fw-bold">
+                            <i class="fas fa-flask me-2"></i> Información del Laboratorio
                         </div>
-                        <form action="{{ url('/admin/laboratorios', $laboratorio->id) }}" method="POST">
-                            @csrf
-                            @method('PUT')
-                            <div class="modal-body">
-                                <div class="form-group mb-3">
+                        <div class="card-body">
+                            <div class="row">
+                                {{-- Nombre --}}
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Nombre</label>
                                     <div class="input-group input-group-outline">
                                         <span class="input-group-text"><i class="fas fa-flask"></i></span>
                                         <input type="text" class="form-control" name="nombre"
                                             value="{{ old('nombre', $laboratorio->nombre) }}" required>
                                     </div>
-                                    @error('nombre')
-                                        <div class="text-danger small mt-2">{{ $message }}</div>
-                                    @enderror
                                 </div>
 
-                                <div class="form-group mb-3">
+                                {{-- Teléfono --}}
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Teléfono</label>
                                     <div class="input-group input-group-outline">
                                         <span class="input-group-text"><i class="fas fa-phone"></i></span>
                                         <input type="text" class="form-control" name="telefono"
                                             value="{{ old('telefono', $laboratorio->telefono) }}" required>
                                     </div>
-                                    @error('telefono')
-                                        <div class="text-danger small mt-2">{{ $message }}</div>
-                                    @enderror
                                 </div>
 
-                                <div class="form-group mb-3">
+                                {{-- NIT --}}
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">NIT</label>
+                                    <div class="input-group input-group-outline">
+                                        <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                        <input type="text" class="form-control" name="nit"
+                                            value="{{ old('nit', $laboratorio->nit) }}">
+                                    </div>
+                                </div>
+
+                                {{-- Correo --}}
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Correo</label>
+                                    <div class="input-group input-group-outline">
+                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                        <input type="email" class="form-control" name="correo"
+                                            value="{{ old('correo', $laboratorio->correo) }}">
+                                    </div>
+                                </div>
+
+                                {{-- Dirección (ocupa todo el ancho) --}}
+                                <div class="col-md-12 mb-3">
                                     <label class="form-label">Dirección</label>
                                     <div class="input-group input-group-outline">
                                         <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
                                         <input type="text" class="form-control" name="direccion"
                                             value="{{ old('direccion', $laboratorio->direccion) }}" required>
                                     </div>
-                                    @error('direccion')
-                                        <div class="text-danger small mt-2">{{ $message }}</div>
-                                    @enderror
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                    <i class="fas fa-times me-1"></i> Cancelar
-                                </button>
-                                <button type="submit" class="btn bg-gradient-success text-white">
-                                    <i class="fas fa-save me-1"></i> Actualizar
-                                </button>
+                        </div>
+                    </div>
+
+                    {{-- DATOS DEL PROVEEDOR --}}
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-light text-dark fw-bold">
+                            <i class="fas fa-user-tie me-2"></i> Información del Proveedor
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                {{-- Nombre Proveedor --}}
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nombre Proveedor</label>
+                                    <div class="input-group input-group-outline">
+                                        <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
+                                        <input type="text" class="form-control" name="nombre_proveedor"
+                                            value="{{ old('nombre_proveedor', $laboratorio->nombre_proveedor) }}">
+                                    </div>
+                                </div>
+
+                                {{-- Celular --}}
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Celular</label>
+                                    <div class="input-group input-group-outline">
+                                        <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+                                        <input type="text" class="form-control" name="celular"
+                                            value="{{ old('celular', $laboratorio->celular) }}">
+                                    </div>
+                                </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
-            </div>
+
+                {{-- FOOTER --}}
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn bg-gradient-success text-white">
+                        <i class="fas fa-save me-1"></i> Actualizar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+            
         @endforeach
-        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+ <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
-         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            $(document).ready(function () {
-                // Configuración de DataTables
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+            <script>
+                
+            $(document).ready(function() {
                 $('#laboratorios-table').DataTable({
-                    "pageLength": 10,
-                    "responsive": true,
-                    "autoWidth": false,
-                    "language": {
-                        "lengthMenu": "Mostrar _MENU_ registros por página",
-                        "zeroRecords": "No se encontraron laboratorios",
-                        "info": "Mostrando página _PAGE_ de _PAGES_",
-                        "infoEmpty": "No hay laboratorios registrados",
-                        "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                        "search": "Buscar:",
-                        "paginate": {
-                            "first": "Primero",
-                            "last": "Último",
-                            "next": "Siguiente",
-                            "previous": "Anterior"
+                    pageLength: 5,
+                    lengthMenu: [5, 10, 25, 50],
+                    responsive: true,
+                    autoWidth: false,
+                    dom: '<"d-flex justify-content-between mb-3"lf>t<"d-flex justify-content-between mt-3"ip>', // Layout moderno
+                    language: {
+                        lengthMenu: "Mostrar _MENU_ registros por página",
+                        zeroRecords: "No se encontraron resultados",
+                        info: "Mostrando página _PAGE_ de _PAGES_",
+                        infoEmpty: "No hay registros disponibles",
+                        infoFiltered: "(filtrado de _MAX_ registros totales)",
+                        search: "🔍 Buscar:",
+                        paginate: {
+                            first: "<i class='bi bi-chevron-bar-left'></i>",
+                            last: "<i class='bi bi-chevron-bar-right'></i>",
+                            next: "<i class='bi bi-chevron-right'></i>",
+                            previous: "<i class='bi bi-chevron-left'></i>"
                         }
-                    },
-                    "dom": '<"row"<"col-md-6"l><"col-md-6"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
-                    "initComplete": function () {
-                        $('.dataTables_filter input').addClass('form-control').attr('placeholder', 'Buscar laboratorio...');
-                        $('.dataTables_length select').addClass('form-select');
                     }
                 });
+
+                
+
 
                 // Confirmación antes de eliminar con SweetAlert2
                 $('form[method="DELETE"]').on('submit', function (e) {

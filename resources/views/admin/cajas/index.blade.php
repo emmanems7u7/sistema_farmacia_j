@@ -74,7 +74,8 @@
             <div class="card">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center border-bottom">
                     <h5 class="mb-0">
-                        <i class="ni ni-bullet-list-67 me-2 text-primary"></i>Detalle de cajas
+                         <i class="fas fa-list-check me-2 text-primary"></i>
+                        Detalle de cajas
                     </h5>
                 </div>
                 <!-- Tabla de Cajas -->
@@ -315,7 +316,8 @@
                             <div class="card border-0 shadow-none">
                                 <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
                                     <h6 class="mb-0 fw-bold text-primary">
-                                        <i class="ni ni-collection me-1"></i> Información de Caja
+                                  <i class="fas fa-folder-open me-1"></i> Información de Caja
+
                                     </h6>
                                 </div>
                                 <div class="card-body">
@@ -323,7 +325,8 @@
                                         <!-- Item de línea de tiempo para apertura -->
                                         <div class="timeline-block mb-3">
                                             <span class="timeline-step bg-primary">
-                                                <i class="ni ni-check-bold text-white"></i>
+                                                <i class="fas fa-check text-white"></i>
+                                                 
                                             </span>
                                             <div class="timeline-content">
                                                 <h6 class="text-sm text-muted mb-0">Apertura</h6>
@@ -338,7 +341,8 @@
                                         @if($caja->fecha_cierre)
                                         <div class="timeline-block mb-3">
                                             <span class="timeline-step bg-success">
-                                                <i class="ni ni-lock-circle-open text-white"></i>
+                                               
+                                                <i class="fas fa-lock text-white"></i>
                                             </span>
                                             <div class="timeline-content">
                                                 <h6 class="text-sm text-muted mb-0">Cierre</h6>
@@ -353,7 +357,8 @@
                                         <!-- Resumen rápido -->
                                         <div class="timeline-block">
                                             <span class="timeline-step bg-info">
-                                                <i class="ni ni-chart-bar-32 text-white"></i>
+                                                
+                                                <i class="fas fa-chart-bar text-white"></i>
                                             </span>
                                             <div class="timeline-content">
                                                 <h6 class="text-sm text-muted mb-0">Balance</h6>
@@ -396,24 +401,24 @@
                         <div class="p-3">
                             <!-- Pestañas mejoradas -->
                             <ul class="nav nav-pills nav-fill mb-4" id="cajaTabs" role="tablist">
-    <li class="nav-item" role="presentation">
-        <button class="nav-link active d-flex align-items-center justify-content-center"
-            id="ingresos-tab" data-bs-toggle="pill" data-bs-target="#ingresos{{$caja->id}}"
-            type="button" role="tab">
-            <i class="ni ni-bold-up me-2"></i> Ingresos
-            <span class="badge bg-success ms-2">{{$caja->movimientos->where('tipo', 'INGRESO')->count()}}</span>
-        </button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link d-flex align-items-center justify-content-center"
-            id="egresos-tab" data-bs-toggle="pill" data-bs-target="#egresos{{$caja->id}}"
-            type="button" role="tab">
-            <i class="ni ni-bold-down me-2"></i> Egresos
-            <span class="badge bg-danger ms-2">{{$caja->movimientos->where('tipo', 'EGRESO')->count()}}</span>
-        </button>
-    </li>
-    
-        </ul>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active d-flex align-items-center justify-content-center"
+                                        id="ingresos-tab" data-bs-toggle="pill" data-bs-target="#ingresos{{$caja->id}}"
+                                        type="button" role="tab">
+                                        <i class="ni ni-bold-up me-2"></i> Ingresos
+                                        <span class="badge bg-success ms-2">{{$caja->movimientos->where('tipo', 'INGRESO')->count()}}</span>
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link d-flex align-items-center justify-content-center"
+                                        id="egresos-tab" data-bs-toggle="pill" data-bs-target="#egresos{{$caja->id}}"
+                                        type="button" role="tab">
+                                        <i class="ni ni-bold-down me-2"></i> Egresos
+                                        <span class="badge bg-danger ms-2">{{$caja->movimientos->where('tipo', 'EGRESO')->count()}}</span>
+                                    </button>
+                                </li>
+                                
+                                    </ul>
                             
                             <!-- Contenido de pestañas -->
                             <div class="tab-content" id="cajaTabContent">
@@ -667,35 +672,38 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-@endsection
 
-@section('css')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
-@endsection
 
-@section('js')
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 <script>
     $(document).ready(function() {
-        $('#mitabla').DataTable({
-            "language": {
-                "lengthMenu": "Mostrar _MENU_ registros por página",
-                "zeroRecords": "No se encontraron resultados",
-                "info": "Mostrando página _PAGE_ de _PAGES_",
-                "infoEmpty": "No hay registros disponibles",
-                "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                "search": "Buscar:",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                }
-            }
-        });
+       
+
+          $('#mitabla').DataTable({
+                    pageLength: 5,
+                    lengthMenu: [5, 10, 25, 50],
+                    responsive: true,
+                    autoWidth: false,
+                    dom: '<"d-flex justify-content-between mb-3"lf>t<"d-flex justify-content-between mt-3"ip>', // Layout moderno
+                    language: {
+                        lengthMenu: "Mostrar _MENU_ registros por página",
+                        zeroRecords: "No se encontraron resultados",
+                        info: "Mostrando página _PAGE_ de _PAGES_",
+                        infoEmpty: "No hay registros disponibles",
+                        infoFiltered: "(filtrado de _MAX_ registros totales)",
+                        search: "🔍 Buscar:",
+                        paginate: {
+                            first: "<i class='bi bi-chevron-bar-left'></i>",
+                            last: "<i class='bi bi-chevron-bar-right'></i>",
+                            next: "<i class='bi bi-chevron-right'></i>",
+                            previous: "<i class='bi bi-chevron-left'></i>"
+                        }
+                    }
+                    
+                });
     });
 
     function confirmDelete(id) {
@@ -715,6 +723,14 @@ document.addEventListener('DOMContentLoaded', function() {
         })
     }
 </script>
+@endsection
+
+@section('css')
+
+@endsection
+
+@section('js')
+
 @endsection
 
 

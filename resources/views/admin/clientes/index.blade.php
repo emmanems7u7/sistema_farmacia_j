@@ -1,6 +1,9 @@
 @extends('layouts.argon')
 
 @section('content')
+
+
+  
     <div class="container-fluid py-4">
         <!-- Tarjeta de título -->
         <div class="col-12 mb-4">
@@ -169,7 +172,7 @@
 
                     <div class="card-body px-0 pt-0 pb-2">
                         <div class="table-responsive p-0">
-                            <table id="mitabla1" class="table table-hover align-items-center mb-0">
+                            <table id="clientes-tabla" class="table table-hover align-items-center mb-0">
 
                                 <thead class="bg-light">
                                     <tr>
@@ -271,7 +274,7 @@
                                                              </div>
                                                            </div>`,
                                                              
-width: '350px',
+                                                            width: '350px',
                                                                 showCancelButton: true,
                                                                 focusConfirm: false,
                                                                 confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Eliminar`,
@@ -563,7 +566,51 @@ width: '350px',
             </div>
         </div>
     @endforeach
+    
+</style>
+ <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+
+<!-- DataTables CSS para Bootstrap 5 -->
+
+
+
+
+            <script>
+
+                
+            $(document).ready(function() {
+                $('#clientes-tabla').DataTable({
+                    pageLength: 5,
+                    lengthMenu: [5, 10, 25, 50],
+                    responsive: true,
+                    autoWidth: false,
+                    dom: '<"d-flex justify-content-between mb-3"lf>t<"d-flex justify-content-between mt-3"ip>', // Layout moderno
+                    language: {
+                        lengthMenu: "Mostrar _MENU_ registros por página",
+                        zeroRecords: "No se encontraron resultados",
+                        info: "Mostrando página _PAGE_ de _PAGES_",
+                        infoEmpty: "No hay registros disponibles",
+                        infoFiltered: "(filtrado de _MAX_ registros totales)",
+                        search: "🔍 Buscar:",
+                        paginate: {
+                            first: "<i class='bi bi-chevron-bar-left'></i>",
+                            last: "<i class='bi bi-chevron-bar-right'></i>",
+                            next: "<i class='bi bi-chevron-right'></i>",
+                            previous: "<i class='bi bi-chevron-left'></i>"
+                        }
+                    }
+                    
+                    
+                });
+
+                });
+            </script>
 @endsection
 
 @push('css')
@@ -652,54 +699,4 @@ width: '350px',
 
 @push('js')
 
-    <!-- Y estos scripts al final de tu body -->
-
-    <script>
-        $(document).ready(function () {
-            // Configuración de DataTables
-            $('#mitabla1').DataTable({
-                "pageLength": 10,
-                "responsive": true,
-                "autoWidth": false,
-                "language": {
-                    "lengthMenu": "Mostrar _MENU_ registros por página",
-                    "zeroRecords": "No se encontraron categorías",
-                    "info": "Mostrando página _PAGE_ de _PAGES_",
-                    "infoEmpty": "No hay categorías registradas",
-                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                    "search": "Buscar:",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
-                },
-                "dom": '<"row"<"col-md-6"l><"col-md-6"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
-                "initComplete": function () {
-                    $('.dataTables_filter input').addClass('form-control').attr('placeholder', 'Buscar categoría...');
-                    $('.dataTables_length select').addClass('form-select');
-                }
-            });
-
-            // Confirmación antes de eliminar con SweetAlert2
-            $('form[method="DELETE"]').on('submit', function (e) {
-                e.preventDefault();
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: "¡No podrás revertir esta acción!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#5e72e4',
-                    cancelButtonColor: '#f5365c',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        this.submit();
-                    }
-                });
-            });
-        });
-    </script>
 @endpush

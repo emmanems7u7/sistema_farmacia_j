@@ -45,11 +45,23 @@
         </td>
     </tr>
     <tr>
+        <td style="padding: 3px; border: 1px solid #000; font-weight: bold;">NIT:</td>
+        <td style="padding: 3px; border: 1px solid #000;">
+            {{ Str::limit($compra->laboratorio->nit ?? 'N/A', 25, '...') }}
+        </td>
+    </tr>
+    <tr>
         <td style="padding: 3px; border: 1px solid #000; font-weight: bold;">Dirección:</td>
         <td style="padding: 3px; border: 1px solid #000;">
             {{ Str::limit($compra->laboratorio->direccion ?? 'N/A', 25, '...') }}
         </td>
     </tr>
+    <tr>
+        <td style="padding: 3px; border: 1px solid #000; font-weight: bold;">Proveedoo:</td>
+        <td style="padding: 3px; border: 1px solid #000;">
+            {{ Str::limit($compra->laboratorio->nombre_proveedor ?? 'N/A', 25, '...') }}
+        </td>
+</tr>
 </table>
 
 <!-- Tabla de Detalle de Productos Mejorada -->

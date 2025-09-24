@@ -9,8 +9,9 @@
                 <div class="card-header bg-gradient-primary border-0 py-3">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="mb-0 text-white">
-                            <i class="ni ni-fat-add mr-2"></i>Nuevo Producto
+                            <i class="fas fa-plus me-2"></i> Nuevo Producto
                         </h4>
+
                         <a href="{{ url()->previous() }}" class="btn btn-sm btn-outline-light">
                             <i class="fas fa-arrow-left mr-1"></i> Volver
                         </a>

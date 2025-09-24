@@ -49,7 +49,14 @@
     }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+
 <script>
 // REGISTRAR UN CLIENTE
 function guardar_cliente(){
@@ -234,27 +241,32 @@ $(document).ready(function() {
     });
 
 
-// Configuración DataTables
-    $('#mitabla, #mitabla2').DataTable({
-        "pageLength": 5,
-        "language": {
-            "lengthMenu": "Mostrar _MENU_ registros por página",
-            "zeroRecords": "No se encontraron resultados",
-            "info": "Mostrando página _PAGE_ de _PAGES_",
-            "infoEmpty": "No hay registros disponibles",
-            "infoFiltered": "(filtrado de _MAX_ registros totales)",
-            "search": "Buscar:",
-            "paginate": {
-                "first": "Primero",
-                "last": "Último",
-                "next": "Siguiente",
-                "previous": "Anterior"
-            }
-        },
-        "responsive": true,
-        "autoWidth": false
-    });
 
+    
+            // Inicializar DataTable
+          
+
+             $('#mitabla, #mitabla2').DataTable({
+                    pageLength: 5,
+                    lengthMenu: [5, 10, 25, 50],
+                    responsive: true,
+                    autoWidth: false,
+                    dom: '<"d-flex justify-content-between mb-3"lf>t<"d-flex justify-content-between mt-3"ip>', // Layout moderno
+                    language: {
+                        lengthMenu: "Mostrar _MENU_ registros por página",
+                        zeroRecords: "No se encontraron resultados",
+                        info: "Mostrando página _PAGE_ de _PAGES_",
+                        infoEmpty: "No hay registros disponibles",
+                        infoFiltered: "(filtrado de _MAX_ registros totales)",
+                        search: "🔍 Buscar:",
+                        paginate: {
+                            first: "<i class='bi bi-chevron-bar-left'></i>",
+                            last: "<i class='bi bi-chevron-bar-right'></i>",
+                            next: "<i class='bi bi-chevron-right'></i>",
+                            previous: "<i class='bi bi-chevron-left'></i>"
+                        }
+                    }
+                });
 
 
 
@@ -315,7 +327,7 @@ $(document).ready(function() {
                             <label for="codigo" class="form-label">Código</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-primary text-white"><i class="fas fa-barcode"></i></span>
-                                <input id="codigo" type="text" class="form-control form-control-lg" name="codigo" placeholder="Escanear código" autofocus>
+                                <input id="codigo" type="text" class="form-control form-control-lg" name="codigo" placeholder=" Ingresar código" autofocus>
                             </div>
                         </div>
                         <div class="col-md-4 d-flex align-items-end">
@@ -487,9 +499,15 @@ $(document).ready(function() {
     <div class="modal-dialog modal-lg">
         <div class="modal-content border-0 shadow-lg">
             <!-- Encabezado del Modal -->
-            <div class="modal-header bg-gradient-primary text-white border-bottom-0">
+
+ 
+
+            <div class="modal-header bg-primary ">
                 <div class="d-flex align-items-center">
-                    <h5 class="modal-title mb-0">Listado de Productos</h5>
+
+              
+                   <h5 class="modal-title fw-semibold text-white">
+                    <i class="fas fa-boxes me-2"></i> Listado de Productos</h5>
                 </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -515,7 +533,10 @@ $(document).ready(function() {
                                 <td class="text-xs font-weight-normal ps-4">{{ $loop->iteration }}</td>
                                 <td class="text-center">
                                     <button type="button" 
-                                            class="btn btn-sm @if($producto->stock <= 0) btn-outline-secondary disabled @else btn-outline-primary @endif seleccionar-btn" 
+                                            class="btn btn-sm @if($producto->stock <= 0) 
+                                            btn-outline-secondary disabled @else btn-outline-primary @endif seleccionar-btn" 
+
+                                            
                                             data-id="{{$producto->codigo}}"
                                             data-nombre="{{$producto->nombre}}"
                                             @if($producto->stock <= 0) disabled @endif>
@@ -567,12 +588,7 @@ $(document).ready(function() {
                 </div>
             </div>
             
-            <!-- Pie del Modal -->
-            <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-1"></i> Cerrar
-                </button>
-            </div>
+            
         </div>
     </div>
 </div>
@@ -590,12 +606,15 @@ $(document).ready(function() {
     <div class="modal-dialog ">
         <div class="modal-content border-0 shadow-lg">
             <!-- Encabezado del Modal -->
-            <div class="modal-header bg-gradient-primary text-white border-bottom-0">
+
+            <div class="modal-header bg-primary">
                 <div class="d-flex align-items-center">
-                    <div class="icon icon-shape bg-white text-primary rounded-circle shadow me-3">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h5 class="modal-title mb-0">Listado de Clientes</h5>
+
+                    
+                    <h5 class="modal-title fw-semibold text-white">
+                        <i class="fas fa-users me-2"></i>Listado de Clientes</h5>
+
+                       
                 </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -639,12 +658,7 @@ $(document).ready(function() {
                 </div>
             </div>
             
-            <!-- Pie del Modal -->
-            <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-1"></i> Cerrar
-                </button>
-            </div>
+           
         </div>
     </div>
 </div>

@@ -10,9 +10,11 @@
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
                         <h5 class="mb-0">
-                            <i class="ni ni-delivery-fast me-2 text-primary"></i>
-                            <strong>Buscar Ingresos por Fecha</strong>
-                        </h5>
+    <i class="fas fa-truck-loading me-2 text-primary"></i>
+    
+    <strong>Buscar Ingresos por Fecha</strong>
+</h5>
+
                     </div>
 
                 </div>

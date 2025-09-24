@@ -5,7 +5,7 @@
     <style>
         @page { 
             margin: 1.5cm; 
-            size: A4 portrait; /* Cambiado a vertical */
+            size: A4 portrait; /* vertical */
         }
         body { 
             font-family: Arial, sans-serif; 
@@ -31,8 +31,9 @@
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 6px;
             text-align: left;
+            font-size: 9pt;
         }
         th {
             background-color: #3498db;
@@ -57,7 +58,7 @@
     </style>
 </head>
 <body>
-       <style>
+<style>
     .compact-header {
         text-align: center;
         padding: 12px 0;
@@ -65,17 +66,14 @@
         border-bottom: 1px solid #e0e0e0;
         font-family: 'Segoe UI', Arial, sans-serif;
     }
-
     .compact-logo {
-        margin: 0 auto 10px; /* Centrado con margen inferior reducido */
+        margin: 0 auto 10px;
     }
-
     .compact-logo img {
         height: 65px; 
         width: auto;
         max-width: 150px;
     }
-
     .compact-title {
         margin: 0;
         font-size: 18px; 
@@ -83,13 +81,11 @@
         color: #2d3748;
         line-height: 1.3;
     }
-
     .compact-subtitle {
         margin: 4px 0 0;
         font-size: 12px;
         color: #4a5568;
     }
-
     .compact-meta {
         margin-top: 6px;
         font-size: 11px;
@@ -111,32 +107,37 @@
     </div>
 </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th width="5%">#</th>
-                <th width="25%">Nombre</th>
-                <th width="50%">Telefono</th>
-                <th width="50%">Direccion</th>
-           
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($laboratorios as $index => $laboratorios)
-            <tr>
-                <td>{{ $index + 1 }}</td>
-                <td>{{ $laboratorios->nombre }}</td>
-                <td>{{ $laboratorios->telefono }}</td>
-                <td>{{ $laboratorios->direccion }}</td>
-                
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+<table>
+    <thead>
+        <tr>
+            <th width="3%">#</th>
+            <th width="15%">Nombre</th>
+            <th width="10%">Teléfono</th>
+            <th width="15%">Dirección</th>
+            <th width="10%">NIT</th>
+            <th width="15%">Correo</th>
+            <th width="15%">Proveedor</th>
+            <th width="10%">Celular</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($laboratorios as $index => $lab)
+        <tr>
+            <td>{{ $index + 1 }}</td>
+            <td>{{ $lab->nombre }}</td>
+            <td>{{ $lab->telefono }}</td>
+            <td>{{ $lab->direccion }}</td>
+            <td>{{ $lab->nit }}</td>
+            <td>{{ $lab->correo }}</td>
+            <td>{{ $lab->nombre_proveedor }}</td>
+            <td>{{ $lab->celular }}</td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
 
-      <div class="footer">
-        <p>Sistema de Gestión - {{ date('Y') }} </p>
-       
-    </div>
+<div class="footer">
+    <p>Sistema de Gestión - {{ date('Y') }} </p>
+</div>
 </body>
 </html>

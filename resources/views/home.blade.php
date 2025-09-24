@@ -6,124 +6,123 @@
             <!-- Primera Fila: Tarjetas Resumen -->
 
             <div class="row">
-                <!-- Tarjeta de Productos -->
-                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                    <div class="card">
-                        <div class="card-body p-3">
-                            <div class="row">
-                                <div class="col-8">
-                                    <div class="numbers">
-                                        <p class="text-sm mb-0 text-uppercase font-weight-bold">Productos</p>
-                                        <h5 class="font-weight-bolder">
-                                            {{$total_productos}}
-                                        </h5>
-                                        <p class="mb-0">
-                                            <a href="{{ url('/admin/productos/create') }}"
-                                                class="text-primary text-sm font-weight-bolder">
-                                                <i class="ni ni-fat-add"></i> Agregar
-                                            </a>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="col-4 text-end">
-                                    <div class="icon icon-shape bg-gradient-primary shadow-primary text-center rounded-circle">
-                                        <i class="ni ni-box-2 text-lg opacity-10" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-                            </div>
+    <!-- Tarjeta de Productos -->
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="card">
+            <div class="card-body p-3">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="numbers">
+                            <p class="text-sm mb-0 text-uppercase font-weight-bold">Productos</p>
+                            <h5 class="font-weight-bolder">
+                                {{$total_productos}}
+                            </h5>
+                            <p class="mb-0">
+                                <a href="{{ url('/admin/productos/create') }}"
+                                   class="text-primary text-sm font-weight-bolder">
+                                    <i class="fas fa-plus"></i> Agregar
+                                </a>
+                            </p>
                         </div>
                     </div>
-                </div>
-
-                <!-- Tarjeta de Compras -->
-                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                    <div class="card">
-                        <div class="card-body p-3">
-                            <div class="row">
-                                <div class="col-8">
-                                    <div class="numbers">
-                                        <p class="text-sm mb-0 text-uppercase font-weight-bold">Compras</p>
-                                        <h5 class="font-weight-bolder">
-                                            {{$total_compras}}
-                                        </h5>
-                                        <p class="mb-0">
-                                            <a href="{{ url('/admin/compras/create') }}"
-                                                class="text-primary text-sm font-weight-bolder">
-                                                <i class="ni ni-fat-add"></i> Nueva
-                                            </a>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="col-4 text-end">
-                                    <div class="icon icon-shape bg-gradient-danger shadow-danger text-center rounded-circle">
-                                        <i class="ni ni-cart text-lg opacity-10" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tarjeta de Ventas -->
-                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                    <div class="card">
-                        <div class="card-body p-3">
-                            <div class="row">
-                                <div class="col-8">
-                                    <div class="numbers">
-                                        <p class="text-sm mb-0 text-uppercase font-weight-bold">Ventas</p>
-                                        <h5 class="font-weight-bolder">
-                                            {{$total_ventas}}
-                                        </h5>
-                                        <p class="mb-0">
-                                            <a href="{{ url('/admin/ventas/create') }}"
-                                                class="text-primary text-sm font-weight-bolder">
-                                                <i class="ni ni-fat-add"></i> Registrar
-                                            </a>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="col-4 text-end">
-                                    <div class="icon icon-shape bg-gradient-success shadow-success text-center rounded-circle">
-                                        <i class="ni ni-money-coins text-lg opacity-10" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tarjeta de Clientes -->
-                <div class="col-xl-3 col-sm-6">
-                    <div class="card">
-                        <div class="card-body p-3">
-                            <div class="row">
-                                <div class="col-8">
-                                    <div class="numbers">
-                                        <p class="text-sm mb-0 text-uppercase font-weight-bold">Clientes</p>
-                                        <h5 class="font-weight-bolder">
-                                            {{$total_clientes}}
-                                        </h5>
-                                        <p class="mb-0">
-                                            <a href="{{ url('/admin/clientes') }}"
-                                                class="text-primary text-sm font-weight-bolder">
-                                               <i class="ni ni-fat-add"></i> Gestionar
-                                               
-
-                                            </a>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="col-4 text-end">
-                                    <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle">
-                                        <i class="ni ni-circle-08 text-lg opacity-10" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="col-4 text-end">
+                        <div class="icon icon-shape bg-gradient-primary shadow-primary text-center rounded-circle">
+                            <i class="fas fa-box text-lg opacity-10" aria-hidden="true"></i>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Tarjeta de Compras -->
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="card">
+            <div class="card-body p-3">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="numbers">
+                            <p class="text-sm mb-0 text-uppercase font-weight-bold">Compras</p>
+                            <h5 class="font-weight-bolder">
+                                {{$total_compras}}
+                            </h5>
+                            <p class="mb-0">
+                                <a href="{{ url('/admin/compras/create') }}"
+                                   class="text-primary text-sm font-weight-bolder">
+                                    <i class="fas fa-cart-plus"></i> Nueva
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-4 text-end">
+                        <div class="icon icon-shape bg-gradient-danger shadow-danger text-center rounded-circle">
+                            <i class="fas fa-shopping-cart text-lg opacity-10" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjeta de Ventas -->
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="card">
+            <div class="card-body p-3">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="numbers">
+                            <p class="text-sm mb-0 text-uppercase font-weight-bold">Ventas</p>
+                            <h5 class="font-weight-bolder">
+                                {{$total_ventas}}
+                            </h5>
+                            <p class="mb-0">
+                                <a href="{{ url('/admin/ventas/create') }}"
+                                   class="text-primary text-sm font-weight-bolder">
+                                    <i class="fas fa-cash-register"></i> Registrar
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-4 text-end">
+                        <div class="icon icon-shape bg-gradient-success shadow-success text-center rounded-circle">
+                            <i class="fas fa-dollar-sign text-lg opacity-10" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjeta de Clientes -->
+    <div class="col-xl-3 col-sm-6">
+        <div class="card">
+            <div class="card-body p-3">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="numbers">
+                            <p class="text-sm mb-0 text-uppercase font-weight-bold">Clientes</p>
+                            <h5 class="font-weight-bolder">
+                                {{$total_clientes}}
+                            </h5>
+                            <p class="mb-0">
+                                <a href="{{ url('/admin/clientes') }}"
+                                   class="text-primary text-sm font-weight-bolder">
+                                    <i class="fas fa-users"></i> Gestionar
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-4 text-end">
+                        <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle">
+                            <i class="fas fa-user-circle text-lg opacity-10" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
             <hr>
 
             <!-- Segunda Fila: Alertas y Gráficos -->
@@ -199,7 +198,8 @@
                                                         <a href="{{ route('admin.productos.index', $product->id) }}"
                                                             class="btn btn-sm btn-danger shadow-sm py-0 px-1" data-toggle="tooltip"
                                                             title="Reabastecer">
-                                                            <i class="fas fa-warehouse fa-sm"></i>
+                                                            <i class="fas fa-boxes-stacked fa-sm text-danger"></i>
+                                                            
                                                         </a>
                                                     </td>
                                                 </tr>

@@ -12,8 +12,9 @@
 
                         <h5 class="mb-0">
 
-                            <i class="ni ni-delivery-fast me-2 text-primary"></i>
-                            <strong>GESTION DE PROVEEDORES</strong>
+                           <i class="fas fa-truck-fast me-2 text-primary"></i>
+<strong>GESTIÓN DE PROVEEDORES</strong>
+
                         </h5>
                     </div>
 
@@ -69,7 +70,7 @@
                 <div class="card mb-4 border-radius-lg shadow-sm">
                     <div class="card-header bg-white d-flex justify-content-between align-items-center border-bottom">
                         <h5 class="mb-0">
-                            <i class="ni ni-bullet-list-67 me-2 text-primary"></i>
+                             <i class="fas fa-list-check me-2 text-primary"></i>
                             <strong>Proveedores Registrados</strong>
                         </h5>
                     </div>
@@ -108,8 +109,9 @@
                                             <td style="text-align: center; vertical-align: middle">{{$contador++}}</td>
                                             <td style="vertical-align: middle">
                                                 <span class="badge bg-gradient-primary p-2">
-                                                    <i class="ni ni-building me-1"></i> {{$proveedor->empresa}}
+                                                    <i class="fas fa-building me-1"></i> {{$proveedor->empresa}}
                                                 </span>
+
                                             </td>
                                             <td style="vertical-align: middle">{{$proveedor->direccion}}</td>
                                             <td style="vertical-align: middle">{{$proveedor->telefono}}</td>
@@ -391,131 +393,132 @@
     </div>
 
     <!-- Modal para Crear Nuevo Proveedor -->
-    <div class="modal fade" id="modalCrear" tabindex="-1" proveedor="dialog" aria-labelledby="modalCrearLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" proveedor="document">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-gradient-primary">
-                    <h5 class="modal-title text-white" id="modalCrearLabel">
-                        <i class="ni ni-fat-add me-2"></i><strong>Registrar Proveedor</strong>
-                    </h5>
-                    <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ url('/admin/proveedores/create') }}" method="post">
-                        @csrf
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="empresa">Empresa</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="ni ni-building"></i></span>
-                                        <input type="text" class="form-control" value="{{ old('empresa') }}" name="empresa"
-                                            required>
-                                    </div>
-                                    @error('empresa')
-                                        <small class="text-danger">{{$message}}</small>
-                                    @enderror
+<div class="modal fade" id="modalCrear" tabindex="-1" proveedor="dialog" aria-labelledby="modalCrearLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" proveedor="document">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary">
+                <h5 class="modal-title text-white" id="modalCrearLabel">
+                    <i class="fas fa-plus me-2"></i><strong>Registrar Proveedor</strong>
+                </h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url('/admin/proveedores/create') }}" method="post">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="empresa">Empresa</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                    <input type="text" class="form-control" value="{{ old('empresa') }}" name="empresa"
+                                        required>
                                 </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="direccion">Dirección</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="ni ni-pin-3"></i></span>
-                                        <input type="text" class="form-control" value="{{ old('direccion') }}"
-                                            name="direccion" required>
-                                    </div>
-                                    @error('direccion')
-                                        <small class="text-danger">{{$message}}</small>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="telefono">Teléfono</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="ni ni-mobile-button"></i></span>
-                                        <input type="text" class="form-control" value="{{ old('telefono') }}"
-                                            name="telefono" required>
-                                    </div>
-                                    @error('telefono')
-                                        <small class="text-danger">{{$message}}</small>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="email">Correo</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="ni ni-email-83"></i></span>
-                                        <input type="text" class="form-control" value="{{ old('email') }}" name="email"
-                                            required>
-                                    </div>
-                                    @error('email')
-                                        <small class="text-danger">{{$message}}</small>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="nombre">Nombre del proveedor</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="ni ni-single-02"></i></span>
-                                        <input type="text" class="form-control" value="{{ old('nombre') }}" name="nombre"
-                                            required>
-                                    </div>
-                                    @error('nombre')
-                                        <small class="text-danger">{{$message}}</small>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="celular">Celular</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="ni ni-mobile-button"></i></span>
-                                        <input type="text" class="form-control" value="{{ old('celular') }}" name="celular"
-                                            required>
-                                    </div>
-                                    @error('celular')
-                                        <small class="text-danger">{{ $message }}</small>
-                                    @enderror
-                                </div>
+                                @error('empresa')
+                                    <small class="text-danger">{{$message}}</small>
+                                @enderror
                             </div>
                         </div>
 
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                <i class="ni ni-fat-remove me-1"></i> Cancelar
-                            </button>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="ni ni-check-bold me-1"></i> Registrar
-                            </button>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="direccion">Dirección</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                    <input type="text" class="form-control" value="{{ old('direccion') }}"
+                                        name="direccion" required>
+                                </div>
+                                @error('direccion')
+                                    <small class="text-danger">{{$message}}</small>
+                                @enderror
+                            </div>
                         </div>
-                    </form>
-                </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="telefono">Teléfono</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    <input type="text" class="form-control" value="{{ old('telefono') }}"
+                                        name="telefono" required>
+                                </div>
+                                @error('telefono')
+                                    <small class="text-danger">{{$message}}</small>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email">Correo</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="text" class="form-control" value="{{ old('email') }}" name="email"
+                                        required>
+                                </div>
+                                @error('email')
+                                    <small class="text-danger">{{$message}}</small>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nombre">Nombre del proveedor</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" value="{{ old('nombre') }}" name="nombre"
+                                        required>
+                                </div>
+                                @error('nombre')
+                                    <small class="text-danger">{{$message}}</small>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="celular">Celular</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+                                    <input type="text" class="form-control" value="{{ old('celular') }}" name="celular"
+                                        required>
+                                </div>
+                                @error('celular')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check me-1"></i> Registrar
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
+
 
    
     @foreach($proveedores as $proveedor)
-        <!-- Modal Ver Proveedor -->
+      <!-- Modal Ver Proveedor -->
 <div class="modal fade" id="verModal{{ $proveedor->id }}" tabindex="-1" aria-labelledby="verModalLabel{{ $proveedor->id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- más ancho -->
         <div class="modal-content border-0 shadow-lg">
             <!-- Encabezado -->
             <div class="modal-header bg-gradient-info">
                 <h5 class="modal-title text-white" id="verModalLabel{{ $proveedor->id }}">
-                    <i class="ni ni-zoom-split-in me-2"></i>Detalles del Proveedor
+                    <i class="fas fa-search-plus me-2"></i> Detalles del Proveedor
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
@@ -525,51 +528,72 @@
                 <div class="row g-3"> <!-- separación uniforme -->
                     <div class="col-md-6">
                         <div class="card shadow-none border mb-2">
-                            <div class="card-body p-2">
-                                <h6 class="text-primary fw-bold mb-1">Empresa</h6>
-                                <p class="mb-0">{{$proveedor->empresa}}</p>
+                            <div class="card-body p-2 d-flex align-items-center">
+                                <i class="fas fa-building text-primary me-2"></i>
+                                <div>
+                                    <h6 class="text-primary fw-bold mb-1">Empresa</h6>
+                                    <p class="mb-0">{{$proveedor->empresa}}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-6">
                         <div class="card shadow-none border mb-2">
-                            <div class="card-body p-2">
-                                <h6 class="text-primary fw-bold mb-1">Dirección</h6>
-                                <p class="mb-0">{{$proveedor->direccion}}</p>
+                            <div class="card-body p-2 d-flex align-items-center">
+                                <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                <div>
+                                    <h6 class="text-primary fw-bold mb-1">Dirección</h6>
+                                    <p class="mb-0">{{$proveedor->direccion}}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-6">
                         <div class="card shadow-none border mb-2">
-                            <div class="card-body p-2">
-                                <h6 class="text-primary fw-bold mb-1">Teléfono</h6>
-                                <p class="mb-0">{{$proveedor->telefono}}</p>
+                            <div class="card-body p-2 d-flex align-items-center">
+                                <i class="fas fa-phone text-primary me-2"></i>
+                                <div>
+                                    <h6 class="text-primary fw-bold mb-1">Teléfono</h6>
+                                    <p class="mb-0">{{$proveedor->telefono}}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-6">
                         <div class="card shadow-none border mb-2">
-                            <div class="card-body p-2">
-                                <h6 class="text-primary fw-bold mb-1">Correo</h6>
-                                <p class="mb-0">{{$proveedor->email}}</p>
+                            <div class="card-body p-2 d-flex align-items-center">
+                                <i class="fas fa-envelope text-primary me-2"></i>
+                                <div>
+                                    <h6 class="text-primary fw-bold mb-1">Correo</h6>
+                                    <p class="mb-0">{{$proveedor->email}}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <h6>Informacion del contacto</h6>
+
+                    <h6>Información del contacto</h6>
+
                     <div class="col-md-6">
                         <div class="card shadow-none border mb-2">
-                            <div class="card-body p-2">
-                                <h6 class="text-primary fw-bold mb-1">Contacto</h6>
-                                <p class="mb-0">{{$proveedor->nombre}}</p>
+                            <div class="card-body p-2 d-flex align-items-center">
+                                <i class="fas fa-user text-primary me-2"></i>
+                                <div>
+                                    <h6 class="text-primary fw-bold mb-1">Contacto</h6>
+                                    <p class="mb-0">{{$proveedor->nombre}}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-6">
                         <div class="card shadow-none border mb-2">
                             <div class="card-body p-2 d-flex align-items-center justify-content-between">
-                                <h6 class="text-primary fw-bold mb-0">Celular</h6>
+                                <h6 class="text-primary fw-bold mb-0"><i class="fas fa-mobile-alt me-1"></i> Celular</h6>
                                 <a href="https://wa.me/591{{$proveedor->celular}}" target="_blank" class="btn btn-sm bg-gradient-success">
-                                    <i class="ni ni-send me-1"></i> {{$proveedor->celular}}
+                                    <i class="fab fa-whatsapp me-1"></i> {{$proveedor->celular}}
                                 </a>
                             </div>
                         </div>
@@ -580,139 +604,172 @@
             <!-- Pie de modal -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                    <i class="fas fa-times me-1"></i> Cancelar
-                                </button>
-                <button type="button"class="btn bg-gradient-success text-white" data-bs-toggle="modal" data-bs-target="#editModal{{ $proveedor->id }}" title="Editar">
-                    <i class="fas fa-save me-1"></i> Actualizar
+                    <i class="fas fa-times me-1"></i> Cancelar
                 </button>
-
-              
-                 
+                <button type="button" class="btn bg-gradient-success text-white" data-bs-toggle="modal" data-bs-target="#editModal{{ $proveedor->id }}" title="Editar">
+                    <i class="fas fa-edit me-1"></i> Actualizar
+                </button>
             </div>
         </div>
     </div>
 </div>
 
 
+
         <!-- Modal Editar -->
-        <div class="modal fade" id="editModal{{ $proveedor->id }}" tabindex="-1" proveedor="dialog"
-            aria-labelledby="editModalLabel{{ $proveedor->id }}" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" proveedor="document">
-                <div class="modal-content border-0 shadow-lg">
-                    <div class="modal-header bg-gradient-success">
-                        <h5 class="modal-title text-white" id="editModalLabel{{ $proveedor->id }}">
-                            <i class="ni ni-ruler-pencil me-2"></i>Editar Proveedor
-                        </h5>
-                        <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form action="{{url('/admin/proveedores', $proveedor->id) }}" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="empresa">Empresa</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="ni ni-building"></i></span>
-                                            <input type="text" class="form-control" name="empresa"
-                                                value="{{ $proveedor->empresa }}" required>
-                                        </div>
-                                        @error('empresa')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
-                                    </div>
+<div class="modal fade" id="editModal{{ $proveedor->id }}" tabindex="-1" proveedor="dialog"
+    aria-labelledby="editModalLabel{{ $proveedor->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" proveedor="document">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-success">
+                <h5 class="modal-title text-white" id="editModalLabel{{ $proveedor->id }}">
+                    <i class="fas fa-pencil-alt me-2"></i> Editar Proveedor
+                </h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{url('/admin/proveedores', $proveedor->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="empresa">Empresa</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                    <input type="text" class="form-control" name="empresa"
+                                        value="{{ $proveedor->empresa }}" required>
                                 </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="direccion">Dirección</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="ni ni-pin-3"></i></span>
-                                            <input type="text" class="form-control" name="direccion"
-                                                value="{{ $proveedor->direccion }}" required>
-                                        </div>
-                                        @error('direccion')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="telefono">Teléfono</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="ni ni-mobile-button"></i></span>
-                                            <input type="text" class="form-control" value="{{ $proveedor->telefono }}"
-                                                name="telefono">
-                                        </div>
-                                        @error('telefono')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="email">Correo</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="ni ni-email-83"></i></span>
-                                            <input type="text" class="form-control" value="{{ $proveedor->email }}" name="email"
-                                                required>
-                                        </div>
-                                        @error('email')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="nombre">Nombre del Contacto</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="ni ni-single-02"></i></span>
-                                            <input type="text" class="form-control" value="{{ $proveedor->nombre }}"
-                                                name="nombre" required>
-                                        </div>
-                                        @error('nombre')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="celular">Celular</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="ni ni-mobile-button"></i></span>
-                                            <input type="text" class="form-control" value="{{ $proveedor->celular }}"
-                                                name="celular" required>
-                                        </div>
-                                        @error('celular')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-                                </div>
+                                @error('empresa')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                    <i class="fas fa-times me-1"></i> Cancelar
-                                </button>
-                            <button type="submit" class="btn bg-gradient-success text-white">
-                                    <i class="fas fa-save me-1"></i> Actualizar
-                                </button>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="direccion">Dirección</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                    <input type="text" class="form-control" name="direccion"
+                                        value="{{ $proveedor->direccion }}" required>
+                                </div>
+                                @error('direccion')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
                         </div>
-                    </form>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="telefono">Teléfono</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    <input type="text" class="form-control" value="{{ $proveedor->telefono }}"
+                                        name="telefono">
+                                </div>
+                                @error('telefono')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email">Correo</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="text" class="form-control" value="{{ $proveedor->email }}" name="email"
+                                        required>
+                                </div>
+                                @error('email')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nombre">Nombre del Contacto</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" value="{{ $proveedor->nombre }}"
+                                        name="nombre" required>
+                                </div>
+                                @error('nombre')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="celular">Celular</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+                                    <input type="text" class="form-control" value="{{ $proveedor->celular }}"
+                                        name="celular" required>
+                                </div>
+                                @error('celular')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+                <div class="modal-footer">
+                    
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn bg-gradient-success text-white">
+                        <i class="fas fa-save me-1"></i> Actualizar
+                    </button>
+                </div>
+            </form>
         </div>
+    </div>
+</div>
+
     @endforeach
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+            <script>
+                
+            $(document).ready(function() {
+                $('#proveedor-tabla').DataTable({
+                    pageLength: 5,
+                    lengthMenu: [5, 10, 25, 50],
+                    responsive: true,
+                    autoWidth: false,
+                    dom: '<"d-flex justify-content-between mb-3"lf>t<"d-flex justify-content-between mt-3"ip>', // Layout moderno
+                    language: {
+                        lengthMenu: "Mostrar _MENU_ registros por página",
+                        zeroRecords: "No se encontraron resultados",
+                        info: "Mostrando página _PAGE_ de _PAGES_",
+                        infoEmpty: "No hay registros disponibles",
+                        infoFiltered: "(filtrado de _MAX_ registros totales)",
+                        search: "🔍 Buscar:",
+                        paginate: {
+                            first: "<i class='bi bi-chevron-bar-left'></i>",
+                            last: "<i class='bi bi-chevron-bar-right'></i>",
+                            next: "<i class='bi bi-chevron-right'></i>",
+                            previous: "<i class='bi bi-chevron-left'></i>"
+                        }
+                    }
+                });
+                   });
+                   </script>
+
+
+
+
 @endsection
 
 @push('css')
@@ -806,39 +863,5 @@
 @endpush
 
 @push('js')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        $(document).ready(function () {
-
-
-            $('#proveedor-tabla').DataTable({
-                "pageLength": 10,
-                "responsive": true,
-                "autoWidth": false,
-                "language": {
-                    "lengthMenu": "Mostrar _MENU_ registros por página",
-                    "zeroRecords": "No se encontraron categorías",
-                    "info": "Mostrando página _PAGE_ de _PAGES_",
-                    "infoEmpty": "No hay categorías registradas",
-                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                    "search": "Buscar:",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
-                },
-                "dom": '<"row"<"col-md-6"l><"col-md-6"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
-                "initComplete": function () {
-                    $('.dataTables_filter input').addClass('form-control').attr('placeholder', 'Buscar categoría...');
-                    $('.dataTables_length select').addClass('form-select');
-                }
-            });
-
-
-
-
-        });
-    </script>
+    
 @endpush

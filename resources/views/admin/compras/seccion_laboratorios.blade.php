@@ -2,6 +2,7 @@
     <div class="card border-0 shadow-sm h-100">
         <div class="card-header bg-white border-bottom">
             <h6 class="mb-0 text-dark font-weight-bold">
+                
                 <i class="fas fa-info-circle text-primary me-2"></i>Información de Compra
             </h6>
         </div>
@@ -91,8 +92,10 @@
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="laboratoriosModalLabel"><i class="fas fa-hospital me-2"></i>Listado de
+            
+                <div class="modal-header bg-primary ">
+                   
+                <h5 class="modal-title fw-semibold text-white" id="laboratoriosModalLabel"><i class="fas fa-hospital me-2"></i>Listado de
                     Laboratorios</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>

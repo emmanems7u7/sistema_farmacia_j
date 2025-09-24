@@ -1,6 +1,14 @@
 @extends('layouts.argon')
 
 @section('content')
+
+
+     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script>
 
         // Agrega esto en tu sección de scripts
@@ -332,25 +340,33 @@
             });
 
             // Configuración DataTables
-            $('#mitabla, #mitabla2').DataTable({
-                "pageLength": 5,
-                "language": {
-                    "lengthMenu": "Mostrar _MENU_ registros por página",
-                    "zeroRecords": "No se encontraron resultados",
-                    "info": "Mostrando página _PAGE_ de _PAGES_",
-                    "infoEmpty": "No hay registros disponibles",
-                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                    "search": "Buscar:",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
+
+           
+                $('#mitabla, #mitabla2, #mitabla1').DataTable({
+                    pageLength: 5,
+                    lengthMenu: [5, 10, 25, 50],
+                    responsive: true,
+                    autoWidth: false,
+                    dom: '<"d-flex justify-content-between mb-3"lf>t<"d-flex justify-content-between mt-3"ip>', // Layout moderno
+                    language: {
+                        lengthMenu: "Mostrar _MENU_ registros por página",
+                        zeroRecords: "No se encontraron resultados",
+                        info: "Mostrando página _PAGE_ de _PAGES_",
+                        infoEmpty: "No hay registros disponibles",
+                        infoFiltered: "(filtrado de _MAX_ registros totales)",
+                        search: "🔍 Buscar:",
+                        paginate: {
+                            first: "<i class='bi bi-chevron-bar-left'></i>",
+                            last: "<i class='bi bi-chevron-bar-right'></i>",
+                            next: "<i class='bi bi-chevron-right'></i>",
+                            previous: "<i class='bi bi-chevron-left'></i>"
+                        }
                     }
-                },
-                "responsive": true,
-                "autoWidth": false
-            });
+                });
+
+
+
+          
 
             // Enfocar campo código al cargar
             $('#codigo').focus();
@@ -363,27 +379,27 @@
         <div class="row">
             <div class="col-12">
                 <!-- Card Principal - Diseño Mejorado -->
-                <div class="card shadow-lg border-0 rounded-lg" style="height: auto; min-height: 0;">
-                    <div class="card-header bg-white border-bottom py-3"> <!-- Reduje el padding vertical -->
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="d-flex align-items-center">
-                                    <div>
-                                        <h class="mb-0 text-dark font-weight-bold" style="font-size: 1.1rem;">Registrar
-                                            Nueva Compra</h4>
-                                    </div>
-                                </div>
-                                <div>
-                                    <a href="{{ route('admin.compras.index') }}" class="btn btn-outline-dark btn-sm py-1">
-                                        <!-- Reduje padding del botón -->
-                                        <i class="fas fa-list me-1"></i> Ver Historial
-                                    </a>
-                                </div>
+
+            <div class="card shadow-lg border-0 rounded-lg" style="height: auto; min-height: 0;">
+                <div class="card-header bg-white border-bottom py-3"> <!-- Reduje el padding vertical -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <h class="mb-0 text-dark font-weight-bold" style="font-size: 1.1rem;">Registrar Nueva Compra</h4>
                             </div>
+                        </div>
+                        <div>
+                           <a href="{{ route('admin.compras.index') }}" class="btn btn-outline-dark btn-sm py-1">
+                                <i class="fas fa-list me-1"></i> Ver Historial
+                            </a>
                         </div>
                     </div>
                 </div>
+            </div>
 
+
+
+                
 
                 <hr>
 

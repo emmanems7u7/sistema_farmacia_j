@@ -40,9 +40,13 @@ class LaboratorioController extends Controller
         // Validación de los datos de entrada
         $request->validate([
 
-            'nombre' => 'required',
-            'telefono' => 'required',
-            'direccion' => 'required', //
+        'nombre' => 'required|string|max:255',
+        'telefono' => 'required|string|max:20',
+        'direccion' => 'required|string|max:255',
+        'nit' => 'nullable|string|max:20',
+        'correo' => 'nullable|email|max:255',
+        'nombre_proveedor' => 'nullable|string|max:255',
+        'celular' => 'nullable|string|max:20',
         ]);
 
         // Crear un nuevo laboratorio
@@ -51,6 +55,11 @@ class LaboratorioController extends Controller
         $laboratorio->telefono = $request->telefono;
         $laboratorio->sucursal_id = Auth::user()->sucursal_id;
         $laboratorio->direccion = $request->direccion;
+        $laboratorio->nit = $request->nit;
+        $laboratorio->correo = $request->correo;
+        $laboratorio->nombre_proveedor = $request->nombre_proveedor;
+        $laboratorio->celular = $request->celular;
+        
         $laboratorio->save();
 
         $laboratorio->assignRole($request->role);//asignar un rol
@@ -85,19 +94,30 @@ class LaboratorioController extends Controller
         //return response()->json($datos);
         // Validación de los datos de entrada
         $request->validate([
-            'nombre' => 'required', // El nombre debe ser único, excepto para la categoría actual
-            'telefono' => 'required',
-            'direccion' => 'required',
+            
+
+             'nombre' => 'required|string|max:255',
+        'telefono' => 'required|string|max:20',
+        'direccion' => 'required|string|max:255',
+        'nit' => 'nullable|string|max:20',
+        'correo' => 'nullable|email|max:255',
+        'nombre_proveedor' => 'nullable|string|max:255',
+        'celular' => 'nullable|string|max:20',
         ]);
 
         // Buscar el laboratorio por ID
         $laboratorio = Laboratorio::find($id);
 
         // Actualizar los datos básicos
-        $laboratorio->nombre = $request->nombre;
-        $laboratorio->telefono = $request->telefono;
-        $laboratorio->sucursal_id = Auth::user()->sucursal_id;
-        $laboratorio->direccion = $request->direccion;
+
+ $laboratorio->nombre = $request->nombre;
+    $laboratorio->telefono = $request->telefono;
+    $laboratorio->sucursal_id = Auth::user()->sucursal_id;
+    $laboratorio->direccion = $request->direccion;
+    $laboratorio->nit = $request->nit;
+    $laboratorio->correo = $request->correo;
+    $laboratorio->nombre_proveedor = $request->nombre_proveedor;
+    $laboratorio->celular = $request->celular;
 
         $laboratorio->save();
         // Redirigir al índice con un mensaje de éxito
@@ -230,31 +250,5 @@ class LaboratorioController extends Controller
         );
     }
 
-    private function generarCSV($laboratorios)
-    {
-        $data = $laboratorios->map(function ($laboratorio) {
-            return [
-                'Nombre' => $laboratorio->nombre,
-                'Teléfono' => $laboratorio->telefono,
-                'Dirección' => $laboratorio->direccion
-                // Agrega más campos si es necesario
-            ];
-        });
-
-        return Excel::download(
-            new class ($data) implements FromCollection {
-            private $data;
-            public function __construct($data)
-            {
-                $this->data = $data;
-            }
-            public function collection()
-            {
-                return $this->data;
-            }
-            },
-            'reporte_laboratorios_' . now()->format('YmdHis') . '.csv',
-            \Maatwebsite\Excel\Excel::CSV
-        );
-    }
+    
 }

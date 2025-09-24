@@ -564,11 +564,7 @@ class CompraController extends Controller
         );
     }
 
-    private function generarCSV($compras): BinaryFileResponse
-    {
-        return $this->generarExcel($compras)
-            ->setContentDisposition('attachment', 'reporte_compras_' . now()->format('YmdHis') . '.csv');
-    }
+   
 
 
 

@@ -25,10 +25,11 @@
 <div class="modal fade" id="productosModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title fw-semibold">
-                    <i class="fas fa-boxes me-2"></i>Listado de Productos
+            <div class="modal-header bg-primary ">
+                <h5 class="modal-title fw-semibold text-white">
+                    <i class="fas fa-boxes me-2"></i> Listado de Productos
                 </h5>
+
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>

@@ -24,19 +24,20 @@
                                 <div class="d-flex align-items-start">
                                     <!-- Icono con efecto -->
                                     <div class="icon-container mr-4">
-                                        <div class="icon bg-gradient-orange text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                                            style="width: 3.5rem; height: 3.5rem;">
-                                            <i class="ni ni-box-2 fs-3"></i>
-                                        </div>
-                                    </div>
+    <div class="icon bg-gradient-orange text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+        style="width: 3.5rem; height: 3.5rem;">
+        <i class="fas fa-boxes fs-3"></i>
+    </div>
+</div>
 
-                                    <!-- Texto con mejor jerarquía -->
+
+                                    <!-- PRODUCTOS-->
                                     <div class="flex-grow-1">
                                         <h3 class="h5 mb-2 text-gray-800 font-weight-bold">Gestión de Productos</h3>
                                         <div class="d-flex flex-wrap align-items-center stats-container">
                                             <div class="stat-item mr-4 mb-2 mb-md-0">
                                                 <span class="badge badge-light text-orange">
-                                                    <i class="fas fa-cubes mr-1"></i>
+                                                    
                                                     <span class="font-weight-bold">{{ count($productos) }}</span> productos
                                                     registrados
                                                 </span>

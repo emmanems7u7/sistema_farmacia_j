@@ -17,8 +17,8 @@
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
 
 <!-- Nucleo Icons -->
-<link href="{{ asset('argon/css/nucleo-icons.css') }}" rel="stylesheet">
-<link href="{{ asset('argon/css/nucleo-svg.css') }}" rel="stylesheet">
+
+
 
     <!-- CSS Files -->
     <link id="pagestyle" href="{{ asset('argon/css/argon-dashboard.css?v=2.1.0')  }}" rel="stylesheet" />
@@ -30,10 +30,10 @@
 
 
 
+<!-- Reemplaza el kit por CDN oficial -->
 
 
-
-
+<!-- Nucleo Icons -->
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -41,9 +41,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 
-
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
 
 
