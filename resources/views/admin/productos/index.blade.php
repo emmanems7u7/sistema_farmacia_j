@@ -881,7 +881,7 @@
                                                                     <input type="number" step="0.01"
                                                                         class="form-control border-primary" name="precio_compra"
                                                                         value="{{ $lote ? $lote->precio_compra : '' }}"
-                                                                        required>
+                                                                        >
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -899,7 +899,7 @@
                                                                     </div>
                                                                     <input type="number" step="0.01"
                                                                         class="form-control border-primary" name="precio_venta"
-                                                                        value="{{ $lote ? $lote->precio_venta : '' }}" required>
+                                                                        value="{{ $lote ? $lote->precio_venta : '' }}" >
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -929,7 +929,7 @@
                                                                 <input type="date" class="form-control border-primary"
                                                                     name="fecha_ingreso"
                                                                     value="{{ $lote ? \Carbon\Carbon::parse($lote->fecha_ingreso)->format('Y-m-d') : '' }}"
-                                                                    required>
+                                                                    >
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
@@ -955,7 +955,7 @@
                                                                 </label>
                                                                 <input type="number" class="form-control border-primary"
                                                                     name="cantidad" value="{{ $lote ? $lote->cantidad : '' }}"
-                                                                    required>
+                                                                    required >
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">

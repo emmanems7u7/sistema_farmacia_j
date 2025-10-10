@@ -544,8 +544,11 @@
 </div>
 
 
-
 <!-- Modal Ver Laboratorio -->
+
+
+
+@foreach($laboratorios as $laboratorio)
 <div class="modal fade" id="verModal{{ $laboratorio->id }}" tabindex="-1" aria-labelledby="verModalLabel{{ $laboratorio->id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- más ancho -->
         <div class="modal-content border-0 shadow-lg">
@@ -670,7 +673,7 @@
     </div>
 </div>
 
-
+@endforeach
         <!-- Modales de Edición (generados dinámicamente) -->
         @foreach($laboratorios as $laboratorio)
         

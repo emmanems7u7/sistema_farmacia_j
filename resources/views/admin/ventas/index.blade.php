@@ -227,29 +227,45 @@
                                             <td class="align-middle">
 
                                             
-                                                <button class="btn btn-sm btn-outline-primary toggle-details"
-                                                    data-target="#details-{{ $venta->id }}">
-                                                    <i class="fas fa-chevron-down mr-1"></i>
-                                                    Productos ({{ count($venta->detallesVenta) }})
-                                                </button>
-                                              <div id="details-{{ $venta->id }}" class="details-content" style="display: none;">
-                                                <div class="mt-3 bg-soft-info p-3 rounded">
-                                                    <table class="table table-sm" style="font-size: 0.85rem;">
-                                                        <thead class="bg-gradient-primary  text-black">
-                                                            <tr>
-                                                                <th style="padding: 0.3rem;">Producto</th>
-                                                                <th class="text-center" style="padding: 0.3rem;">Cantidad</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @foreach($venta->detallesVenta as $detalle)
-                                                                <tr>
-                                                                    <td style="padding: 0.3rem;">{{ $detalle->producto->nombre }}</td>
-                                                                    <td class="text-center" style="padding: 0.3rem;">{{ $detalle->cantidad }}</td>
-                                                                </tr>
-                                                            @endforeach
-                                                        </tbody>
-                                                    </table>
+                                               <button type="button" class="btn btn-sm btn-outline-primary"
+        data-bs-toggle="collapse"
+        data-bs-target="#details-{{ $venta->id }}"
+        aria-expanded="false"
+        aria-controls="details-{{ $venta->id }}">
+    <i class="fas fa-chevron-down mr-1"></i>
+    Productos ({{ $venta->detallesVenta->groupBy('producto_id')->count() }})
+</button>
+
+<div id="details-{{ $venta->id }}" class="collapse mt-3 bg-soft-info p-3 rounded">
+    @php
+        // Agrupar los detalles por producto y sumar cantidades
+        $detallesAgrupados = $venta->detallesVenta->groupBy('producto_id')->map(function($items) {
+            return [
+                'producto' => $items->first()->producto,
+                'cantidad' => $items->sum('cantidad')
+            ];
+        });
+    @endphp
+
+    <table class="table table-sm" style="font-size: 0.85rem;">
+        <thead class="bg-gradient-primary text-black">
+            <tr>
+                <th style="padding: 0.3rem;">Producto</th>
+                <th class="text-center" style="padding: 0.3rem;">Cantidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($detallesAgrupados as $detalle)
+                <tr>
+                    <td style="padding: 0.3rem;">{{ $detalle['producto']->nombre }}</td>
+                    <td class="text-center" style="padding: 0.3rem;">{{ $detalle['cantidad'] }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+
+
                                                 </div>
                                             </div>
 
@@ -268,7 +284,15 @@
                                                     </a>
 
 
+                                                    <a href="{{ url('/admin/ventas/pdf/' . $venta->id) }}" target="_blank"
+                                                    class="btn btn-sm btn-outline-primary mx-1 d-flex align-items-center justify-content-center"
+                                                    style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
+                                                    title="Imprimir comprobante">
+                                                        <i class="fas fa-print"></i>
+                                                    </a>
 
+
+                                                    
 
 
                                                     <form action="{{ route('admin.ventas.destroy', $venta->id) }}" method="POST"

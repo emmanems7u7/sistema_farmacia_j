@@ -134,9 +134,7 @@ class CompraController extends Controller
                     'producto_id' => $tmp_compra->producto_id
                 ]);
 
-                // SOLO actualizar stock en el lote 
-               
-                Lote::where('id', $lote_id)->increment('cantidad', $lote->cantidad);
+                
 
             }
 

@@ -184,26 +184,26 @@ $fecha_formateada = str_replace(array_keys($meses), array_values($meses), $fecha
     </thead>
     <tbody>
         @php
-        $contador = 1;
-        $subtotal = 0;
         $suma_cantidad = 0;
         $suma_subtotal = 0;
         @endphp
 
         @foreach($venta->detallesVenta as $detalle)
         @php
-        // Obtenemos el lote más reciente para este producto
-        $lote = $detalle->producto->lotes()->orderBy('created_at', 'desc')->first();
-        
-        // Usamos el precio del lote si existe, sino del producto
-        $precio_unitario = $lote ? $lote->precio_venta : $detalle->producto->precio_venta;
+        // USAR EL PRECIO DEL LOTE ESPECÍFICO (ya que tienes lote_id)
+        $precio_unitario = $detalle->lote->precio_venta ?? $detalle->producto->precio_venta;
         $subtotal = $detalle->cantidad * $precio_unitario;
         $suma_subtotal += $subtotal;
         $suma_cantidad += $detalle->cantidad;
         @endphp
         <tr>
             <td class="item-qty">{{$detalle->cantidad}}</td>
-            <td class="item-desc">{{$detalle->producto->nombre}}</td>
+            <td class="item-desc">
+                {{$detalle->producto->nombre}}
+                @if($detalle->lote)
+                <br><small>Lote: {{$detalle->lote->numero_lote}}</small>
+                @endif
+            </td>
             <td class="item-price">Bs {{number_format($precio_unitario, 2, '.', ',')}}</td>
             <td class="item-total">Bs {{number_format($subtotal, 2, '.', ',')}}</td>
         </tr>
@@ -220,10 +220,9 @@ $fecha_formateada = str_replace(array_keys($meses), array_values($meses), $fecha
 
 <!-- Información de pago -->
 <div class="payment-info">
-    <div class="text-bold">Total a pagar: Bs {{number_format($suma_subtotal, 2, '.', ',')}}</div>
     
-
-<div>Son: {{ $literal }}</div>
+    <div class="text-bold">Total a pagar: Bs {{number_format($suma_subtotal, 2, '.', ',')}}</div>
+    <div>Son: {{ $literal }}</div>
 
 </div>
 

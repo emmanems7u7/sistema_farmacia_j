@@ -349,66 +349,79 @@ $(document).ready(function() {
 
 
                     <!-- Tabla de productos -->
-                    <div class="table-responsive">
-                        <table class="table table-sm table-hover align-middle" style="font-size: 0.85rem;">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="text-center px-1" style="width: 3%;">#</th>
-                                    <th class="text-center px-1" style="width: 8%;">Código</th>
-                                    <th class="text-center px-1" style="width: 5%;">Cant.</th>
-                                    <th class="px-1" style="width: 35%;">Nombre</th>
-                                    <th class="text-end px-1" style="width: 10%;">Unit.</th>
-                                    <th class="text-end px-1" style="width: 12%;">Subtotal</th>
-                                    <th class="text-center px-1" style="width: 4%;"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php $cont = 1; $total_cantidad = 0; $total_venta = 0;?>
-                                @foreach($tmp_ventas as $tmp_venta)
-                                <tr>
-                                    <td class="text-center">{{$cont++}}</td>
-                                    <td class="text-center small">{{$tmp_venta->producto->codigo}}</td>
-                                    <td class="text-center">{{$tmp_venta->cantidad}}</td>
-                                    <td class="small text-truncate" style="max-width: 200px;" title="{{$tmp_venta->producto->nombre}}">
-                                        {{$tmp_venta->producto->nombre}}
-                                    </td>
-                                    @php
-                                        $lote = \App\Models\Lote::where('producto_id', $tmp_venta->producto_id)
-                                                                ->latest('id')
-                                                                ->first();
-                                        $precioVenta = $lote->precio_venta ?? 0;
-                                        $costo = $tmp_venta->cantidad * $precioVenta;
-                                    @endphp
-                                    <td class="text-end">Bs {{ number_format($precioVenta, 2) }}</td>
-                                    <td class="text-end">Bs {{ number_format($costo, 2) }}</td>
-                                    <td class="text-center">
-                                        <button type="button" class="btn btn-sm btn-outline-danger border-0 py-0 px-2 delete-btn" data-id="{{$tmp_venta->id}}">
-                                            
-                                             <i class="fas fa-trash-alt" style="font-size: 0.75rem;"></i>
-                                        </button>
+                    <!-- Tabla de productos -->
+<div class="table-responsive">
+    <table class="table table-sm table-hover align-middle" style="font-size: 0.85rem;">
+        <thead class="table-light">
+            <tr>
+                <th class="text-center px-1" style="width: 3%;">#</th>
+                <th class="text-center px-1" style="width: 8%;">Código</th>
+                <th class="text-center px-1" style="width: 5%;">Cant.</th>
+                <th class="px-1" style="width: 35%;">Nombre</th>
+                <th class="text-end px-1" style="width: 10%;">Unit.</th>
+                <th class="text-end px-1" style="width: 12%;">Subtotal</th>
+                <th class="text-center px-1" style="width: 4%;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php $cont = 1; $total_cantidad = 0; $total_venta = 0;?>
+            @foreach($tmp_ventas as $tmp_venta)
+                @php
+                    // Obtener los lotes disponibles para el producto ordenados por fecha de ingreso (PEPS)
+                    $lotes = \App\Models\Lote::where('producto_id', $tmp_venta->producto_id)
+                                              ->where('cantidad', '>', 0)
+                                              ->orderBy('fecha_ingreso', 'asc')
+                                              ->get();
 
-                                                           
+                    $cantidad_restante = $tmp_venta->cantidad;
+                @endphp
 
+                @foreach($lotes as $lote)
+                    @if($cantidad_restante <= 0)
+                        @break
+                    @endif
 
-                                    </td>
-                                </tr>
-                                @php
-                                $total_cantidad += $tmp_venta->cantidad;
-                                $total_venta += $costo;
-                                @endphp
-                                @endforeach
-                            </tbody>
-                            <tfoot class="table-light">
-                                <tr>
-                                    <th colspan="2" class="text-end small">TOTAL</th>
-                                    <th class="text-center small">{{$total_cantidad}}</th>
-                                    <th colspan="2" class="text-end small">TOTAL VENTA</th>
-                                    <th class="text-center text-primary small">Bs {{number_format($total_venta, 2)}}</th>
-                                    <th></th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
+                    @php
+                        $cantidad_a_mostrar = min($cantidad_restante, $lote->cantidad);
+                        $subtotal = $cantidad_a_mostrar * $lote->precio_venta;
+                        $cantidad_restante -= $cantidad_a_mostrar;
+                    @endphp
+
+                    <tr>
+                        <td class="text-center">{{$cont++}}</td>
+                        <td class="text-center small">{{$tmp_venta->producto->codigo}}</td>
+                        <td class="text-center">{{$cantidad_a_mostrar}}</td>
+                        <td class="small text-truncate" style="max-width: 200px;" title="{{$tmp_venta->producto->nombre}}">
+                            {{$tmp_venta->producto->nombre}} (Lote: {{$lote->numero_lote}})
+                        </td>
+                        <td class="text-end">Bs {{ number_format($lote->precio_venta, 2) }}</td>
+                        <td class="text-end">Bs {{ number_format($subtotal, 2) }}</td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-sm btn-outline-danger border-0 py-0 px-2 delete-btn" data-id="{{$tmp_venta->id}}">
+                                <i class="fas fa-trash-alt" style="font-size: 0.75rem;"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                    @php
+                        $total_cantidad += $cantidad_a_mostrar;
+                        $total_venta += $subtotal;
+                    @endphp
+                @endforeach
+            @endforeach
+        </tbody>
+        <tfoot class="table-light">
+            <tr>
+                <th colspan="2" class="text-end small">TOTAL</th>
+                <th class="text-center small">{{$total_cantidad}}</th>
+                <th colspan="2" class="text-end small">TOTAL VENTA</th>
+                <th class="text-center text-primary small">Bs {{number_format($total_venta, 2)}}</th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
                 </div>
             </div>
         </div>
@@ -419,7 +432,7 @@ $(document).ready(function() {
                 
 
                 <div class="card-header bg-white border-bottom">
-                                        <h6 class="mb-0 text-dark font-weight-bold">
+                                        <h6 class="mb-0 text-white font-weight-bold">
                                             <i class="fas fa-user-tag me-2"></i>Datos del Cliente
                                         </h6>
                                     </div>
@@ -557,16 +570,31 @@ $(document).ready(function() {
                                         @if($producto->stock <= 0) 0 STOCK @else {{ $producto->stock }} @endif
                                     </span>
                                 </td>
-                                @php
-                                    $lote = $producto->lotes->sortByDesc('id')->first();
-                                @endphp
-                                <td class="text-end text-xs font-weight-bold text-primary">
-                                    @if($lote)
-                                        Bs {{ number_format($lote->precio_venta, 2) }}
-                                    @else
-                                        <span class="text-muted">N/A</span>
-                                    @endif
-                                </td>
+
+
+@php
+    // ANTES: Tomaba el último lote
+    // $lote = $producto->lotes->sortByDesc('id')->first();
+    
+    // AHORA: Toma el primer lote disponible (más antiguo primero - PEPS)
+    $lote = $producto->lotes()
+                     ->where('cantidad', '>', 0)
+                     ->orderBy('fecha_ingreso', 'asc')
+                     ->orderBy('id', 'asc')
+                     ->first();
+@endphp
+<td class="text-end text-xs font-weight-bold text-primary">
+    @if($lote)
+        Bs {{ number_format($lote->precio_venta, 2) }}
+    @else
+        <span class="text-muted">N/A</span>
+    @endif
+</td>
+
+
+
+
+                        
                                 <td class="text-xs font-weight-normal">
                                     @if($lote && $lote->fecha_vencimiento)
                                         <span class="badge 
@@ -668,7 +696,7 @@ $(document).ready(function() {
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="clientecrearModalLabel">Registrar cliente</h5>
+                <h5 class="modal-title text-white" id="clientecrearModalLabel">Registrar cliente</h5>
                 <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

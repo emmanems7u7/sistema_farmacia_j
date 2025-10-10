@@ -49,7 +49,7 @@ class ProductoController extends Controller
             'nombre' => 'required',
             'stock_minimo' => 'required',
             'stock_maximo' => 'required',
-            'descripcion' => 'required',
+            'descripcion' => 'nullable',
             'imagen' => 'required|image|mimes:jpg,jpeg,png',
         ]);
 

@@ -202,8 +202,15 @@
                                                         <i class="fas fa-eye"></i>
                                                     </a>
 
+                                                    <a href="{{ url('/admin/compras/pdf/' . $compra->id) }}" target="_blank"
+                                                    class="btn btn-sm btn-outline-primary mx-1 d-flex align-items-center justify-content-center"
+                                                    style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
+                                                    title="Imprimir comprobante">
+                                                        <i class="fas fa-print"></i>
+                                                    </a>
 
 
+                                                    
 
 
                                                     <form action="{{ route('admin.compras.destroy', $compra->id) }}"

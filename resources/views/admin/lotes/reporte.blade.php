@@ -44,7 +44,7 @@
         }
         .product-name {
             font-size: 10pt;
-            color: #2c3e50;
+            color: #bdc1c5ff;
         }
         .product-code {
             font-size: 9pt;

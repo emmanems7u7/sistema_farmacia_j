@@ -15,7 +15,7 @@ class Venta extends Model
         'cliente_id',
         'usuario_id',
         'sucursal_id',
-        // otros campos...
+       
     ];
 
 

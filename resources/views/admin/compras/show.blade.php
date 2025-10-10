@@ -30,14 +30,16 @@
                 <div class="row mb-3">
                     <div class="col-md-8">
                         <div class="card ">
-                            
-                            <div class="modal-header bg-gradient-info text-white py-3 px-4">
-                                <div class="d-flex align-items-center w-100">
-                                    <i class="fas fa-boxes fs-3 me-2"></i>
-                                    <h5 class="modal-title text-white mb-0">Productos Comprados</h5>
+                            <div class="card border-info mb-3 shadow-sm rounded-4" style="overflow: hidden;">
+                                <div class="modal-header bg-gradient-info text-white py-3 px-4">
+                                    <div class="d-flex align-items-center w-100">
+                                        <i class="fas fa-boxes fs-3 me-2"></i>
+                                        <h5 class="modal-title text-white mb-0">Productos Comprados</h5>
+                                    </div>
                                 </div>
-                            </div>
 
+
+                           
 
 
                             <div class="card-body p-0">
@@ -101,10 +103,11 @@
                                 </div>
                             </div>
                         </div>
+                        </div>
                     </div>
                     <!-- Columna derecha (Fecha y detalles de compra) -->
                     <div class="col-md-4">
-                        <div class="card border-info mb-3">
+                        <div class="card border-info mb-3 shadow-sm rounded-4" style="overflow: hidden;">
                             <div class="modal-header bg-gradient-info text-white py-3 px-4">
                                 <div class="d-flex align-items-center w-100">
                                     <i class="fas fa-calendar-alt fs-3 me-2"></i>
@@ -112,7 +115,7 @@
                                 </div>
                             </div>
 
-                            <div class="card-body">
+                            <div class="card-body" style="background: #f9f9f9;">
                                 <div class="form-group mb-3">
                                     <label for="fecha" class="form-label">Fecha</label>
                                     <input type="date" class="form-control bg-light" value="{{$compra->fecha}}" disabled>
@@ -120,11 +123,9 @@
 
                                 <div class="form-group mb-3">
                                     <label for="comprobante{{$compra->id}}" class="form-label">Comprobante</label>
-                                    <select name="comprobante" id="comprobante{{$compra->id}}" class="form-control bg-light"
-                                        disabled>
+                                    <select name="comprobante" id="comprobante{{$compra->id}}" class="form-control bg-light" disabled>
                                         <option value="FACTURA" {{ trim($compra->comprobante) == 'FACTURA' ? 'selected' : '' }}>FACTURA</option>
-                                        <option value="RECIBO" {{ trim($compra->comprobante) == 'RECIBO' ? 'selected' : '' }}>
-                                            RECIBO</option>
+                                        <option value="RECIBO" {{ trim($compra->comprobante) == 'RECIBO' ? 'selected' : '' }}>RECIBO</option>
                                     </select>
                                 </div>
 
@@ -133,18 +134,10 @@
                                     <input type="text" class="form-control text-center fw-bold text-danger bg-light"
                                         value="Bs{{number_format($total_compra, 2)}}" disabled>
                                 </div>
-
-                                <a href="{{ url('/admin/compras/' . $compra->id . '/edit') }}"
-                                    class="btn btn-sm btn-icon   bg-gradient-success  mx-3" title="Editar">
-                                    <i class="fas fa-pencil-alt"></i>Editar
-                                </a>
-                                
-
                             </div>
-
                         </div>
-
                     </div>
+
                 </div>
             </div>
 

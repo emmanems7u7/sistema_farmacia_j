@@ -96,89 +96,92 @@ class VentaController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        // Validación de los datos de entrada
-        $request->validate([
-            'fecha' => 'required',
-            'precio_total' => 'required',
-        ]);
+{
+    // Validación de los datos de entrada
+    $request->validate([
+        'fecha' => 'required',
+        'precio_total' => 'required',
+    ]);
 
-        // Iniciar transacción para asegurar integridad de datos
-        DB::beginTransaction();
+    // Iniciar transacción para asegurar integridad de datos
+    DB::beginTransaction();
 
-        try {
-            // Crear la venta principal
-            $ventas = new Venta();
-            $ventas->fecha = $request->fecha;
-            $ventas->precio_total = $request->precio_total;
-            $ventas->sucursal_id = Auth::user()->sucursal_id;
-            $ventas->cliente_id = $request->cliente_id;
-            $ventas->save();
+    try {
+        // Crear la venta principal
+        $ventas = new Venta();
+        $ventas->fecha = $request->fecha;
+        $ventas->precio_total = $request->precio_total;
+        $ventas->sucursal_id = Auth::user()->sucursal_id;
+        $ventas->cliente_id = $request->cliente_id;
+        $ventas->save();
 
-            $session_id = session()->getId();
+        $session_id = session()->getId();
 
-            // Registrar en la caja 
-            $caja_id = Caja::whereNull('fecha_cierre')->first();
-            $movimiento = new MovimientoCaja();
-            $movimiento->tipo = "INGRESO";
-            $movimiento->monto = $request->precio_total;
-            $movimiento->descripcion = "venta de productos";
-            $movimiento->fecha_movimiento = $request->fecha_movimiento ?? now();
-            $movimiento->caja_id = $caja_id->id;
-            $movimiento->save();
+        // Registrar en la caja 
+        $caja_id = Caja::whereNull('fecha_cierre')->first();
+        $movimiento = new MovimientoCaja();
+        $movimiento->tipo = "INGRESO";
+        $movimiento->monto = $request->precio_total;
+        $movimiento->descripcion = "venta de productos";
+        $movimiento->fecha_movimiento = $request->fecha_movimiento ?? now();
+        $movimiento->caja_id = $caja_id->id;
+        $movimiento->save();
 
-            // Procesar productos temporales
-            $tmp_ventas = TmpVenta::where('session_id', $session_id)->get();
+        // Procesar productos temporales
+        $tmp_ventas = TmpVenta::where('session_id', $session_id)->get();
 
-            foreach ($tmp_ventas as $tmp_venta) {
-                // Crear detalle venta (manteniendo tu lógica actual)
+        foreach ($tmp_ventas as $tmp_venta) {
+            // PEPS para descontar de múltiples lotes
+            $cantidad_restante = $tmp_venta->cantidad;
+
+            // Obtener lotes ordenados por fecha de ingreso (más antiguos primero)
+            $lotes = Lote::where('producto_id', $tmp_venta->producto_id)
+                ->where('cantidad', '>', 0)
+                ->orderBy('fecha_ingreso', 'asc')
+                ->get();
+
+            // Crear un detalle de venta POR CADA LOTE utilizado
+            foreach ($lotes as $lote) {
+                if ($cantidad_restante <= 0)
+                    break;
+
+                $cantidad_a_descontar = min($lote->cantidad, $cantidad_restante);
+
+                // CREAR DETALLE VENTA POR CADA LOTE
                 $detalle_venta = new DetalleVenta();
-                $detalle_venta->cantidad = $tmp_venta->cantidad;
+                $detalle_venta->cantidad = $cantidad_a_descontar;
                 $detalle_venta->venta_id = $ventas->id;
                 $detalle_venta->producto_id = $tmp_venta->producto_id;
+                $detalle_venta->lote_id = $lote->id; // ← NUEVO: Guardar el lote_id
                 $detalle_venta->save();
 
-                // PEPS para descontar de múltiples lotes
-                $cantidad_restante = $tmp_venta->cantidad;
+                // Descontar del lote
+                $lote->cantidad -= $cantidad_a_descontar;
+                $lote->save();
 
-                // Obtener lotes ordenados por fecha de ingreso (más antiguos primero)
-                $lotes = Lote::where('producto_id', $tmp_venta->producto_id)
-                    ->where('cantidad', '>', 0)
-                    ->orderBy('fecha_ingreso', 'asc')
-                    ->get();
-
-                foreach ($lotes as $lote) {
-                    if ($cantidad_restante <= 0)
-                        break;
-
-                    $cantidad_a_descontar = min($lote->cantidad, $cantidad_restante);
-
-                    $lote->cantidad -= $cantidad_a_descontar;
-                    $lote->save();
-
-                    $cantidad_restante -= $cantidad_a_descontar;
-                }
-
-                // Validar si hay suficiente stock
-                if ($cantidad_restante > 0) {
-                    throw new \Exception("No hay suficiente stock para el producto: " . $tmp_venta->producto->nombre);
-                }
+                $cantidad_restante -= $cantidad_a_descontar;
             }
 
-            // Eliminar temporales
-            TmpVenta::where('session_id', $session_id)->delete();
-
-            DB::commit();
-
-            return redirect()->route('admin.ventas.index')
-                ->with('status', 'Se registró la venta correctamente');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()
-                ->with('status', 'Error al registrar la venta: ' . $e->getMessage());
+            // Validar si hay suficiente stock
+            if ($cantidad_restante > 0) {
+                throw new \Exception("No hay suficiente stock para el producto: " . $tmp_venta->producto->nombre);
+            }
         }
+
+        // Eliminar temporales
+        TmpVenta::where('session_id', $session_id)->delete();
+
+        DB::commit();
+
+        return redirect()->route('admin.ventas.index')
+            ->with('status', 'Se registró la venta correctamente');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->back()
+            ->with('status', 'Error al registrar la venta: ' . $e->getMessage());
     }
+}
 
 
 
@@ -197,6 +200,9 @@ class VentaController extends Controller
             $precio = $lote ? $lote->precio_venta : $detalle->producto->precio_venta;
             return $detalle->cantidad * $precio;
         });
+
+
+        
 
         // Convertir a letras (variable ya contiene el string)
         $literal = $this->numerosALetrasConDecimales($total);
@@ -234,8 +240,11 @@ class VentaController extends Controller
             ['name' => 'Ver Venta', 'url' => route('admin.ventas.index')],
 
         ];
-        $venta = Venta::with('detallesVenta', 'cliente')->findOrfail($id);
+      //  $venta = Venta::with('detallesVenta', 'cliente')->findOrfail($id);
+    
+        $venta = Venta::with(['detallesVenta.producto', 'detallesVenta.lote', 'cliente'])->findOrfail($id);
         return view('admin.ventas.show', compact('breadcrumb', 'venta'));
+        
 
     }
 

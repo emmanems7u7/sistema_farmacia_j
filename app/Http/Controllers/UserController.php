@@ -60,12 +60,16 @@ class UserController extends Controller
         session(['form_action' => 'store']);
 
         $user = $this->userRepository->CrearUsuario($request);
-
+ // 🔹 Asignar automáticamente la sucursal principal
+    $user->sucursal_id = 1;
+    $user->save();
         $user->assignRole($request->input('role'));
         // Redirigir al usuario con un mensaje de éxito
         return redirect()->route('users.index')->with('success', 'Usuario registrado exitosamente!');
     }
 
+
+   
 
     // Mostrar la información de un usuario
     public function show(User $user)

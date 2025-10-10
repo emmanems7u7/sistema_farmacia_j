@@ -154,7 +154,7 @@
                                             </td>
                                             <td class="text-center pe-3">
                                                 <div class="d-flex justify-content-center">
-                                                    <a href="{{ route('admin.productos.create', $producto->id) }}"
+                                                    <a href="{{ route('admin.compras.create', $producto->id) }}"
                                                         class="btn btn-xs btn-primary mx-1" data-bs-toggle="tooltip"
                                                         title="Reabastecer">
                                                         <i class="fas fa-warehouse"></i>
@@ -169,25 +169,7 @@
                         </div>
                     </div>
 
-                    <div class="card-footer bg-light py-2">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="legend mb-2 mb-md-0">
-                                <span class="badge bg-danger-soft text-danger me-2">
-                                    <i class="fas fa-fire me-1"></i> Crítico (-5)
-                                </span>
-                                <span class="badge bg-warning-soft text-warning me-2">
-                                    <i class="fas fa-exclamation-triangle me-1"></i> Advertencia (-10)
-                                </span>
-                                <span class="badge bg-info-soft text-info me-2">
-                                    <i class="fas fa-info-circle me-1"></i> Precaución (-15)
-                                </span>
-                                
-                            </div>
-                            <div>
-                                {{ $productos->withQueryString()->links() }}
-                            </div>
-                        </div>
-                    </div>
+                   
                 </div>
             </div>
         </div>

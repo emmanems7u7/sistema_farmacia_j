@@ -70,20 +70,24 @@
                         </a>
                     @endcan
 
-                    @can('usuarios.eliminar')
-                        <a type="button"
-                            class="btn btn-sm btn-outline-danger  mx-1 d-flex align-items-center justify-content-center"
-                            style="width: 30px; height: 30px; min-width: 30px; padding: 0;" id="modal_edit_usuario_button"
-                            onclick="confirmarEliminacion('eliminarUsuarioForm_{{ $usuario->id }}', '¿Estás seguro de que deseas eliminar este usuario?')">
-                            <i class="fas fa-trash"></i>
-                        </a>
+                    
 
-                        <form id="eliminarUsuarioForm" method="POST"
-                            action="{{ route('users.destroy', ['user' => $usuario->id]) }}" style="display: none;">
-                            @csrf
-                            @method('DELETE')
-                        </form>
-                    @endcan
+
+                    @can('usuarios.eliminar')
+    <a type="button"
+        class="btn btn-sm btn-outline-danger mx-1 d-flex align-items-center justify-content-center"
+        style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
+        onclick="confirmarEliminacion('eliminarUsuarioForm_{{ $usuario->id }}', '¿Estás seguro de que deseas eliminar este usuario?')">
+        <i class="fas fa-trash"></i>
+    </a>
+
+    <form id="eliminarUsuarioForm_{{ $usuario->id }}" method="POST"
+        action="{{ route('users.destroy', ['user' => $usuario->id]) }}" style="display: none;">
+        @csrf
+        @method('DELETE')
+    </form>
+@endcan
+
                 </td>
 
             </tr>
