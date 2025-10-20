@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Factura de Venta - {{$sucursal->nombre}}</title>
+    <title>Nota de Venta - {{$sucursal->nombre}}</title>
     <style>
         /* Reset completo para impresión térmica */
         body, html {
