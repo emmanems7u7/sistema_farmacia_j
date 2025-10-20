@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
         
                 User::factory()->create([
                     'name' => 'admin',
-                    'email' => 'admin@admin.com',
+                    'email' => 'mariel@gmail.com',
                     'password' => Hash::make('1'),
                     'sucursal_id'=>$Sucursal->id,
                 ]);

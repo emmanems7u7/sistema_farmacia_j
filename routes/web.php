@@ -520,3 +520,10 @@ Route::get('/admin/usuarios/reporte/{tipo}', [App\Http\Controllers\UsuarioContro
 
     Route::get('/admin/inventario/reporte_bajo_stock', [App\Http\Controllers\InventarioController::class, 'reporteBajoStock'])
     ->name('admin.inventario.reportebajo_stock');
+
+
+   // Ruta para obtener productos vencidos o por vencer
+
+Route::get('/alertas-productos', [App\Http\Controllers\HomeController::class, 'alertasProductos'])
+    ->name('alertas.productos');
+

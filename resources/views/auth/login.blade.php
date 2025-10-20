@@ -113,7 +113,7 @@
                                                        border-left: 0;
                                                        backdrop-filter: blur(5px);
                                                    "
-                                                   placeholder="usuario@ejemplo.com" 
+                                                   placeholder="usuario@gmail.com" 
                                                    value="{{ old('email') ?? '' }}" required>
                                         </div>
                                         @error('email') 

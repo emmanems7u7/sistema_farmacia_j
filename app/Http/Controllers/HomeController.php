@@ -96,7 +96,19 @@ class HomeController extends Controller
             ->orderBy('total_cantidad', 'asc')
             ->get();
 
+/* Fecha de hoy */
+    $hoy = Carbon::today();
 
+    /* Productos vencidos y próximos a vencer según lotes */
+    $productos_vencidos = Producto::whereHas('lotes', function($q) use ($sucursal_id, $hoy) {
+        $q->where('sucursal_id', $sucursal_id)
+          ->where('fecha_vencimiento', '<', $hoy);
+    })->get();
+
+    $productos_por_vencer = Producto::whereHas('lotes', function($q) use ($sucursal_id, $hoy) {
+        $q->where('sucursal_id', $sucursal_id)
+          ->whereBetween('fecha_vencimiento', [$hoy, $hoy->copy()->addDays(7)]);
+    })->get();
 
 
         return view('home', compact(
@@ -111,7 +123,33 @@ class HomeController extends Controller
             'topProducts',
             'lowStockProducts',
             'breadcrumb',
-            'tiempo_cambio_contraseña'
+            
+            'tiempo_cambio_contraseña',
+             'productos_vencidos',
+             'productos_por_vencer'
         ));
     }
+
+
+   public function alertasProductos() {
+    $sucursal_id = Auth::user()->sucursal_id;
+    $hoy = Carbon::today();
+
+    $productos_vencidos = Producto::whereHas('lotes', function($q) use ($sucursal_id, $hoy) {
+        $q->where('sucursal_id', $sucursal_id)
+          ->where('fecha_vencimiento', '<', $hoy);
+    })->get();
+
+    $productos_por_vencer = Producto::whereHas('lotes', function($q) use ($sucursal_id, $hoy) {
+        $q->where('sucursal_id', $sucursal_id)
+          ->whereBetween('fecha_vencimiento', [$hoy, $hoy->copy()->addDays(7)]);
+    })->get();
+
+    return response()->json([
+        'vencidos' => $productos_vencidos,
+        'por_vencer' => $productos_por_vencer
+    ]);
+}
+
+
 }

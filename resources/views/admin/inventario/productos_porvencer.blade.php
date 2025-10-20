@@ -28,32 +28,32 @@
 
             <!-- Card Body - Filtro por días -->
             <div class="card-body p-4">
-                <form method="get" action="{{ route('admin.inventario.productos_porvencer') }}"
-                    class="row g-3 align-items-center">
+                <form method="get" action="{{ route('admin.inventario.productos_porvencer') }}" class="row g-3 align-items-center">
                     <div class="col-md-8">
                         <label class="form-label small text-muted mb-1">Mostrar productos que vencen en:</label>
                         <div class="input-group">
                             <select name="dias" class="form-select">
                                 <option value="7" {{ request('dias') == 7 ? 'selected' : '' }}>Próximos 7 días</option>
                                 <option value="15" {{ request('dias') == 15 ? 'selected' : '' }}>Próximos 15 días</option>
-                                <option value="30" {{ !request('dias') || request('dias') == 30 ? 'selected' : '' }}>Próximos
-                                    30 días</option>
+                                <option value="30" {{ !request('dias') || request('dias') == 30 ? 'selected' : '' }}>Próximos 30 días</option>
                                 <option value="60" {{ request('dias') == 60 ? 'selected' : '' }}>Próximos 60 días</option>
                             </select>
                             <button class="btn btn-primary" type="submit">
                                 <i class="fas fa-filter me-1"></i> Aplicar
                             </button>
                         </div>
+
+                        {{-- filtro para mostrar vencidos --}}
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" name="vencidos" id="vencidos" value="1"
+                                {{ request('vencidos') ? 'checked' : '' }}>
+                            <label class="form-check-label small text-muted" for="vencidos">
+                                Mostrar solo productos vencidos
+                            </label>
+                        </div>
                     </div>
-                    <!-- <div class="col-md-4 d-flex justify-content-end gap-2">
-                    <button type="button" class="btn btn-outline-secondary">
-                        <i class="fas fa-file-export me-1"></i> Exportar
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary">
-                        <i class="fas fa-print me-1"></i> Imprimir
-                    </button>
-                </div>-->
                 </form>
+
             </div>
         </div>
     </div>
