@@ -458,10 +458,10 @@ Route::get('admin/reporte/egresos_por_fecha/pdf', [App\Http\Controllers\reporteC
 // Catálogo público
 Route::get('/admin/catalogo', [App\Http\Controllers\CatalogController::class, 'index'])->name('admin.catalogo.index');
 Route::get('/admin/catalogo/{producto}', [App\Http\Controllers\CatalogController::class, 'show'])->name('admin.catalogo.show');
+//Route::get('/admin/catalogo/{id}', [App\Http\Controllers\CatalogController::class, 'show'])->name('admin.catalogo.show');
 
 
 Route::get('/admin/catalogo', [App\Http\Controllers\CatalogController::class, 'index'])->name('admin.catalogo.index');
-Route::get('/admin/catalogo/{id}', [App\Http\Controllers\CatalogController::class, 'show'])->name('admin.catalogo.show');
 
 
 
@@ -518,11 +518,11 @@ Route::get('/admin/usuarios/reporte/{tipo}', [App\Http\Controllers\UsuarioContro
     ->where('tipo', 'pdf|excel|csv|print')
     ->name('admin.usuarios.reporte');
 
-    Route::get('/admin/inventario/reporte_bajo_stock', [App\Http\Controllers\InventarioController::class, 'reporteBajoStock'])
+Route::get('/admin/inventario/reporte_bajo_stock', [App\Http\Controllers\InventarioController::class, 'reporteBajoStock'])
     ->name('admin.inventario.reportebajo_stock');
 
 
-   // Ruta para obtener productos vencidos o por vencer
+// Ruta para obtener productos vencidos o por vencer
 
 Route::get('/alertas-productos', [App\Http\Controllers\HomeController::class, 'alertasProductos'])
     ->name('alertas.productos');
