@@ -7,66 +7,56 @@
     <div class="container-fluid py-4">
         <!-- Tarjeta de título -->
         <div class="col-12 mb-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-radius-lg shadow-sm" style="border-left: 4px solid #5e72e4;">
+                <div class="card-header pb-0 d-flex flex-wrap justify-content-between align-items-center bg-white">
+                    <div class="mb-2 mb-md-0">
+                        <h5 class="mb-0">
+                            <i class="fas fa-users me-2 text-primary"></i>
+                            <strong>Clientes</strong>
+                        </h5>
+                    </div>
 
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card border-radius-lg shadow-sm" style="border-left: 4px solid #5e72e4;">
-                        <div class="card-header pb-0 d-flex justify-content-between align-items-center bg-white">
-                            <div>
-                                <h5 class="mb-0">
-                                    <i class="fas fa-users me-2 text-primary"></i>
-                                    <strong>Clientes</strong>
-                                </h5>
-                            </div>
+                    <div class="d-flex align-items-center flex-wrap">
+                        <span class="badge bg-gradient-info me-3 mb-2 mb-md-0">
+                            <i class="fas fa-database me-1"></i> {{ $clientes->count() }} Clientes
+                        </span>
 
-                            <div class="col-4 text-end">
-                                <div class="d-flex align-items-center">
-                                    <span class="badge bg-gradient-info me-3">
-
-
-                                        <i class="fas fa-database me-1"></i> {{ $clientes->count() }} Clientes
-                                    </span>
-
-                                    <div class="dropdown me-2">
-                                        <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button"
-                                            id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false"
-                                            title="Exportar reporte en diferentes formatos">
-                                            <i class="fas fa-download me-1"></i> Exportar
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportDropdown">
-                                            <li>
-                                                <a class="dropdown-item"
-                                                    href="{{ route('admin.clientes.reporte') }}?tipo=pdf"
-                                                    title="Exportar a PDF" target="_blank">
-                                                    <i class="fas fa-file-pdf text-danger me-2"></i> PDF
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item"
-                                                    href="{{ route('admin.clientes.reporte') }}?tipo=excel"
-                                                    title="Exportar a Excel">
-                                                    <i class="fas fa-file-excel text-success me-2"></i> Excel
-                                                </a>
-                                            </li>
-                                            
-
-                                            <li>
-                                                <hr class="dropdown-divider">
-                                            </li>
-                                        </ul>
-                                    </div>
-
-
-                                </div>
-                            </div>
-
-
+                        <div class="dropdown me-2 mb-2 mb-md-0">
+                            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button"
+                                id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                                title="Exportar reporte en diferentes formatos">
+                                <i class="fas fa-download me-1"></i> Exportar
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportDropdown">
+                                <li>
+                                    <a class="dropdown-item"
+                                        href="{{ route('admin.clientes.reporte') }}?tipo=pdf"
+                                        title="Exportar a PDF" target="_blank">
+                                        <i class="fas fa-file-pdf text-danger me-2"></i> PDF
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                        href="{{ route('admin.clientes.reporte') }}?tipo=excel"
+                                        title="Exportar a Excel">
+                                        <i class="fas fa-file-excel text-success me-2"></i> Excel
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                            </ul>
                         </div>
 
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
 
         <!-- Tarjeta de registro -->
         <div class="row mb-4">

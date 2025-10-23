@@ -148,13 +148,17 @@
                         <input type="hidden" name="sucursal" value="{{ $sucursalId }}">
                     @endif
                     <select name="month" class="form-control form-control-sm border-primary">
-                        @foreach($mesesDisponibles as $mes)
-                            <option value="{{ $mes->format('Y-m') }}" 
-                                {{ $mesSeleccionado->format('Y-m') == $mes->format('Y-m') ? 'selected' : '' }}>
-                                {{ $mes->translatedFormat('M Y') }}
-                            </option>
-                        @endforeach
-                    </select>
+    @foreach($mesesDisponibles as $mes)
+        @php
+            $mesCarbon = \Carbon\Carbon::parse($mes);
+        @endphp
+        <option value="{{ $mesCarbon->format('Y-m') }}" 
+            {{ \Carbon\Carbon::parse($mesSeleccionado)->format('Y-m') == $mesCarbon->format('Y-m') ? 'selected' : '' }}>
+            {{ $mesCarbon->translatedFormat('M Y') }}
+        </option>
+    @endforeach
+</select>
+
                 </form>
                 @else
                 <span class="badge badge-warning">No hay datos</span>
@@ -251,14 +255,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         <input type="hidden" name="{{ $key }}" value="{{ $value }}">
                     @endforeach
                     
-                    <select name="month" class="form-control form-control-sm border-success">
-                        @foreach($mesesDisponibles as $mes)
-                            <option value="{{ $mes->format('Y-m') }}" 
-                                {{ $mesSeleccionado->format('Y-m') == $mes->format('Y-m') ? 'selected' : '' }}>
-                                {{ $mes->translatedFormat('M Y') }}
-                            </option>
-                        @endforeach
-                    </select>
+                   <select name="month" class="form-control form-control-sm border-success">
+    @foreach($mesesDisponibles as $mes)
+        @php
+            $mesCarbon = \Carbon\Carbon::parse($mes);
+            $mesSelCarbon = \Carbon\Carbon::parse($mesSeleccionado);
+        @endphp
+        <option value="{{ $mesCarbon->format('Y-m') }}" 
+            {{ $mesSelCarbon->format('Y-m') == $mesCarbon->format('Y-m') ? 'selected' : '' }}>
+            {{ $mesCarbon->translatedFormat('M Y') }}
+        </option>
+    @endforeach
+</select>
+
                 </form>
                 @else
                 <span class="badge badge-warning">No hay datos</span>

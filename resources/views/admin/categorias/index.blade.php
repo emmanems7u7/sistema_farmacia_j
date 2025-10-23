@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-12 mb-4">
                 <div class="card shadow-sm border-0">
-                    <div class="card-header pb-0 d-flex justify-content-between align-items-center bg-white">
+                    <div class="card-header pb-0 d-flex flex-wrap justify-content-between align-items-center bg-white">
                         <div class="d-flex align-items-center">
 
                             <h5 class="mb-0">

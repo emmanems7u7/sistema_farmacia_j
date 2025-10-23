@@ -13,119 +13,206 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <!-- Estilos personalizados -->
-    <style>
-        body {
-            background-color: #f8f9fa;
-            padding-top: 0 !important;
-        }
+   <style>
+body {
+    background-color: #f8f9fa;
+    padding-top: 0 !important;
+}
 
-        .navbar {
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 1.2rem 1rem;
-            min-height: 70px;
-        }
+.navbar {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1.2rem 1rem;
+    min-height: 70px;
+}
 
-        .footer {
-            background-color: #f8f9fa;
-            padding: 2rem 0;
-            margin-top: 3rem;
-        }
+.footer {
+    background-color: #f8f9fa;
+    padding: 2rem 0;
+    margin-top: 3rem;
+}
 
-        .search-container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
+.search-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
 
-        .modal-categorias .modal-body {
-            max-height: 60vh;
-            overflow-y: auto;
-        }
+.modal-categorias .modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+}
 
-        .categoria-item {
-            transition: all 0.3s ease;
-            border-radius: 5px;
-        }
+.categoria-item {
+    transition: all 0.3s ease;
+    border-radius: 5px;
+}
 
-        .categoria-item:hover {
-            background-color: #f0f7ff;
-        }
+.categoria-item:hover {
+    background-color: #f0f7ff;
+}
 
-        .navbar-brand {
-            font-weight: 600;
-        }
+.navbar-brand {
+    font-weight: 600;
+}
 
-        /* Nuevos estilos para el carrusel y productos */
-        .hero-carousel {
-            margin-bottom: 2rem;
-        }
+/* ✅ PRODUCTOS Y CARRUSEL (igual que antes) */
+.hero-carousel {
+    margin-bottom: 2rem;
+}
 
-        .carousel-item {
-            height: 400px;
-            background-size: cover;
-            background-position: center;
-        }
+.carousel-item {
+    height: 400px;
+    background-size: cover;
+    background-position: center;
+}
 
-        .carousel-caption {
-            background-color: rgba(0, 0, 0, 0.6);
-            border-radius: 10px;
-            padding: 20px;
-        }
+.carousel-caption {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    padding: 20px;
+}
 
-        .product-card {
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-            height: 100%;
-        }
+.product-card {
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+    height: 100%;
+}
 
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
 
-        .product-img-container {
-            height: 200px;
-            overflow: hidden;
-        }
+.product-img-container {
+    height: 200px;
+    overflow: hidden;
+}
 
-        .product-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
+.product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
 
-        .product-card:hover .product-img {
-            transform: scale(1.05);
-        }
-    </style>
+.product-card:hover .product-img {
+    transform: scale(1.05);
+}
+
+/* ✅ DISEÑO RESPONSIVE SOLO PARA MÓVIL */
+@media (max-width: 991.98px) {
+    /* 🔹 OCULTAR solo el texto "Categorías" del botón - CORREGIDO */
+    #dropdownCategorias {
+        font-size: 0 !important;
+        padding: 0.5rem !important;
+    }
+    
+    #dropdownCategorias i {
+        font-size: 1.2rem !important;
+        margin-right: 0 !important;
+    }
+    
+    /* 🔹 OCULTAR texto "Ingresar" y mostrar solo ícono */
+    .btn-ingresar-text {
+        display: none !important;
+    }
+    
+    .btn-ingresar-icon {
+        display: inline-block !important;
+    }
+    
+    /* 🔹 Hacer más pequeño el nombre FARMACIA MARIEL */
+    .navbar-brand h2 {
+        font-size: 0.9rem !important;
+        margin-bottom: 0.1rem !important;
+    }
+    
+    .navbar-brand {
+        line-height: 1.1 !important;
+    }
+
+    /* Mantener los íconos visibles */
+    .navbar i,
+    .navbar .fa,
+    .navbar .fas,
+    .navbar .fab {
+        display: inline-block !important;
+        font-size: 1.2rem;
+    }
+
+    /* 🔹 Mantener todo en una sola línea */
+    .navbar,
+    .navbar .container,
+    .navbar .d-flex,
+    .navbar-nav {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+    }
+
+    /* 🔹 Evitar que los elementos bajen */
+    .navbar .nav-item,
+    .navbar .d-flex.align-items-center {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-wrap: nowrap !important;
+    }
+
+    /* 🔹 Reducir espacios entre botones */
+    .navbar .gap-3 {
+        gap: 0.3rem !important;
+    }
+
+    /* 🔹 Ajustar padding de los botones */
+    .navbar .btn,
+    .navbar .nav-link {
+        padding: 0.3rem 0.4rem !important;
+        font-size: 1rem !important;
+    }
+
+    /* 🔹 Eliminar colapso del menú (nunca se apila) */
+    .navbar-collapse {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        flex-wrap: nowrap !important;
+    }
+
+    /* 🔹 Ajustar ancho del buscador */
+    .search-container {
+        width: 150px !important;
+        margin: 0 !important;
+    }
+
+    .form-control {
+        font-size: 0.8rem !important;
+    }
+
+    /* 🔹 Ajustar tamaño del icono de WhatsApp */
+    .bg-white.rounded-circle {
+        transform: scale(0.85);
+    }
+}
+</style>
+
 </head>
 
 <body>
-    <!-- Menú de navegación -->
+    <!-- Menú de navegación (EXACTAMENTE IGUAL) -->
     <nav class="navbar navbar-expand-lg sticky-top" style="background-color: #5BC0EB;">
         <div class="container-fluid">
             <!-- Nombre de la farmacia en el navbar -->
-            <div class="navbar-brand text-white d-flex flex-column align-items-start" style="line-height: 1;">
-                <h2 class="mb-0" style="font-weight: 500; font-size: 1.2rem;">FARMACIA</h2>
-                <h2 class="mb-0" style="font-weight: 600; font-size: 1.2rem;">MARIEL</h2>
-            </div>
-
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
-            </button>
-
-            <!-- Contenido del navbar -->
-            <div class="collapse navbar-collapse" id="navbarContent">
-
-                <!-- Botón Categorías -->
-                <div class="d-flex me-3">
+               <!-- Botón Categorías -->
+             <div class="d-flex me-3">
                     <div class="dropdown">
                         <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownCategorias"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-list-ul me-2"></i> Categorías
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="dropdownCategorias"
+                        <ul class="dropdown-menu dropdown-menu-start shadow-lg" aria-labelledby="dropdownCategorias"
                             style="width: 280px;">
                             <li class="px-3 py-2" style="background-color: #0077B6; color: white;">
                                 <h6 class="mb-0">
@@ -163,6 +250,20 @@
                         </ul>
                     </div>
                 </div>
+            <div class="navbar-brand text-white d-flex flex-column align-items-start" style="line-height: 1;">
+                <h2 class="mb-0" style="font-weight: 500; font-size: 1.2rem;">FARMACIA</h2>
+                <h2 class="mb-0" style="font-weight: 600; font-size: 1.2rem;">MARIEL</h2>
+            </div>
+
+           <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+            </button>-->
+
+            <!-- Contenido del navbar -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+
+                <!-- Botón Categorías -->
+                
 
                 <!-- Buscador -->
                 <div class="search-container flex-grow-1 mx-3 position-relative">
@@ -175,9 +276,10 @@
                                 class="form-control border-end-0 py-2 ps-4" placeholder="Buscar medicamentos..."
                                 value="{{ request('search') }}" autocomplete="off" aria-label="Buscar productos"
                                 data-min-chars="1">
-                            <button class="btn btn-primary px-4" type="submit">
-                                <i class="fas fa-search"></i>
+                            <button class="btn btn-light px-4" type="submit">
+                                <i class="fas fa-search" style="color: #0dcaf0;"></i> <!-- celeste -->
                             </button>
+
                         </div>
                         <div id="search-suggestions" class="dropdown-menu w-100 shadow-lg" style="display: none;">
                             <div class="dropdown-header d-flex justify-content-between align-items-center">
@@ -188,7 +290,6 @@
                             <div id="suggestions-list" class="px-2">
                                 <!-- Las sugerencias se cargarán aquí -->
                             </div>
-
                         </div>
                     </form>
                 </div>
@@ -196,7 +297,7 @@
                 <div class="d-flex align-items-center gap-3 ms-auto">
                     <!-- Botón WhatsApp resaltado sobre un card pequeño -->
                     <div class="bg-white shadow rounded-circle p-2">
-                        <a href="https://wa.me/59112345678" target="_blank"
+                        <a href="https://wa.me/59169917597" target="_blank"
                             class="text-decoration-none d-flex align-items-center justify-content-center">
                             <i class="fab fa-whatsapp fa-2x" style="color: #25D366;"></i>
                         </a>
@@ -207,9 +308,15 @@
                         <li class="nav-item">
                             @if (Route::has('login'))
                                 @auth
-                                    <a href="{{ url('/home') }}" class="btn btn-outline-light">Inicio</a>
+                                    <a href="{{ url('/home') }}" class="btn btn-outline-light">
+                                        <span class="btn-ingresar-text">Inicio</span>
+                                        <i class="fas fa-home btn-ingresar-icon"></i>
+                                    </a>
                                 @else
-                                    <a href="{{ route('login') }}" class="btn btn-outline-light">Ingresar</a>
+                                    <a href="{{ route('login') }}" class="btn btn-outline-light">
+                                        <span class="btn-ingresar-text">Ingresar</span>
+                                        <i class="fas fa-user btn-ingresar-icon"></i>
+                                    </a>
                                 @endauth
                             @endif
                         </li>
@@ -219,45 +326,54 @@
         </div>
     </nav>
 
+    <!-- Contenido principal -->
+    <main class="py-4">
+        @yield('content')
+    </main>
 
-    <!-- Añade estos estilos -->
-    <style>
-        .search-container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
+    <!-- Pie de página -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p class="mb-0 text-muted">
+                &copy; {{ date('Y') }} Farmacia Mariel
+            </p>
+        </div>
+    </footer>
 
-        #search-suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            z-index: 1000;
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid rgba(0, 0, 0, .15);
-            border-radius: 0.5rem;
-        }
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-        .dropdown-item.active {
-            background-color: #f8f9fa;
-            color: #212529;
-        }
-
-        .dropdown-item:hover {
-            background-color: #f8f9fa;
-        }
-
-        .dropdown-header,
-        .dropdown-footer {
-            padding: 0.5rem 1rem;
-        }
-    </style>
-
-    <!-- Añade este JavaScript -->
+    <!-- Script para el buscador y carrusel -->
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Configuración del carrusel automático
+            const myCarousel = document.getElementById('productCarousel');
+            const carousel = new bootstrap.Carousel(myCarousel, {
+                interval: 3000, // Cambia cada 3 segundos
+                ride: true,     // Inicia automáticamente
+                wrap: true      // Vuelve al inicio después del último
+            });
 
+            // Pausar al pasar el ratón
+            myCarousel.addEventListener('mouseenter', function () {
+                carousel.pause();
+            });
 
+            // Reanudar al quitar el ratón
+            myCarousel.addEventListener('mouseleave', function () {
+                carousel.cycle();
+            });
 
+            // Buscador
+            const searchForm = document.querySelector('form[action="{{ route('admin.catalogo.index') }}"]');
+            if (searchForm) {
+                searchForm.addEventListener('submit', function (e) {
+                    // Validación adicional si es necesaria
+                });
+            }
+        });
+
+        // Script del buscador (EXACTAMENTE IGUAL)
         document.addEventListener('DOMContentLoaded', function () {
             // Elementos del DOM
             const searchInput = document.getElementById('search-input');
@@ -373,8 +489,6 @@
                 }
             }
 
-
-
             function displaySuggestions(items) {
                 if (!items || items.length === 0) {
                     showNoResults();
@@ -418,9 +532,6 @@
                 currentFocus = -1;
             }
 
-
-
-
             // Funciones auxiliares
             function highlightMatch(text, query) {
                 if (!text || !query) return text;
@@ -459,67 +570,6 @@
                         behavior: 'smooth'
                     });
                 }
-            }
-        });
-    </script>
-
-
-
-
-
-    </div>
-    </div>
-    </nav>
-
-
-
-
-
-    <!-- Contenido principal -->
-    <main class="py-4">
-        @yield('content')
-    </main>
-
-
-    <!-- Pie de página -->
-    <footer class="footer">
-        <div class="container text-center">
-            <p class="mb-0 text-muted">
-                &copy; {{ date('Y') }} Farmacia Mariel
-            </p>
-        </div>
-    </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Script para el buscador y carrusel -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Configuración del carrusel automático
-            const myCarousel = document.getElementById('productCarousel');
-            const carousel = new bootstrap.Carousel(myCarousel, {
-                interval: 3000, // Cambia cada 3 segundos
-                ride: true,     // Inicia automáticamente
-                wrap: true      // Vuelve al inicio después del último
-            });
-
-            // Pausar al pasar el ratón
-            myCarousel.addEventListener('mouseenter', function () {
-                carousel.pause();
-            });
-
-            // Reanudar al quitar el ratón
-            myCarousel.addEventListener('mouseleave', function () {
-                carousel.cycle();
-            });
-
-            // Buscador
-            const searchForm = document.querySelector('form[action="{{ route('admin.catalogo.index') }}"]');
-            if (searchForm) {
-                searchForm.addEventListener('submit', function (e) {
-                    // Validación adicional si es necesaria
-                });
             }
         });
     </script>

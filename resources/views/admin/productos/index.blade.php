@@ -124,40 +124,41 @@
                 <div class="card">
                     <!-- Card header -->
                     <div class="card-header border-0">
-                        <div class="row align-items-center">
-                            <div class="col-8">
-                                <h4 class="mb-0">Listado de Productos</h4>
-                            </div>
-                            <div class="col-4 text-end">
-                                <div class="dropdown">
-                                    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button"
-                                        id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false"
-                                        title="Exportar reporte en diferentes formatos">
-                                        <i class="fas fa-download me-1"></i> Exportar
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportDropdown">
-                                        <li>
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.productos.reporte', ['tipo' => 'pdf']) }}?categoria={{ request('categoria') }}&stockBajo={{ request('stockBajo', 0) }}&diasVencimiento={{ request('diasVencimiento') }}"
-                                                title="Exportar a PDF" target="_blank">
-                                                <i class="fas fa-file-pdf text-danger me-2"></i> PDF
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.productos.reporte', ['tipo' => 'excel']) }}?categoria={{ request('categoria') }}&stockBajo={{ request('stockBajo', 0) }}&diasVencimiento={{ request('diasVencimiento') }}"
-                                                title="Exportar a Excel">
-                                                <i class="fas fa-file-excel text-success me-2"></i> Excel
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
+                <div class="row align-items-center flex-wrap">
+                    <div class="col-12 col-md-8 mb-2 mb-md-0">
+                        <h4 class="mb-0">Listado de Productos</h4>
+                    </div>
+                    <div class="col-12 col-md-4 text-md-end">
+                        <div class="dropdown d-inline-block">
+                            <button class="btn btn-sm btn-outline-primary dropdown-toggle w-100 w-md-auto" type="button"
+                                id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                                title="Exportar reporte en diferentes formatos">
+                                <i class="fas fa-download me-1"></i> Exportar
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportDropdown">
+                                <li>
+                                    <a class="dropdown-item"
+                                        href="{{ route('admin.productos.reporte', ['tipo' => 'pdf']) }}?categoria={{ request('categoria') }}&stockBajo={{ request('stockBajo', 0) }}&diasVencimiento={{ request('diasVencimiento') }}"
+                                        title="Exportar a PDF" target="_blank">
+                                        <i class="fas fa-file-pdf text-danger me-2"></i> PDF
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                        href="{{ route('admin.productos.reporte', ['tipo' => 'excel']) }}?categoria={{ request('categoria') }}&stockBajo={{ request('stockBajo', 0) }}&diasVencimiento={{ request('diasVencimiento') }}"
+                                        title="Exportar a Excel">
+                                        <i class="fas fa-file-excel text-success me-2"></i> Excel
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                            </ul>
                         </div>
                     </div>
+                </div>
+            </div>
+
 
                     <!-- Search and Filter -->
                     <div class="card-body pt-0">
@@ -220,7 +221,8 @@
                 <!-- Products card-->
                 <div class="row" id="productosContainer">
                     @foreach($productos as $producto)
-                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4 producto-card"
+                        
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-6 mb-4 producto-card"
                             data-category="{{ $producto->categoria_id }}">
                             <div class="card card-lift--hover shadow-sm h-100">
                                 <!-- Producto Image -->

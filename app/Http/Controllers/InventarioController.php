@@ -162,9 +162,24 @@ class InventarioController extends Controller
             ->count();
 
         // Combinar meses disponibles de compras y ventas para el filtro
-        $mesesDisponibles = $mesesDisponiblesCompras->merge($mesesDisponiblesVentas)
-            ->unique()
-            ->sortDesc();
+    
+
+// Convertir a strings 'Y-m'
+$mesesCompras = collect($mesesDisponiblesCompras)->map(function($fecha) {
+    return $fecha instanceof Carbon ? $fecha->format('Y-m') : $fecha;
+});
+
+$mesesVentas = collect($mesesDisponiblesVentas)->map(function($fecha) {
+    return $fecha instanceof Carbon ? $fecha->format('Y-m') : $fecha;
+});
+
+// Merge, unique y ordenar
+$mesesDisponibles = $mesesCompras
+    ->merge($mesesVentas)
+    ->unique()
+    ->sortDesc()
+    ->values(); // reindexa
+
 
         return view('admin.inventario.index', compact(
             'sucursales',

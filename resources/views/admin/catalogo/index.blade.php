@@ -3,48 +3,168 @@
 @section('content')
 
  <!-- Carrusel de productos destacados -->
-    <div id="productCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel">
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0" class="active"></button>
-            <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1"></button>
-            <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2"></button>
-        </div>
-        
-
-
-        <div class="carousel-inner">
-        <div class="carousel-item active" 
-     style="background-image: url('{{ asset('assets/img/banner.jpg') }}'); background-size: cover;">
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>Productos Destacados</h5>
-                    <p>Los medicamentos más vendidos este mes</p>
-                </div>
-            </div>
-            <div class="carousel-item" 
-            style="background-image: url('{{ asset('assets/img/banner2.jpg') }}'); background-size: cover;">
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>Nuevos Lanzamientos</h5>
-                    <p>Descubre nuestras novedades</p>
-                </div>
-            </div>
-            <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');">
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>Precio Increibles</h5>
-                    <p>Aprovecha nuestros precios</p>
-                </div>
-            </div>
-        </div>
-        
-        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
-        </button>
+    <!-- Carrusel de productos destacados -->
+<div id="productCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2"></button>
     </div>
+
+    <div class="carousel-inner">
+        <div class="carousel-item active" 
+             style="background-image: url('{{ asset('assets/img/banner.jpg') }}'); background-size: cover; background-position: center;">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Productos Destacados</h5>
+                <p>Los medicamentos más vendidos este mes</p>
+            </div>
+            <!-- Captión para móvil -->
+            <div class="carousel-caption d-block d-md-none">
+                <h6>Productos Destacados</h6>
+                <small>Los más vendidos este mes</small>
+            </div>
+        </div>
+        <div class="carousel-item" 
+             style="background-image: url('{{ asset('assets/img/banner2.jpg') }}'); background-size: cover; background-position: center;">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Nuevos Lanzamientos</h5>
+                <p>Descubre nuestras novedades</p>
+            </div>
+            <!-- Captión para móvil -->
+            <div class="carousel-caption d-block d-md-none">
+                <h6>Nuevos Lanzamientos</h6>
+                <small>Descubre novedades</small>
+            </div>
+        </div>
+        <div class="carousel-item" 
+             style="background-image: url('https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); background-size: cover; background-position: center;">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Precios Increíbles</h5>
+                <p>Aprovecha nuestros precios</p>
+            </div>
+            <!-- Captión para móvil -->
+            <div class="carousel-caption d-block d-md-none">
+                <h6>Precios Increíbles</h6>
+                <small>Aprovecha ofertas</small>
+            </div>
+        </div>
+    </div>
+    
+    <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+</div>
+
+<style>
+/* Estilos para el carrusel responsive */
+.hero-carousel {
+    margin-bottom: 1rem;
+}
+
+.carousel-item {
+    height: 400px; /* Altura para desktop */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Ajustes para móvil */
+@media (max-width: 768px) {
+    .carousel-item {
+        height: 200px !important; /* Mucho más bajo en móvil */
+    }
+    
+    .hero-carousel {
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Indicadores más pequeños en móvil */
+    .carousel-indicators {
+        bottom: 5px !important;
+    }
+    
+    .carousel-indicators button {
+        width: 8px !important;
+        height: 8px !important;
+        border-radius: 50% !important;
+        margin: 0 3px !important;
+    }
+    
+    /* Captions para móvil */
+    .carousel-caption.d-block.d-md-none {
+        bottom: 15px !important;
+        padding: 8px 12px !important;
+        background: rgba(0, 0, 0, 0.6) !important;
+        border-radius: 8px !important;
+        left: 10px !important;
+        right: 10px !important;
+    }
+    
+    .carousel-caption.d-block.d-md-none h6 {
+        font-size: 0.9rem !important;
+        margin-bottom: 2px !important;
+        font-weight: 600;
+    }
+    
+    .carousel-caption.d-block.d-md-none small {
+        font-size: 0.75rem !important;
+        opacity: 0.9;
+    }
+    
+    /* Flechas de navegación más pequeñas */
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 30px !important;
+        height: 30px !important;
+        top: 50% !important;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 50%;
+    }
+    
+    .carousel-control-prev {
+        left: 5px !important;
+    }
+    
+    .carousel-control-next {
+        right: 5px !important;
+    }
+    
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        width: 15px !important;
+        height: 15px !important;
+    }
+}
+
+/* Ajustes para tablets */
+@media (min-width: 769px) and (max-width: 991px) {
+    .carousel-item {
+        height: 300px !important;
+    }
+}
+
+/* Estilos para desktop (mantenemos los originales) */
+@media (min-width: 992px) {
+    .carousel-item {
+        height: 400px !important;
+    }
+    
+    .carousel-caption {
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 10px;
+        padding: 20px;
+    }
+}
+</style>
 <!-- Contenedor principal con 1cm exacto a cada lado -->
 <div style="margin: 0 30px;"> 
     <!-- Filtro de categoría -->
+   <div style="margin: 0 30px;"> 
+    <!-- FILTRO DE CATEGORÍA -->
     @if(request()->has('categoria'))
     <div class="row mb-2">
         <div class="col-12">
@@ -62,80 +182,95 @@
     </div>
     @endif
 
+    <!-- 🖥️ VERSIÓN ESCRITORIO (visible en pantallas grandes) -->
+    <div class="d-none d-md-flex flex-wrap justify-content-center gap-3 mb-4 px-3 py-4 rounded-4"
+         style="background: rgba(245,245,245,0.8);">
+        @foreach($categorias as $cat)
+            @php
+                switch (strtolower($cat->nombre)) {
+                    case 'medicamentos':
+                        $icono = 'fas fa-pills';
+                        $iconColor = '#ffffff';
+                        $gradient = 'radial-gradient(circle at top, #3a7bd5, #00d2ff)';
+                        break;
+                    case 'suplemento':
+                        $icono = 'fas fa-capsules';
+                        $iconColor = '#fff8e1';
+                        $gradient = 'radial-gradient(circle at top, #f46b45, #eea849)';
+                        break;
+                    case 'belleza':
+                        $icono = 'fas fa-magic';
+                        $iconColor = '#fce4ec';
+                        $gradient = 'radial-gradient(circle at top, #ff758c, #ff7eb3)';
+                        break;
+                    case 'salud sexual':
+                        $icono = 'fas fa-heart';
+                        $iconColor = '#ffebee';
+                        $gradient = 'radial-gradient(circle at top, #ff416c, #ff4b2b)';
+                        break;
+                    case 'cuidado de piel':
+                        $icono = 'fas fa-spa';
+                        $iconColor = '#e8f5e9';
+                        $gradient = 'radial-gradient(circle at top, #56ab2f, #a8e063)';
+                        break;
+                    case 'insumos medicos':
+                        $icono = 'fas fa-syringe';
+                        $iconColor = '#e3f2fd';
+                        $gradient = 'radial-gradient(circle at top, #0575e6, #021b79)';
+                        break;
+                    case 'mamas y bebes':
+                        $icono = 'fas fa-baby';
+                        $iconColor = '#f3e5f5';
+                        $gradient = 'radial-gradient(circle at top, #da22ff, #9733ee)';
+                        break;
+                    case 'nutricon saludable':
+                        $icono = 'fas fa-apple-alt';
+                        $iconColor = '#f1f8e9';
+                        $gradient = 'radial-gradient(circle at top, #a8ff78, #78ffd6)';
+                        break;
+                    case 'cuidado e higiene':
+                        $icono = 'fas fa-soap';
+                        $iconColor = '#e0f7fa';
+                        $gradient = 'radial-gradient(circle at top, #00c6ff, #0072ff)';
+                        break;
+                    default:
+                        $icono = 'fas fa-pills';
+                        $iconColor = '#ffffff';
+                        $gradient = 'radial-gradient(circle at top, #3a7bd5, #00d2ff)';
+                }
+            @endphp
 
-<div class="d-flex flex-wrap justify-content-center gap-3 mb-4 px-3 py-4 rounded-4" style="background: rgba(245,245,245,0.8);">
-    @foreach($categorias as $cat)
-        @php
-            switch (strtolower($cat->nombre)) {
-                case 'medicamentos':
-                    $icono = 'fas fa-pills';
-                    $iconColor = '#ffffff';
-                    $gradient = 'radial-gradient(circle at top, #3a7bd5, #00d2ff)';
-                    break;
-                case 'suplemento':
-                    $icono = 'fas fa-capsules';
-                    $iconColor = '#fff8e1';
-                    $gradient = 'radial-gradient(circle at top, #f46b45, #eea849)';
-                    break;
-                case 'belleza':
-                    $icono = 'fas fa-magic';
-                    $iconColor = '#fce4ec';
-                    $gradient = 'radial-gradient(circle at top, #ff758c, #ff7eb3)';
-                    break;
-                case 'salud sexual':
-                    $icono = 'fas fa-heart';
-                    $iconColor = '#ffebee';
-                    $gradient = 'radial-gradient(circle at top, #ff416c, #ff4b2b)';
-                    break;
-                case 'cuidado de piel':
-                    $icono = 'fas fa-spa';
-                    $iconColor = '#e8f5e9';
-                    $gradient = 'radial-gradient(circle at top, #56ab2f, #a8e063)';
-                    break;
-                case 'insumos medicos':
-                    $icono = 'fas fa-syringe';
-                    $iconColor = '#e3f2fd';
-                    $gradient = 'radial-gradient(circle at top, #0575e6, #021b79)';
-                    break;
-                case 'mamas y bebes':
-                    $icono = 'fas fa-baby';
-                    $iconColor = '#f3e5f5';
-                    $gradient = 'radial-gradient(circle at top, #da22ff, #9733ee)';
-                    break;
-                case 'nutricon saludable':
-                    $icono = 'fas fa-apple-alt';
-                    $iconColor = '#f1f8e9';
-                    $gradient = 'radial-gradient(circle at top, #a8ff78, #78ffd6)';
-                    break;
-                case 'cuidado e higiene':
-                    $icono = 'fas fa-soap';
-                    $iconColor = '#e0f7fa';
-                    $gradient = 'radial-gradient(circle at top, #00c6ff, #0072ff)';
-                    break;
-                default:
-                    
-                    $icono = 'fas fa-pills';
-                    $iconColor = '#ffffff';
-                    
-                    $gradient = 'radial-gradient(circle at top, #3a7bd5, #00d2ff)';
-            }
-        @endphp
-
-        <a href="{{ route('admin.catalogo.categoria', $cat->id) }}" 
-           class="category-btn rounded-circle d-flex flex-column align-items-center justify-content-center position-relative shadow-sm"
-           style="background: {{ $gradient }}; width: 85px; height: 85px;">
-           
-            <div class="icon-container position-relative mb-1">
+            <a href="{{ route('admin.catalogo.categoria', $cat->id) }}" 
+               class="rounded-circle d-flex flex-column align-items-center justify-content-center position-relative shadow-sm"
+               style="background: {{ $gradient }}; width: 85px; height: 85px; text-decoration:none;">
                 <i class="{{ $icono }}" style="color: {{ $iconColor }}; font-size: 1.3rem;"></i>
+                <span class="category-name text-center text-white" style="font-size: 0.8rem;">{{ $cat->nombre }}</span>
+            </a>
+        @endforeach
+    </div>
+
+    <!-- 📱 VERSIÓN MÓVIL (carrusel automático) -->
+    <div id="categoriasCarousel" class="carousel slide d-md-none" data-bs-ride="carousel" data-bs-interval="2500">
+      <div class="carousel-inner">
+        @foreach($categorias->chunk(3) as $index => $grupo)
+          <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+            <div class="d-flex justify-content-center gap-3 py-3">
+              @foreach($grupo as $cat)
+                  <a href="{{ route('admin.catalogo.categoria', $cat->id) }}" 
+                     class="rounded-circle d-flex flex-column align-items-center justify-content-center shadow-sm"
+                     style="background: {{ $gradient }}; width: 85px; height: 85px; text-decoration:none;">
+                    <i class="{{ $icono }}" style="color: {{ $iconColor }}; font-size: 1.3rem;"></i>
+                    <span class="category-name text-center text-white" style="font-size: 0.8rem;">{{ $cat->nombre }}</span>
+                  </a>
+              @endforeach
             </div>
-            
-            <span class="category-name">{{ $cat->nombre }}</span>
-            
-            <div class="hover-overlay rounded-circle"></div>
-            <div class="pulse-effect rounded-circle"></div>
-        </a>
-    @endforeach
+          </div>
+        @endforeach
+      </div>
+    </div>
 </div>
+
+
 
 <style>
     .category-btn {
@@ -233,77 +368,77 @@
         }
     }
 </style>
-<!-- Sección de productos más vendidos -->
+
 <!-- Sección de productos más vendidos -->
 @if($topProductos->isNotEmpty())
 <section class="mb-5">
     <div class="container">
     <!-- Encabezado profesional para productos más vendidos -->
-<div class="card mb-5 overflow-hidden border-0" style="
-    border-radius: 12px;
-    background: linear-gradient(135deg, #e3f4fc 0%, #b8e2f2 100%);
-    box-shadow: 0 4px 20px rgba(24, 154, 180, 0.15);
-    border-left: 6px solid #189ab4;
-">
-    <div class="card-body p-4 text-center position-relative">
-        <!-- Efecto de burbujas decorativas -->
-        <div class="position-absolute top-0 start-0 w-100 h-100 opacity-20">
-            <div style="
-                position: absolute;
-                width: 80px;
-                height: 80px;
-                background: #189ab4;
-                border-radius: 50%;
-                top: -20px;
-                right: -20px;
-                filter: blur(8px);
-            "></div>
-            <div style="
-                position: absolute;
-                width: 60px;
-                height: 60px;
-                background: #05445e;
-                border-radius: 50%;
-                bottom: -15px;
-                left: -15px;
-                filter: blur(5px);
-            "></div>
+        <div class="card mb-5 overflow-hidden border-0" style="
+            border-radius: 12px;
+            background: linear-gradient(135deg, #e3f4fc 0%, #b8e2f2 100%);
+            box-shadow: 0 4px 20px rgba(24, 154, 180, 0.15);
+            border-left: 6px solid #189ab4;
+        ">
+            <div class="card-body p-4 text-center position-relative">
+                <!-- Efecto de burbujas decorativas -->
+                <div class="position-absolute top-0 start-0 w-100 h-100 opacity-20">
+                    <div style="
+                        position: absolute;
+                        width: 80px;
+                        height: 80px;
+                        background: #189ab4;
+                        border-radius: 50%;
+                        top: -20px;
+                        right: -20px;
+                        filter: blur(8px);
+                    "></div>
+                    <div style="
+                        position: absolute;
+                        width: 60px;
+                        height: 60px;
+                        background: #05445e;
+                        border-radius: 50%;
+                        bottom: -15px;
+                        left: -15px;
+                        filter: blur(5px);
+                    "></div>
+                </div>
+                
+                <h2 class="mb-0 position-relative" style="
+                    font-size: 1.8rem;
+                    font-weight: 700;
+                    color: #05445e;
+                    letter-spacing: 0.5px;
+                    text-transform: uppercase;
+                    font-family: 'Montserrat', sans-serif;
+                ">
+                    <span class="me-3" style="
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 50px;
+                        height: 50px;
+                        background: #ffd700;
+                        border-radius: 12px;
+                        box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+                    ">
+                        <i class="fas fa-crown" style="color: #05445e; font-size: 1.5rem;"></i>
+                    </span>
+                    Productos Destacados
+                </h2>
+                
+                <p class="mt-2 position-relative mb-0" style="
+                    color: #189ab4;
+                    font-weight: 500;
+                    letter-spacing: 0.3px;
+                ">
+                    Los favoritos de nuestros clientes
+                </p>
+            </div>
         </div>
         
-        <h2 class="mb-0 position-relative" style="
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #05445e;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            font-family: 'Montserrat', sans-serif;
-        ">
-            <span class="me-3" style="
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                width: 50px;
-                height: 50px;
-                background: #ffd700;
-                border-radius: 12px;
-                box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
-            ">
-                <i class="fas fa-crown" style="color: #05445e; font-size: 1.5rem;"></i>
-            </span>
-            Productos Destacados
-        </h2>
-        
-        <p class="mt-2 position-relative mb-0" style="
-            color: #189ab4;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-        ">
-            Los favoritos de nuestros clientes
-        </p>
-    </div>
-</div>
-        
-        <div class="row g-3">
+        <div class="d-flex flex-nowrap overflow-auto pb-3 px-2" style="gap: 1rem; scroll-snap-type: x mandatory;">
             @foreach($topProductos as $producto)
             <div class="col-6 col-md-4 col-lg-3 col-xl-2">
                 <div class="card h-100 product-card shadow-sm border-0">
@@ -478,9 +613,9 @@
 
 
     <!-- Lista de productos - 6 por fila -->
-    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-2">
+<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-2">
          @foreach($productosMostrar as $producto)
-        <div class="col p-2">
+    <div class="col p-2">
         <div class="card h-100 border-0 product-card @if($producto->stock == 0) out-of-stock @endif">
             <!-- Contenedor de imagen con efecto hover -->
             <div class="product-image-container position-relative overflow-hidden">
@@ -521,7 +656,7 @@
                 @endif
             </div>
         </div>
-</div>
+    </div>
 
 <style>
     /* Estilos generales de la tarjeta */
@@ -688,6 +823,42 @@
     .view-product-btn:hover {
         animation: pulse 1.5s infinite;
     }
+
+/* SOLO para pantallas móviles */
+@media (max-width: 768px) {
+  /* Contenedor principal de productos */
+  .row.row-cols-2.row-cols-sm-3.row-cols-md-4.row-cols-lg-6.g-2 {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important; /* ✅ permite scroll horizontal */
+    overflow-y: hidden;
+    gap: 0.8rem;
+    padding: 10px;
+    scroll-snap-type: x mandatory; /* para un scroll suave */
+    -webkit-overflow-scrolling: touch; /* hace más fluido el scroll en iOS */
+  }
+
+  /* Cada producto */
+  .row.row-cols-2.row-cols-sm-3.row-cols-md-4.row-cols-lg-6.g-2 > .col {
+    flex: 0 0 auto !important; /* evita que se estiren */
+    width: 50% !important; /* ancho de cada producto */
+    scroll-snap-align: center; /* hace que “salten” suavemente */
+  }
+
+  /* Estilo del scrollbar */
+  .row.row-cols-2.row-cols-sm-3.row-cols-md-4.row-cols-lg-6.g-2::-webkit-scrollbar {
+    height: 8px;
+  }
+  .row.row-cols-2.row-cols-sm-3.row-cols-md-4.row-cols-lg-6.g-2::-webkit-scrollbar-thumb {
+    background-color: #bdc7c9ff;
+    border-radius: 10px;
+  }
+  .row.row-cols-2.row-cols-sm-3.row-cols-md-4.row-cols-lg-6.g-2::-webkit-scrollbar-track {
+    background: #e0f7fa;
+  }
+}
+
+    
 </style>
     @endforeach
 </div>

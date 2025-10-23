@@ -38,36 +38,37 @@
                 </div>
 
                 <!-- Filtros adicionales -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body py-2">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="d-flex align-items-center mb-2 mb-md-0">
-                                <span class="me-2 fw-bold">Filtrar:</span>
-                                <div class="btn-group btn-group-sm">
-                                    <a href="{{ request()->fullUrlWithQuery(['alerta' => 'critico']) }}"
-                                        class="btn btn-outline-danger">
-                                        <i class="fas fa-fire me-1"></i> Crítico (-5)
-                                    </a>
-                                    <a href="{{ request()->fullUrlWithQuery(['alerta' => 'advertencia']) }}"
-                                        class="btn btn-outline-warning">
-                                        <i class="fas fa-exclamation me-1"></i> Advertencia (-10)
-                                    </a>
-                                    <a href="{{ request()->fullUrlWithQuery(['alerta' => 'precaucion']) }}"
-                                        class="btn btn-outline-info">
-                                        <i class="fas fa-info-circle me-1"></i> Precaución (-15)
-                                    </a>
-                                    <a href="{{ request()->url() }}" class="btn btn-outline-secondary">
-                                        <i class="fas fa-broom me-1"></i> Limpiar
-                                    </a>
-                                </div>
-                            </div>
-
-                            <span class="badge bg-danger fs-6">
-                                <i class="fas fa-box-open me-1"></i> {{ $productos->total() }} Productos con bajo stock
-                            </span>
-                        </div>
-                    </div>
+              <div class="card shadow-sm mb-4">
+    <div class="card-body py-2">
+        <div class="d-flex flex-wrap justify-content-between align-items-center">
+            <div class="d-flex flex-wrap align-items-center mb-2 mb-md-0">
+                <span class="me-2 fw-bold">Filtrar:</span>
+                <div class="btn-group btn-group-sm flex-wrap">
+                    <a href="{{ request()->fullUrlWithQuery(['alerta' => 'critico']) }}"
+                        class="btn btn-outline-danger mb-1 me-1">
+                        <i class="fas fa-fire me-1"></i> Crítico (-5)
+                    </a>
+                    <a href="{{ request()->fullUrlWithQuery(['alerta' => 'advertencia']) }}"
+                        class="btn btn-outline-warning mb-1 me-1">
+                        <i class="fas fa-exclamation me-1"></i> Advertencia (-10)
+                    </a>
+                    <a href="{{ request()->fullUrlWithQuery(['alerta' => 'precaucion']) }}"
+                        class="btn btn-outline-info mb-1 me-1">
+                        <i class="fas fa-info-circle me-1"></i> Precaución (-15)
+                    </a>
+                    <a href="{{ request()->url() }}" class="btn btn-outline-secondary mb-1 me-1">
+                        <i class="fas fa-broom me-1"></i> Limpiar
+                    </a>
                 </div>
+            </div>
+
+            <span class="badge bg-danger fs-6">
+                <i class="fas fa-box-open me-1"></i> {{ $productos->total() }} Productos con bajo stock
+            </span>
+        </div>
+    </div>
+</div>
+
 
                 <!-- Tabla de productos -->
                 <div class="card shadow border-0">
