@@ -193,7 +193,7 @@
                         $iconColor = '#ffffff';
                         $gradient = 'radial-gradient(circle at top, #3a7bd5, #00d2ff)';
                         break;
-                    case 'suplemento':
+                    case 'suplementos':
                         $icono = 'fas fa-capsules';
                         $iconColor = '#fff8e1';
                         $gradient = 'radial-gradient(circle at top, #f46b45, #eea849)';
@@ -223,7 +223,7 @@
                         $iconColor = '#f3e5f5';
                         $gradient = 'radial-gradient(circle at top, #da22ff, #9733ee)';
                         break;
-                    case 'nutricon saludable':
+                    case 'nutricion saludable':
                         $icono = 'fas fa-apple-alt';
                         $iconColor = '#f1f8e9';
                         $gradient = 'radial-gradient(circle at top, #a8ff78, #78ffd6)';
@@ -232,6 +232,11 @@
                         $icono = 'fas fa-soap';
                         $iconColor = '#e0f7fa';
                         $gradient = 'radial-gradient(circle at top, #00c6ff, #0072ff)';
+                        break;
+                    case 'alimentos y bebidas':
+                        $icono = 'fas fa-soap';
+                        $iconColor = '#e0f7fa';
+                        $gradient = 'radial-gradient(circle at top, #33b14eff, #4ebbceff)';
                         break;
                     default:
                         $icono = 'fas fa-pills';
