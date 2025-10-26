@@ -117,12 +117,19 @@
                                                 
                                                 <div class="form-group mb-2">
                                                     <label class="form-control-label">Stock Mínimo</label>
-                                                    <input type="number" class="form-control" name="stock_minimo" value="{{ old('stock_minimo', 0) }}" required>
+                                                   
+                                                 <input type="number" class="form-control" name="stock_minimo" value="{{ old('stock_minimo', 0) }}" required>
+                                                 @error('stock_minimo')
+                                                    <div class="text-danger small mt-2">{{ $message }}</div>
+                                                @enderror
                                                 </div>
                                                 
                                                 <div class="form-group mb-2">
                                                     <label class="form-control-label">Stock Máximo</label>
                                                     <input type="number" class="form-control" name="stock_maximo" value="{{ old('stock_maximo', 0) }}" required>
+                                               @error('stock_maximo')
+                                                    <div class="text-danger small mt-2">{{ $message }}</div>
+                                                @enderror
                                                 </div>
                                             </div>
                                         </div>

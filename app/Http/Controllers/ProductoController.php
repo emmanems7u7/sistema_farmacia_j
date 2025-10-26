@@ -44,14 +44,27 @@ class ProductoController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'codigo' => 'required|unique:productos,codigo',
-            'nombre' => 'required',
-            'stock_minimo' => 'required',
-            'stock_maximo' => 'required',
-            'descripcion' => 'nullable',
-            'imagen' => 'required|image|mimes:jpg,jpeg,png',
-        ]);
+       $request->validate([
+    'codigo' => 'required|unique:productos,codigo',
+    'nombre' => 'required',
+    'stock_minimo' => 'required|integer|min:1',
+    'stock_maximo' => 'required|integer|min:1',
+    'descripcion' => 'nullable',
+    'imagen' => 'required|image|mimes:jpg,jpeg,png',
+], [
+    
+
+    'stock_minimo.required' => 'Debe ingresar el stock mínimo.',
+    'stock_minimo.integer' => 'El stock mínimo debe ser un número entero.',
+    'stock_minimo.min' => 'El stock mínimo debe ser mayor a 0.',
+
+    'stock_maximo.required' => 'Debe ingresar el stock máximo.',
+    'stock_maximo.integer' => 'El stock máximo debe ser un número entero.',
+    'stock_maximo.min' => 'El stock máximo debe ser mayor a 0.',
+
+    
+]);
+
 
         $producto = new Producto();
         $producto->codigo = $request->codigo;

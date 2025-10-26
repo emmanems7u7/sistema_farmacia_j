@@ -86,8 +86,7 @@
                                                 #</th>
                                             <th class="text-uppercase text-secondary text-xs font-weight-bolder">Laboratorio
                                             </th>
-                                            <th class="text-uppercase text-secondary text-xs font-weight-bolder">Teléfono
-                                            </th>
+                                            
                                             
                                             <th class="text-uppercase text-secondary text-xs font-weight-bolder">Nombre Proveedor
                                             </th>
@@ -114,12 +113,7 @@
                                                             class="text-dark text-sm font-weight-bold">{{ $laboratorio->nombre }}</span>
                                                     </div>
                                                 </td>
-                                                <td class="align-middle">
-                                                    <span class="text-dark text-sm">
-                                                        <i class="fas fa-phone me-1 text-primary"></i>
-                                                        {{ $laboratorio->telefono }}
-                                                    </span>
-                                                </td>
+                                                
                                                 
                                                 <td class="align-middle">
                                                     <span class="text-dark text-sm">
@@ -453,7 +447,7 @@
 
                     <!-- Teléfono -->
                     <div class="form-group mb-3">
-                        <label class="form-label">Teléfono</label>
+                        <label class="form-label">Teléfono/Celular</label>
                         <div class="input-group input-group-outline">
                             <span class="input-group-text"><i class="fas fa-phone"></i></span>
                             <input type="text" class="form-control" name="telefono" value="{{ old('telefono') }}"

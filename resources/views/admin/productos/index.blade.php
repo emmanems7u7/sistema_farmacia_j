@@ -238,7 +238,8 @@
                                     @endif
                                     <span class="badge bg-primary rounded-pill position-absolute"
                                         style="top: 5px; left: 5px; font-size: 0.7rem;">
-                                        #{{ $loop->iteration }}
+                                        
+                                        {{ $producto->codigo }}
                                     </span>
 
                                 </div>
@@ -613,14 +614,15 @@
                                     </span>
                                 </div>
 
-                                <div class="progress mb-3" style="height: 6px;">
+                               <div class="progress mb-3" style="height: 6px;">
                                     @php
-                                        $porcentaje = ($producto->stock / $producto->stock_maximo) * 100;
+                                        $porcentaje = $producto->stock_maximo > 0 ? ($producto->stock / $producto->stock_maximo) * 100 : 0;
                                         $color = $porcentaje < 20 ? 'bg-danger' : ($porcentaje < 50 ? 'bg-warning' : 'bg-success');
                                     @endphp
                                     <div class="progress-bar {{ $color }}" role="progressbar" style="width: {{ $porcentaje }}%">
                                     </div>
                                 </div>
+
 
                                 <div class="small text-muted text-center">
                                     {{ $producto->stock }} unidades en stock
