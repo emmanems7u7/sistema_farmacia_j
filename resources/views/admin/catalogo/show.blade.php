@@ -19,8 +19,14 @@
                     <!-- Sección de imagen (lado izquierdo) -->
                     <div class="col-md-5">
                         <div class="product-image-container h-100 d-flex align-items-center justify-content-center p-4 bg-light">
-                            <img src="{{ $producto->imagen ? asset('storage/'.$producto->imagen) : asset('img/default-medicine.png') }}" 
-                                 alt="{{ $producto->nombre }}" 
+
+
+                         <img src="{{ $producto->imagen && file_exists(public_path('storage/'.$producto->imagen)) 
+                            ? asset('storage/'.$producto->imagen) 
+                            : asset('assets/img/sinimagen.jpeg') }}" 
+                     alt="{{ $producto->nombre }}"
+
+                             
                                  class="img-fluid" 
                                  style="max-height: 300px; width: auto; object-fit: contain; mix-blend-mode: multiply;">
                         </div>

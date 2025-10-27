@@ -451,7 +451,7 @@
                         <div class="input-group input-group-outline">
                             <span class="input-group-text"><i class="fas fa-phone"></i></span>
                             <input type="text" class="form-control" name="telefono" value="{{ old('telefono') }}"
-                                required placeholder="Ej: 22445566">
+                             placeholder="Ej: 22445566">
                         </div>
                         @error('telefono')
                             <div class="text-danger small mt-2">{{ $message }}</div>
@@ -464,7 +464,7 @@
                         <div class="input-group input-group-outline">
                             <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
                             <input type="text" class="form-control" name="direccion" value="{{ old('direccion') }}"
-                                required placeholder="Ej: Av. Montes #123">
+                                placeholder="Ej: Av. Montes #123">
                         </div>
                         @error('direccion')
                             <div class="text-danger small mt-2">{{ $message }}</div>

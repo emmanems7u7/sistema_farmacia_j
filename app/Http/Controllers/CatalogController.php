@@ -12,8 +12,8 @@ use App\Models\Compra;
 use App\Models\Lote;
 use App\Models\Venta;
 use App\Models\Cliente;
-use App\Models\DetalleVenta; // Asegúrate de importar el modelo DetalleVenta
-use Illuminate\Support\Facades\DB; // Necesario para las consultas
+use App\Models\DetalleVenta; 
+use Illuminate\Support\Facades\DB; 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
@@ -123,7 +123,7 @@ class CatalogController extends Controller
 
     public function ver(Categoria $categoria)
     {
-        $productosPaginados = $categoria->productos()->with('lotes')->paginate(12);
+        $productosPaginados = $categoria->productos()->with('lotes')->paginate(30);
 
         // Calcular precio mínimo y stock total por producto
         foreach ($productosPaginados as $producto) {
@@ -139,7 +139,7 @@ class CatalogController extends Controller
     }
 
 
-    // En tu componente Livewire
+
     public function getCategoryIcon($categoryName)
     {
         $icons = [
@@ -157,7 +157,7 @@ class CatalogController extends Controller
     }
 
 
-    // En tu controlador (CatalogoController.php)
+ 
     public function buscar(Request $request)
     {
         $request->validate(['search' => 'required|string|min:2']);
@@ -186,9 +186,6 @@ class CatalogController extends Controller
 
 
 
-    // Ejemplo de controlador
-// En tu controlador
-// En tu controlador Laravel
     public function search(Request $request)
     {
         $query = $request->input('query', '');
@@ -204,7 +201,10 @@ class CatalogController extends Controller
                 return [
                     'nombre' => $item->nombre,
                     'url' => route('admin.catalogo.show', $item->id), // Asegúrate que esta sea la ruta correcta
-                    'imagen' => $item->imagen ? asset('storage/' . $item->imagen) : asset('img/default-product.png'),
+                   
+                    'imagen' => $item->imagen && file_exists(public_path('storage/'.$item->imagen)) 
+                    ? asset('storage/' . $item->imagen) 
+                    : asset('assets/img/sinimagen.jpeg'),
                     'precio' => 'Bs ' . number_format($precio_venta, 2) // Ahora se incluye el precio correcto
                 ];
             });

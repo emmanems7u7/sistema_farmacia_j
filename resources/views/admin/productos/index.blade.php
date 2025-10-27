@@ -228,14 +228,20 @@
                                 <!-- Producto Image -->
                                 <div class="card-header p-0 position-relative">
                                     @if($producto->imagen)
-                                        <img src="{{ asset('storage/' . $producto->imagen) }}" class="card-img-top"
-                                            style="height: 150px; object-fit: cover; width: 100%;" alt="{{ $producto->nombre }}">
-                                    @else
-                                        <div class="placeholder-img d-flex align-items-center justify-content-center bg-secondary"
-                                            style="height: 100px;">
-                                            <i class="fas fa-box-open fa-2x text-white"></i>
-                                        </div>
-                                    @endif
+    {{-- Si la imagen es de storage (imagen subida) --}}
+    @if(Str::startsWith($producto->imagen, 'productos/'))
+        <img src="{{ asset('storage/' . $producto->imagen) }}" class="card-img-top"
+            style="height: 150px; object-fit: cover; width: 100%;" alt="{{ $producto->nombre }}">
+    @else
+        {{-- Si es la imagen por defecto en /assets/img --}}
+        <img src="{{ asset($producto->imagen) }}" class="card-img-top"
+            style="height: 150px; object-fit: cover; width: 100%;" alt="{{ $producto->nombre }}">
+    @endif
+@else
+    {{-- Si no hay imagen registrada, mostrar también la imagen por defecto --}}
+    <img src="{{ asset('assets/img/sinimagen.jpeg') }}" class="card-img-top"
+        style="height: 150px; object-fit: cover; width: 100%;" alt="Sin imagen">
+@endif
                                     <span class="badge bg-primary rounded-pill position-absolute"
                                         style="top: 5px; left: 5px; font-size: 0.7rem;">
                                         
@@ -842,7 +848,7 @@
                                                                 </label>
                                                                 <input type="number" class="form-control border-primary"
                                                                     name="stock_minimo" value="{{ $producto->stock_minimo }}"
-                                                                    required>
+                                                                    >
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
@@ -854,7 +860,7 @@
                                                                 </label>
                                                                 <input type="number" class="form-control border-primary"
                                                                     name="stock_maximo" value="{{ $producto->stock_maximo }}"
-                                                                    required>
+                                                                    >
                                                             </div>
                                                         </div>
                                                     </div>
@@ -959,7 +965,7 @@
                                                                 </label>
                                                                 <input type="number" class="form-control border-primary"
                                                                     name="cantidad" value="{{ $lote ? $lote->cantidad : '' }}"
-                                                                    required >
+                                                                     >
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">

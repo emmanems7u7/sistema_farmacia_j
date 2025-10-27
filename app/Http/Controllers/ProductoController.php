@@ -50,7 +50,7 @@ class ProductoController extends Controller
     'stock_minimo' => 'required|integer|min:1',
     'stock_maximo' => 'required|integer|min:1',
     'descripcion' => 'nullable',
-    'imagen' => 'required|image|mimes:jpg,jpeg,png',
+    'imagen' => 'nullable|image|mimes:jpg,jpeg,png',
 ], [
     
 
@@ -85,7 +85,12 @@ class ProductoController extends Controller
 
             // Guardar la ruta relativa en la BD
             $producto->imagen = 'productos/' . $filename;
-        }
+        } else {
+        // ⚙️ Si no se sube imagen, usar la predeterminada
+        $producto->imagen = 'assets/img/sinimagen.jpeg';
+    }
+
+
 
         $producto->save();
 
@@ -112,15 +117,15 @@ class ProductoController extends Controller
         $request->validate([
             'codigo' => 'required|unique:productos,codigo,' . $id,
             'nombre' => 'required',
-            'stock_minimo' => 'required|integer',
-            'stock_maximo' => 'required|integer',
-            'descripcion' => 'required',
+            'stock_minimo' => 'nullable|integer',
+            'stock_maximo' => 'nullable|integer',
+            'descripcion' => 'nullable',
             'imagen' => 'nullable|image|mimes:jpg,jpeg,png',
-            'precio_compra' => 'required|numeric|min:0',
-            'precio_venta' => 'required|numeric|min:0',
-            'fecha_ingreso' => 'required|date',
+            'precio_compra' => 'nullable|numeric|min:0',
+            'precio_venta' => 'nullable|numeric|min:0',
+            'fecha_ingreso' => 'nullable|date',
             'fecha_vencimiento' => 'nullable|date',
-            'cantidad' => 'required|integer|min:1'
+            'cantidad' => 'nullable|integer|min:1'
         ]);
 
         // Actualizar el producto

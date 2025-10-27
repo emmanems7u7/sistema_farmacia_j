@@ -139,41 +139,41 @@
                                 </div>
                             </div>
                             
-                            <!-- Image Section -->
+                            <!-- Imagen -->
                             <div class="col-lg-4">
-    <div class="card h-100 border-0 shadow-hover">
-        <div class="card-header bg-white border-bottom py-3">
-            <h6 class="mb-0 font-weight-bold text-primary">
-                <i class="fas fa-camera-retro mr-2"></i> Imagen del Producto
-            </h6>
-        </div>
-        <div class="card-body p-4">
-            <!-- Upload Area -->
-            <div class="upload-area border-2 border-dashed rounded-lg p-4 mb-4 text-center">
-                <div class="file-upload-wrapper">
-                    <input type="file" id="file" name="imagen" accept=".jpg, .jpeg, .png" class="file-upload-input" 
-                           onchange="previewImage(this)">
-                    <label for="file" class="file-upload-label btn btn-sm btn-primary px-4">
-                        <i class="fas fa-cloud-upload-alt mr-2"></i> Seleccionar imagen
-                    </label>
-                    <p class="small text-muted mt-2 mb-0">Formatos: JPG, PNG (Máx. 2MB)</p>
-                </div>
-            </div>
-            
-            <!-- Preview Area -->
-            <div class="preview-container border rounded-lg overflow-hidden bg-white">
-                <div id="no-image" class="empty-state text-center p-4">
-                    <div class="icon-container bg-light-primary rounded-circle p-3 mb-3 d-inline-block">
-                        <i class="fas fa-image text-primary fa-2x"></i>
-                    </div>
-                    <h6 class="text-muted mb-1">Vista previa</h6>
-                    <p class="small text-muted mb-0">La imagen seleccionada aparecerá aquí</p>
-                </div>
-                <img id="preview" class="img-fluid w-100" style="display: none; max-height: 220px; object-fit: contain;">
-            </div>
-        </div>
-    </div>
-</div>
+                                <div class="card h-100 border-0 shadow-hover">
+                                    <div class="card-header bg-white border-bottom py-3">
+                                        <h6 class="mb-0 font-weight-bold text-primary">
+                                            <i class="fas fa-camera-retro mr-2"></i> Imagen del Producto
+                                        </h6>
+                                    </div>
+                                    <div class="card-body p-4">
+                                        <!-- Upload Area -->
+                                        <div class="upload-area border-2 border-dashed rounded-lg p-4 mb-4 text-center">
+                                            <div class="file-upload-wrapper">
+                                                <input type="file" id="file" name="imagen" accept=".jpg, .jpeg, .png" class="file-upload-input" 
+                                                    onchange="previewImage(this)">
+                                                <label for="file" class="file-upload-label btn btn-sm btn-primary px-4">
+                                                    <i class="fas fa-cloud-upload-alt mr-2"></i> Seleccionar imagen
+                                                </label>
+                                                <p class="small text-muted mt-2 mb-0">Formatos: JPG, PNG (Máx. 2MB)</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Preview Area -->
+                                        <div class="preview-container border rounded-lg overflow-hidden bg-white">
+                                            <div id="no-image" class="empty-state text-center p-4">
+                                                <div class="icon-container bg-light-primary rounded-circle p-3 mb-3 d-inline-block">
+                                                    <i class="fas fa-image text-primary fa-2x"></i>
+                                                </div>
+                                                <h6 class="text-muted mb-1">Vista previa</h6>
+                                                <p class="small text-muted mb-0">La imagen seleccionada aparecerá aquí</p>
+                                            </div>
+                                            <img id="preview" class="img-fluid w-100" style="display: none; max-height: 220px; object-fit: contain;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
 <style>
     .shadow-hover {

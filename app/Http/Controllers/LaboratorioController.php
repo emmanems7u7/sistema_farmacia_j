@@ -41,8 +41,8 @@ class LaboratorioController extends Controller
         $request->validate([
 
         'nombre' => 'required|string|max:255',
-        'telefono' => 'required|string|max:20',
-        'direccion' => 'required|string|max:255',
+        'telefono' => 'nullable|string|max:20',
+        'direccion' => 'nullable|string|max:255',
         'nit' => 'nullable|string|max:20',
         'correo' => 'nullable|email|max:255',
         'nombre_proveedor' => 'nullable|string|max:255',
@@ -97,8 +97,8 @@ class LaboratorioController extends Controller
             
 
              'nombre' => 'required|string|max:255',
-        'telefono' => 'required|string|max:20',
-        'direccion' => 'required|string|max:255',
+        'telefono' => 'nullable|string|max:20',
+        'direccion' => 'nullable|string|max:255',
         'nit' => 'nullable|string|max:20',
         'correo' => 'nullable|email|max:255',
         'nombre_proveedor' => 'nullable|string|max:255',

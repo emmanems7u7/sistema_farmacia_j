@@ -27,7 +27,7 @@
             <div class="card h-100 border-0 product-card @if($producto->stock == 0) out-of-stock @endif">
                 <!-- Contenedor de imagen con efecto hover -->
                 <div class="product-image-container position-relative overflow-hidden">
-                    <img src="{{ $producto->imagen ? asset('storage/'.$producto->imagen) : asset('img/default-medicine.png') }}" 
+                    <img src="{{ $producto->imagen ? asset('storage/'.$producto->imagen) : asset('assets/img/sinimagen.jpeg') }}" 
                          class="product-image" alt="{{ $producto->nombre }}">
                     <div class="image-overlay"></div>
                 </div>
