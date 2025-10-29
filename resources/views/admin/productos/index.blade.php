@@ -250,12 +250,12 @@
 
                                 </div>
 
-                                <!-- Product Body -->
+                                <!-- Producto -->
                                 <div class="card-body pt-3 pb-2">
                                     <h5 class="card-title mb-1 fs-6 text-xs text-dark card-text">{{ $producto->nombre }}</h5>
 
 
-                                    <!-- Product Details -->
+                                    <!-- Producto -->
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <span class="text-xs text-muted">Stock:</span>
                                         <span
@@ -266,7 +266,7 @@
 
                                     @php
                                         $lote = \App\Models\Lote::where('producto_id', $producto->id)
-                                            ->latest('id')
+                                            ->oldest('id')
                                             ->first();
                                     @endphp
 
@@ -969,7 +969,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <!-- Espacio adicional para futuros campos si es necesario -->
+                                                            
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1008,7 +1008,7 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Preview Area -->
+                                            <!-- iamgen -->
                                             <div class="image-preview-container d-flex flex-column align-items-center justify-content-center"
                                                 style="min-height: 200px; background-color: #f8fafc; border-radius: 0.5rem; padding: 1rem;">
                                                 @if($producto->imagen)
@@ -1098,7 +1098,7 @@
 
 
     <script>
-        // Search and filter functionality remains the same
+        // buscar
         document.getElementById('searchInput').addEventListener('input', function () {
             const searchValue = this.value.toLowerCase();
             const productCards = document.querySelectorAll('.producto-card');

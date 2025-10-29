@@ -44,7 +44,7 @@
                 <div class="col-md-6">
                     <label for="comprobante" class="form-label fw-bold text-sm">Comprobante</label>
                     <select name="comprobante" id="comprobante" class="form-select form-select-sm border" required>
-                        <option value="FACTURA" selected>FACTURA</option>
+                        
                         <option value="RECIBO">RECIBO</option>
                         <option value="NOTA">NOTA</option>
                     </select>

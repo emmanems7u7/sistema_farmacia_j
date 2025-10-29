@@ -159,8 +159,7 @@
 
 
 
-        // Reemplázalo por este código mejorado:
-        // En el formulario del modal (#formLote)
+       
         $('#formLote').submit(function (e) {
             e.preventDefault();
 
@@ -248,7 +247,7 @@
 
     <script>
         $(document).ready(function () {
-            // [Mantener todos tus scripts originales aquí]
+           
 
             // Eliminar producto temporal
 
@@ -378,10 +377,10 @@
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
-                <!-- Card Principal - Diseño Mejorado -->
+                <!-- Card Principal - -->
 
             <div class="card shadow-lg border-0 rounded-lg" style="height: auto; min-height: 0;">
-                <div class="card-header bg-white border-bottom py-3"> <!-- Reduje el padding vertical -->
+                <div class="card-header bg-white border-bottom py-3"> 
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
                             <div>

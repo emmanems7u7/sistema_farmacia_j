@@ -125,6 +125,18 @@ class CompraController extends Controller
 
 
                 $lote = Lote::findOrFail($lote_id);
+                $producto = Producto::findOrFail($tmp_compra->producto_id);
+
+            // ✅ NUEVA VALIDACIÓN: Verificar stock máximo según los lotes
+            $stock_actual = Lote::where('producto_id', $producto->id)->sum('cantidad');
+            $nuevo_stock = $stock_actual + $lote->cantidad;
+
+            if ($producto->stock_maximo !== null && $producto->stock_maximo > 0 && $nuevo_stock > $producto->stock_maximo) {
+                throw new \Exception("No se puede registrar la compra del producto '{$producto->nombre}'. 
+                    Stock máximo permitido: {$producto->stock_maximo}. 
+                    Stock actual: {$stock_actual}. 
+                    Con esta compra sería: {$nuevo_stock}.");
+            }
 
                 // Crear detalle de compra
                 DetalleCompra::create([
@@ -138,10 +150,6 @@ class CompraController extends Controller
 
             }
 
-
-
-
-            
 
             // Eliminar temporales
             TmpCompra::where('session_id', $session_id)->delete();
