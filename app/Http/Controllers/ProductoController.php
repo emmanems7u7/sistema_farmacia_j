@@ -112,57 +112,60 @@ class ProductoController extends Controller
         return view('admin.productos.edit', compact('producto', 'categorias', 'laboratorios'));
     }
 
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'codigo' => 'required|unique:productos,codigo,' . $id,
-            'nombre' => 'required',
-            'stock_minimo' => 'nullable|integer',
-            'stock_maximo' => 'nullable|integer',
-            'descripcion' => 'nullable',
-            'imagen' => 'nullable|image|mimes:jpg,jpeg,png',
-            'precio_compra' => 'nullable|numeric|min:0',
-            'precio_venta' => 'nullable|numeric|min:0',
-            'fecha_ingreso' => 'nullable|date',
-            'fecha_vencimiento' => 'nullable|date',
-            'cantidad' => 'nullable|integer|min:1'
-        ]);
+   public function update(Request $request, $id)
+{
+    $request->validate([
+        'codigo' => 'required|unique:productos,codigo,' . $id,
+        'nombre' => 'required',
+        'stock_minimo' => 'nullable|integer',
+        'stock_maximo' => 'nullable|integer',
+        'descripcion' => 'nullable',
+        'imagen' => 'nullable|image|mimes:jpg,jpeg,png',
+        'precio_compra' => 'nullable|numeric|min:0',
+        'precio_venta' => 'nullable|numeric|min:0',
+        'fecha_ingreso' => 'nullable|date',
+        'fecha_vencimiento' => 'nullable|date',
+        'cantidad' => 'nullable|integer|min:0' // 🔹 Cambiado a min:0 para permitir 0
+    ]);
 
-        // Actualizar el producto
-        $producto = Producto::findOrFail($id);
+    // Actualizar el producto
+    $producto = Producto::findOrFail($id);
 
-        $producto->update([
-            'codigo' => $request->codigo,
-            'nombre' => $request->nombre,
-            'descripcion' => $request->descripcion,
-            'stock_minimo' => $request->stock_minimo,
-            'stock_maximo' => $request->stock_maximo,
-            'categoria_id' => $request->categoria_id,
-            'laboratorio_id' => $request->laboratorio_id
-        ]);
+    $producto->update([
+        'codigo' => $request->codigo,
+        'nombre' => $request->nombre,
+        'descripcion' => $request->descripcion,
+        'stock_minimo' => $request->stock_minimo,
+        'stock_maximo' => $request->stock_maximo,
+        'categoria_id' => $request->categoria_id,
+        'laboratorio_id' => $request->laboratorio_id
+    ]);
 
-        // Manejar la imagen si se subió una nueva
-        if ($request->hasFile('imagen')) {
-            // Eliminar imagen anterior si existe
-            if ($producto->imagen && file_exists(public_path('storage/' . $producto->imagen))) {
-                unlink(public_path('storage/' . $producto->imagen));
-            }
-
-            $file = $request->file('imagen');
-            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('storage/productos'), $filename);
-            $producto->imagen = 'productos/' . $filename;
+    // Manejar la imagen si se subió una nueva
+    if ($request->hasFile('imagen')) {
+        if ($producto->imagen && file_exists(public_path('storage/' . $producto->imagen))) {
+            unlink(public_path('storage/' . $producto->imagen));
         }
-        // Guardar cambios en producto (incluye imagen)
-        $producto->save();
 
-        // Manejar el lote del producto
+        $file = $request->file('imagen');
+        $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path('storage/productos'), $filename);
+        $producto->imagen = 'productos/' . $filename;
+        $producto->save();
+    }
+
+    // 🔹 Solo procesar el lote si hay datos válidos
+    if (
+        $request->filled('precio_compra') ||
+        $request->filled('precio_venta') ||
+        $request->filled('cantidad')
+    ) {
         $loteData = [
             'precio_compra' => $request->precio_compra,
             'precio_venta' => $request->precio_venta,
             'fecha_ingreso' => $request->fecha_ingreso,
             'fecha_vencimiento' => $request->fecha_vencimiento,
-            'cantidad' => $request->cantidad,
+            'cantidad' => $request->cantidad ?? 0, // 🔹 Si no se envía, por defecto 0
             'cantidad_inicial' => 1
         ];
 
@@ -171,15 +174,17 @@ class ProductoController extends Controller
             $lote = Lote::findOrFail($request->lote_id);
             $lote->update($loteData);
         } else {
-            // Crear nuevo lote
+            // Crear nuevo lote solo si tiene sentido (precio o cantidad)
             $loteData['producto_id'] = $producto->id;
             $loteData['numero_lote'] = 'LOTE-' . strtoupper(Str::random(6));
             Lote::create($loteData);
         }
-
-        return redirect()->route('admin.productos.index')
-            ->with('status', 'Producto actualizado correctamente');
     }
+
+    return redirect()->route('admin.productos.index')
+        ->with('status', 'Producto actualizado correctamente');
+}
+
 
     public function destroy($id)
     {
