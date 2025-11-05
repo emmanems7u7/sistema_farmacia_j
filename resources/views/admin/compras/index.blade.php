@@ -258,7 +258,7 @@
                                                                 
                                                              
                                                              
-width: '350px',
+                                width: '350px',
                                                                 showCancelButton: true,
                                                                 focusConfirm: false,
                                                                 confirmButtonText: `<i class="fas fa-trash-alt me-2"></i> Confirmar Eliminación`,

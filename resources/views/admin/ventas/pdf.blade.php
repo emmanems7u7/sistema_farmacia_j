@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Nota de Venta - {{$sucursal->nombre}}</title>
+    <title>reporte de venta - {{$sucursal->nombre}}</title>
     <style>
         /* Reset completo para impresión térmica */
         body, html {
@@ -132,7 +132,7 @@
 </div>
 
 <!-- Título del documento -->
-<div class="invoice-title text-uppercase">factura de venta</div>
+<div class="invoice-title text-uppercase">Nota de venta</div>
 
 <?php
 $fecha_db = $venta->fecha;
@@ -219,11 +219,11 @@ $fecha_formateada = str_replace(array_keys($meses), array_values($meses), $fecha
 </table>
 
 <!-- Información de pago -->
-<div class="payment-info">
-    
-    <div class="text-bold">Total a pagar: Bs {{number_format($suma_subtotal, 2, '.', ',')}}</div>
-    <div>Son: {{ $literal }}</div>
 
+
+<div class="payment-info">
+    <div class="text-bold">Total a pagar: Bs {{ number_format($total, 2, '.', ',') }}</div>
+    <div>Son: {{ $literal }}</div>
 </div>
 
 

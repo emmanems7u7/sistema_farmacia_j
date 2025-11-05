@@ -188,43 +188,79 @@ class VentaController extends Controller
 
 
     public function pdf($id)
-    {
-        $id_sucursal = Auth::user()->sucursal_id;
-        $sucursal = Sucursal::where('id', $id_sucursal)->first();
+{
+    $id_sucursal = Auth::user()->sucursal_id;
+    $sucursal = Sucursal::findOrFail($id_sucursal);
 
-        $venta = Venta::with(['detallesVenta.producto', 'cliente'])->findOrFail($id);
+    $venta = Venta::with(['detallesVenta.producto', 'detallesVenta.lote', 'cliente'])->findOrFail($id);
 
-        // Calcular el total sumando los subtotales
-        $total = $venta->detallesVenta->sum(function ($detalle) {
-            $lote = $detalle->producto->lotes()->latest()->first();
-            $precio = $lote ? $lote->precio_venta : $detalle->producto->precio_venta;
-            return $detalle->cantidad * $precio;
-        });
+    // Calcular el total sumando los subtotales usando precio del lote si existe
+    $total = $venta->detallesVenta->sum(function ($detalle) {
+        $precio = $detalle->lote->precio_venta ?? $detalle->producto->precio_venta;
+        return $detalle->cantidad * $precio;
+    });
+
+    // Generar el literal
+    $literal = $this->numerosALetrasConDecimales($total);
+
+    // Enviar a la vista del PDF
+    return PDF::loadView('admin.ventas.pdf', [
+        'sucursal' => $sucursal,
+        'venta' => $venta,
+        'literal' => $literal, // monto en letras
+        'total' => $total      // monto en números
+    ])->setPaper([0, 0, 250.77, 600], 'portrait')->stream();
+}
 
 
-        
 
-        // Convertir a letras (variable ya contiene el string)
-        $literal = $this->numerosALetrasConDecimales($total);
 
-        return PDF::loadView('admin.ventas.pdf', [
-            'sucursal' => $sucursal,
-            'venta' => $venta,
-            'literal' => $literal, // String con el monto en letras
-            'total' => $total
-        ])->setPaper([0, 0, 250.77, 600], 'portrait')->stream();
-    }
+private function numerosALetrasConDecimales($numero)
+{
+    $unidades = [
+        '', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez',
+        'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve', 'veinte'
+    ];
+    $decenas = ['', '', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
+    $centenas = ['', 'cien', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos'];
 
-    private function numerosALetrasConDecimales($numero)
-    {
-        $formatter = new NumberFormatter("es", NumberFormatter::SPELLOUT);
-        $partes = explode('.', number_format(abs($numero), 2, '.', ''));
+    $numero = round($numero, 2);
+    $entero = floor($numero);
+    $decimal = (int)round(($numero - $entero) * 100);
 
-        $entero = $partes[0] == 1 ? 'un boliviano' : $formatter->format($partes[0]) . ' bolivianos';
-        $decimal = $partes[1] == '00' ? 'exactos' : $formatter->format($partes[1]) . ' centavos';
+    $convertir = function ($n) use ($unidades, $decenas, $centenas, &$convertir) {
+        if ($n == 0) return 'cero';
+        elseif ($n < 21) return $unidades[$n];
+        elseif ($n < 100) {
+            $d = intdiv($n, 10);
+            $u = $n % 10;
+            return $decenas[$d] . ($u ? ' y ' . $unidades[$u] : '');
+        } elseif ($n < 1000) {
+            $c = intdiv($n, 100);
+            $r = $n % 100;
+            $texto = $centenas[$c];
+            if ($c == 1 && $r > 0) $texto = 'ciento';
+            return trim($texto . ($r ? ' ' . $convertir($r) : ''));
+        } elseif ($n < 1000000) {
+            $m = intdiv($n, 1000);
+            $r = $n % 1000;
+            $miles = $m == 1 ? 'mil' : $convertir($m) . ' mil';
+            return trim($miles . ' ' . ($r ? $convertir($r) : ''));
+        } elseif ($n < 1000000000) {
+            $millones = intdiv($n, 1000000);
+            $r = $n % 1000000;
+            $textoMillones = $millones == 1 ? 'un millón' : $convertir($millones) . ' millones';
+            return trim($textoMillones . ' ' . ($r ? $convertir($r) : ''));
+        } else {
+            return (string)$n;
+        }
+    };
 
-        return ($numero < 0 ? 'Menos ' : '') . ucfirst("$entero con $decimal");
-    }
+    $textoEntero = $convertir($entero) . ' boliviano' . ($entero != 1 ? 's' : '');
+    $textoDecimal = $decimal == 0 ? 'exactos' : $convertir($decimal) . ' centavo' . ($decimal != 1 ? 's' : '');
+
+    return ucfirst(trim(($numero < 0 ? 'menos ' : '') . "$textoEntero con $textoDecimal"));
+}
 
 
 

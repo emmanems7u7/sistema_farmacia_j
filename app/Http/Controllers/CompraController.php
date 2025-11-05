@@ -572,9 +572,7 @@ class CompraController extends Controller
 
    
 
-
-
-    public function pdf($id)
+  public function pdf($id)
     {
         try {
             // 1. Obtener datos básicos
@@ -619,16 +617,59 @@ class CompraController extends Controller
             return redirect()->route('admin.compras.index')
                 ->with('error', 'No se pudo generar el reporte: ' . $e->getMessage());
         }
-    }
+    }  
 
-    private function numerosALetrasConDecimales($numero)
-    {
-        $formatter = new NumberFormatter("es", NumberFormatter::SPELLOUT);
-        $partes = explode('.', number_format($numero, 2, '.', ''));
-        $entero = $formatter->format($partes[0]);
-        $decimal = $formatter->format($partes[1]);
-        return ucfirst("$entero con $decimal/100");
-    }
+  
+
+private function numerosALetrasConDecimales($numero)
+{
+    $unidades = [
+        '', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez',
+        'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve', 'veinte'
+    ];
+    $decenas = ['', '', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
+    $centenas = ['', 'cien', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos'];
+
+    // Dividir parte entera y decimal
+    $partes = explode('.', number_format(abs($numero), 2, '.', ''));
+    $entero = intval($partes[0]);
+    $decimal = intval($partes[1]);
+
+    // Función interna para convertir hasta 999
+    $convertir = function ($n) use ($unidades, $decenas, $centenas, &$convertir) {
+        if ($n == 0) return 'cero';
+        elseif ($n < 21) return $unidades[$n];
+        elseif ($n < 100) {
+            $d = intdiv($n, 10);
+            $u = $n % 10;
+            return $decenas[$d] . ($u ? ' y ' . $unidades[$u] : '');
+        } elseif ($n < 1000) {
+            $c = intdiv($n, 100);
+            $r = $n % 100;
+            return $centenas[$c] . ($r ? ' ' . $convertir($r) : '');
+        } elseif ($n < 1000000) {
+            $m = intdiv($n, 1000);
+            $r = $n % 1000;
+            $miles = $m == 1 ? 'mil' : $convertir($m) . ' mil';
+            return trim($miles . ' ' . ($r ? $convertir($r) : ''));
+        } elseif ($n < 1000000000) {
+            $millones = intdiv($n, 1000000);
+            $r = $n % 1000000;
+            $textoMillones = $millones == 1 ? 'un millón' : $convertir($millones) . ' millones';
+            return trim($textoMillones . ' ' . ($r ? $convertir($r) : ''));
+        } else {
+            return (string)$n;
+        }
+    };
+
+    // Convertir partes
+    $textoEntero = $convertir($entero) . ' boliviano' . ($entero != 1 ? 's' : '');
+    $textoDecimal = $decimal == 0 ? 'exactos' : $convertir($decimal) . ' centavo' . ($decimal != 1 ? 's' : '');
+
+    return ($numero < 0 ? 'Menos ' : '') . ucfirst("$textoEntero con $textoDecimal");
+}
+
+
 }
 
 
