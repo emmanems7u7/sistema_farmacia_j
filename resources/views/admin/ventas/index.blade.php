@@ -174,6 +174,38 @@
                         </h5>
                         <!-- Barra de acciones - Contenedor modificado -->
                         <div class="d-flex gap-2 align-items-center ms-auto position-relative">
+                            <button class="btn btn-sm btn-info text-white" onclick="generarReporteDia()">
+                                <i class="fas fa-file-alt me-1"></i> Reporte del Día
+                            </button>
+
+<script>
+    // Función para generar reporte del día
+function generarReporteDia() {
+    Swal.fire({
+        title: 'Generar Reporte del Día',
+        text: '¿Deseas generar el reporte de ventas de hoy?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, generar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Mostrar loading
+           
+
+            // Obtener fecha actual
+            const hoy = new Date().toISOString().split('T')[0];
+            
+            // Redirigir a la ruta del reporte
+            window.location.href = "{{ route('admin.ventas.reporte_dia') }}?fecha=" + hoy;
+        }
+    });
+}
+</script>
+
+
                             <button class="btn btn-sm btn-outline-secondary" id="refreshTable">
                                 <i class="fas fa-sync-alt me-1"></i> Actualizar
                             </button>

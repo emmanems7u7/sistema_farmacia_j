@@ -2,7 +2,6 @@
 
 @section('content')
 
-
 <style>
     .card {
         border: none;
@@ -49,13 +48,10 @@
     }
 </style>
 
-      <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-
 
 <script>
 // REGISTRAR UN CLIENTE
@@ -89,6 +85,99 @@ function guardar_cliente(){
         },
         error: function(error) {
             Swal.fire('Error', 'Ocurrió un error al registrar el cliente', 'error');
+        }
+    });
+}
+
+// FUNCIÓN PARA AÑADIR PRODUCTO - REUTILIZABLE
+// FUNCIÓN PARA AÑADIR PRODUCTO - REUTILIZABLE CON VALIDACIÓN DE STOCK
+function agregarProducto() {
+    const codigo = $('#codigo').val().trim();
+    const cantidad = $('#cantidad').val();
+    
+    if(!codigo) {
+        Swal.fire('Error', 'Por favor ingrese un código', 'warning');
+        return;
+    }
+
+    if(cantidad <= 0) {
+        Swal.fire('Error', 'La cantidad debe ser mayor a cero', 'warning');
+        return;
+    }
+
+    // PRIMERO VERIFICAR STOCK DISPONIBLE
+    $.ajax({
+        url: "{{ route('admin.ventas.verificar_stock') }}", // Necesitarás crear esta ruta
+        method: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}',
+            codigo: codigo,
+            cantidad: cantidad
+        },
+        beforeSend: function() {
+            Swal.showLoading();
+        },
+        success: function(response) {
+            if(response.stock_suficiente) {
+                // Si hay stock suficiente, proceder a agregar el producto
+                agregarProductoTmp(codigo, cantidad);
+            } else {
+                // Si no hay stock suficiente, mostrar alerta
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Stock Insuficiente',
+                    html: `
+                        <div class="text-start">
+                            <p><strong>Producto:</strong> ${response.producto_nombre}</p>
+                            <p><strong>Cantidad solicitada:</strong> ${cantidad}</p>
+                            <p><strong>Stock disponible:</strong> ${response.stock_disponible}</p>
+                            <p class="text-danger"><strong>Faltan:</strong> ${response.faltante} unidades</p>
+                        </div>
+                    `,
+                    confirmButtonText: 'Entendido'
+                });
+            }
+        },
+        error: function(xhr) {
+            Swal.fire('Error', 'Error al verificar el stock', 'error');
+        }
+    });
+}
+
+// FUNCIÓN PARA AGREGAR PRODUCTO A TEMPORAL (una vez verificado el stock)
+function agregarProductoTmp(codigo, cantidad) {
+    $.ajax({
+        url: "{{ route('admin.ventas.tmp_ventas') }}",
+        method: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}',
+            codigo: codigo,
+            cantidad: cantidad
+        },
+        beforeSend: function() {
+            Swal.showLoading();
+        },
+        success: function(response) {
+            if(response.success) {
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Producto agregado",
+                    showConfirmButton: false,
+                    timer: 1000
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire('Error', response.message || 'Error al agregar', 'error');
+            }
+        },
+        error: function(xhr) {
+            let errorMsg = 'Error en la conexión';
+            if(xhr.responseJSON && xhr.responseJSON.message) {
+                errorMsg = xhr.responseJSON.message;
+            }
+            Swal.fire('Error', errorMsg, 'error');
         }
     });
 }
@@ -188,45 +277,97 @@ $(document).ready(function() {
         }
     });
 
+    // Evento para añadir producto con Enter
     $('#codigo').on('keyup', function(e) {
         if (e.which === 13) {
-            const codigo = $(this).val().trim();
-            const cantidad = $('#cantidad').val();
+            agregarProducto();
+        }
+    });
+
+    // Evento para añadir producto con el botón +
+    $('#btn-agregar-producto').on('click', function() {
+        agregarProducto();
+    });
+    
+    // Inicializar DataTable
+    $('#mitabla, #mitabla2').DataTable({
+        pageLength: 5,
+        lengthMenu: [5, 10, 25, 50],
+        responsive: true,
+        autoWidth: false,
+        dom: '<"d-flex justify-content-between mb-3"lf>t<"d-flex justify-content-between mt-3"ip>', // Layout moderno
+        language: {
+            lengthMenu: "Mostrar _MENU_ registros por página",
+            zeroRecords: "No se encontraron resultados",
+            info: "Mostrando página _PAGE_ de _PAGES_",
+            infoEmpty: "No hay registros disponibles",
+            infoFiltered: "(filtrado de _MAX_ registros totales)",
+            search: "🔍 Buscar:",
+            paginate: {
+                first: "<i class='bi bi-chevron-bar-left'></i>",
+                last: "<i class='bi bi-chevron-bar-right'></i>",
+                next: "<i class='bi bi-chevron-right'></i>",
+                previous: "<i class='bi bi-chevron-left'></i>"
+            }
+        }
+    });
+});
+
+
+// Editar producto de la venta temporal
+$(document).on('click', '.edit-btn', function() {
+    const id = $(this).data('id');
+    const codigoActual = $(this).data('codigo');
+    const cantidadActual = $(this).data('cantidad');
+    
+    Swal.fire({
+        title: 'Editar Cantidad',
+        html: `
+            <div class="text-start">
+                <p><strong>Producto:</strong> ${codigoActual}</p>
+                <p><strong>Cantidad actual:</strong> ${cantidadActual}</p>
+            </div>
+            <input type="number" id="nuevaCantidad" class="form-control mt-3" value="${cantidadActual}" min="1" required>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Actualizar',
+        cancelButtonText: 'Cancelar',
+        preConfirm: () => {
+            const nuevaCantidad = document.getElementById('nuevaCantidad').value;
+            if (!nuevaCantidad || nuevaCantidad <= 0) {
+                Swal.showValidationMessage('La cantidad debe ser mayor a cero');
+                return false;
+            }
+            return nuevaCantidad;
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const nuevaCantidad = result.value;
             
-            if(!codigo) {
-                Swal.fire('Error', 'Por favor ingrese un código', 'warning');
-                return;
-            }
-
-            if(cantidad <= 0) {
-                Swal.fire('Error', 'La cantidad debe ser mayor a cero', 'warning');
-                return;
-            }
-
             $.ajax({
-                url: "{{ route('admin.ventas.tmp_ventas') }}",
-                method: 'POST',
+                url: "{{url('/admin/ventas/create/tmp')}}/"+id,
+                type: 'POST', // Mantenemos POST pero con _method
                 data: {
                     _token: '{{ csrf_token() }}',
-                    codigo: codigo,
-                    cantidad: cantidad
+                    _method: 'PUT', // Especificamos que es PUT
+                    cantidad: nuevaCantidad
                 },
                 beforeSend: function() {
                     Swal.showLoading();
                 },
                 success: function(response) {
-                    if(response.success) {
+                    if (response.success) {
                         Swal.fire({
                             position: "center",
                             icon: "success",
-                            title: "Producto agregado",
+                            title: "Cantidad actualizada",
                             showConfirmButton: false,
                             timer: 1000
                         }).then(() => {
                             location.reload();
                         });
                     } else {
-                        Swal.fire('Error', response.message || 'Error al agregar', 'error');
+                        Swal.fire('Error', response.message || 'Error al actualizar', 'error');
                     }
                 },
                 error: function(xhr) {
@@ -239,83 +380,39 @@ $(document).ready(function() {
             });
         }
     });
-
-
-
-    
-            // Inicializar DataTable
-          
-
-             $('#mitabla, #mitabla2').DataTable({
-                    pageLength: 5,
-                    lengthMenu: [5, 10, 25, 50],
-                    responsive: true,
-                    autoWidth: false,
-                    dom: '<"d-flex justify-content-between mb-3"lf>t<"d-flex justify-content-between mt-3"ip>', // Layout moderno
-                    language: {
-                        lengthMenu: "Mostrar _MENU_ registros por página",
-                        zeroRecords: "No se encontraron resultados",
-                        info: "Mostrando página _PAGE_ de _PAGES_",
-                        infoEmpty: "No hay registros disponibles",
-                        infoFiltered: "(filtrado de _MAX_ registros totales)",
-                        search: "🔍 Buscar:",
-                        paginate: {
-                            first: "<i class='bi bi-chevron-bar-left'></i>",
-                            last: "<i class='bi bi-chevron-bar-right'></i>",
-                            next: "<i class='bi bi-chevron-right'></i>",
-                            previous: "<i class='bi bi-chevron-left'></i>"
-                        }
-                    }
-                });
-
-
-
-
-
-    // DataTables - CONFIGURACIÓN MEJORADA
-  
 });
 </script>
 
 <div class="container-fluid mt--6">
     <div class="row">
-
-    <!-- Card Principal - Diseño Mejorado -->
-
-
-            <div class="card shadow-lg border-0 rounded-lg" style="height: auto; min-height: 0;">
-                <div class="card-header bg-white border-bottom py-3"> <!-- Reduje el padding vertical -->
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div>
-                                <h class="mb-0 text-dark font-weight-bold" style="font-size: 1.1rem;">Registrar Nueva Venta</h4>
-                            </div>
-                        </div>
+        <!-- Card Principal - Diseño Mejorado -->
+        <div class="card shadow-lg border-0 rounded-lg" style="height: auto; min-height: 0;">
+            <div class="card-header bg-white border-bottom py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
                         <div>
-                            <a href="{{ route('admin.ventas.index') }}" class="btn btn-outline-dark btn-sm py-1"> <!-- Reduje padding del botón -->
-                                <i class="fas fa-list me-1"></i> Ver Historial
-                            </a>
+                            <h class="mb-0 text-dark font-weight-bold" style="font-size: 1.1rem;">Registrar Nueva Venta</h>
                         </div>
+                    </div>
+                    <div>
+                        <a href="{{ route('admin.ventas.index') }}" class="btn btn-outline-dark btn-sm py-1">
+                            <i class="fas fa-list me-1"></i> Ver Historial
+                        </a>
                     </div>
                 </div>
             </div>
+        </div>
 
-
-
-
-
-
-
-
-            <hr>
+        <hr>
+        
         <!-- Card 1: Registro de Productos -->
         <div class="col-lg-8">
             <div class="card shadow">
                 <div class="card-header bg-white border-bottom">
                     <h6 class="mb-0 text-dark font-weight-bold">
                         <i class="fas fa-boxes text-primary me-2"></i>Productos
-                        </h6>
-                             </div>
+                    </h6>
+                </div>
                 <div class="card-body">
                     <!-- Formulario de búsqueda -->
                     <div class="row mb-4">
@@ -333,20 +430,15 @@ $(document).ready(function() {
                         <div class="col-md-4 d-flex align-items-end">
                             <div class="d-flex gap-2 w-100">
                                 <button type="button" class="btn btn-primary flex-grow-1" data-bs-toggle="modal" data-bs-target="#verModal">
-                                    <i class="fas fa-search me-2"></i>
+                                    <i class="fas fa-search me-2"></i> Buscar
                                 </button>
-                                <a href="{{url('/admin/productos/create')}}" class="btn btn-success flex-grow-1">
-                                    <i class="fas fa-plus me-2"></i>
-                                </a>
+                                <!-- Botón para añadir el producto a la tabla de productos -->
+                                <button type="button" class="btn btn-success flex-grow-1" id="btn-agregar-producto">
+                                    <i class="fas fa-plus me-2"></i> Añadir
+                                </button>
                             </div>
                         </div>
                     </div>
-
-
-
-                    
-
-
 
                     <!-- Tabla de productos -->
                     <!-- Tabla de productos -->
@@ -360,7 +452,7 @@ $(document).ready(function() {
                 <th class="px-1" style="width: 35%;">Nombre</th>
                 <th class="text-end px-1" style="width: 10%;">Unit.</th>
                 <th class="text-end px-1" style="width: 12%;">Subtotal</th>
-                <th class="text-center px-1" style="width: 4%;"></th>
+                <th class="text-center px-1" style="width: 8%;">Acciones</th> <!-- Aumenté el ancho para dos botones -->
             </tr>
         </thead>
         <tbody>
@@ -397,9 +489,25 @@ $(document).ready(function() {
                         <td class="text-end">Bs {{ number_format($lote->precio_venta, 2) }}</td>
                         <td class="text-end">Bs {{ number_format($subtotal, 2) }}</td>
                         <td class="text-center">
-                            <button type="button" class="btn btn-sm btn-outline-danger border-0 py-0 px-2 delete-btn" data-id="{{$tmp_venta->id}}">
-                                <i class="fas fa-trash-alt" style="font-size: 0.75rem;"></i>
-                            </button>
+                            <div class="d-flex justify-content-center gap-1">
+                                <!-- Botón Editar -->
+                                <button type="button" 
+                                        class="btn btn-sm btn-outline-warning border-0 py-0 px-2 edit-btn" 
+                                        data-id="{{$tmp_venta->id}}"
+                                        data-codigo="{{$tmp_venta->producto->codigo}}"
+                                        data-cantidad="{{$tmp_venta->cantidad}}"
+                                        title="Editar cantidad">
+                                    <i class="fas fa-edit" style="font-size: 0.75rem;"></i>
+                                </button>
+                                
+                                <!-- Botón Eliminar -->
+                                <button type="button" 
+                                        class="btn btn-sm btn-outline-danger border-0 py-0 px-2 delete-btn" 
+                                        data-id="{{$tmp_venta->id}}"
+                                        title="Eliminar producto">
+                                    <i class="fas fa-trash-alt" style="font-size: 0.75rem;"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
 
@@ -421,7 +529,6 @@ $(document).ready(function() {
         </tfoot>
     </table>
 </div>
-
                 </div>
             </div>
         </div>
@@ -530,37 +637,60 @@ $(document).ready(function() {
                 <div class="table-responsive">
                     <table id="mitabla" class="table table-hover align-items-center mb-0">
                         <thead class="bg-light">
-                            <tr>
-                                <th class="text-uppercase text-secondary text-xs font-weight-bolder ps-4">#</th>
-                                <th class="text-uppercase text-secondary text-xs font-weight-bolder text-center">Acción</th>
-                                <th class="text-uppercase text-secondary text-xs font-weight-bolder">Código</th>
-                                <th class="text-uppercase text-secondary text-xs font-weight-bolder">Nombre</th>
-                                <th class="text-uppercase text-secondary text-xs font-weight-bolder text-center">Stock</th>
-                                <th class="text-uppercase text-secondary text-xs font-weight-bolder text-end">Precio</th>
-                                <th class="text-uppercase text-secondary text-xs font-weight-bolder">Fecha Venc.</th>
-                            </tr>
+
+
+                        <style>
+.encabezado-pequeno th {
+    font-size: 10px;
+}
+</style>
+
+                            <tr class="encabezado-pequeno">
+    <th class="text-uppercase text-secondary font-weight-bolder ps-4">#</th>
+    <th class="text-uppercase text-secondary font-weight-bolder text-center">Acción</th>
+    <th class="text-uppercase text-secondary font-weight-bolder">Código</th>
+    <th class="text-uppercase text-secondary font-weight-bolder">Nombre</th>
+    <th class="text-uppercase text-secondary font-weight-bolder">Laboratorio</th>
+    <th class="text-uppercase text-secondary font-weight-bolder text-center">Stock</th>
+    <th class="text-uppercase text-secondary font-weight-bolder text-end">Precio</th>
+    <th class="text-uppercase text-secondary font-weight-bolder">Fecha Venc.</th>
+</tr>
+
                         </thead>
                         <tbody>
                             @foreach($productos as $producto)
                             <tr>
                                 <td class="text-xs font-weight-normal ps-4">{{ $loop->iteration }}</td>
-                                <td class="text-center">
-                                    <button type="button" 
-                                            class="btn btn-sm @if($producto->stock <= 0) 
-                                            btn-outline-secondary disabled @else btn-outline-primary @endif seleccionar-btn" 
+                               <td class="text-center">
+    <button type="button"
+            class="btn btn-xs 
+            @if($producto->stock <= 0) btn-outline-secondary disabled @else btn-outline-primary @endif seleccionar-btn"
+            style="
+                width: 25px; 
+                height: 25px; 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                padding: 0;  /* elimina espacio interno */
+            "
+            data-id="{{$producto->codigo}}"
+            data-nombre="{{$producto->nombre}}"
+            @if($producto->stock <= 0) disabled @endif>
+        <i class="fas fa-check-circle"></i>
+    </button>
+</td>
 
-                                            
-                                            data-id="{{$producto->codigo}}"
-                                            data-nombre="{{$producto->nombre}}"
-                                            @if($producto->stock <= 0) disabled @endif>
-                                        <i class="fas fa-check-circle me-1"></i>
-                                    </button>
-                                </td>
+
+
+
                                 <td class="text-xs font-weight-normal">
                                     <span class="badge bg-gray-200 text-dark">{{ $producto->codigo }}</span>
                                 </td>
                                 <td class="text-xs font-weight-normal">
                                     <strong>{{ $producto->nombre }}</strong>
+                                </td>
+                                <td class="text-xs font-weight-normal">
+                                    <strong>{{ $producto->laboratorio->nombre }}</strong>
                                 </td>
                                 <td class="text-center">
                                     <span class="badge 

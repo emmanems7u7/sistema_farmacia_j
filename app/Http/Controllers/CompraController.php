@@ -76,58 +76,59 @@ class CompraController extends Controller
     }
 
 
-    public function store(Request $request)
-    {
+  public function store(Request $request)
+{
+    // Validación (sin cambios)
+    $request->validate([
+        'fecha' => 'required|date',
+        'comprobante' => 'required|string|max:50',
+        'precio_total' => 'required|numeric|min:0',
+        // 'lotes' => 'required|array', // QUITADO
+        // 'lotes.*' => 'required|exists:lotes,id' // QUITADO
+    ]);
 
+    $caja = Caja::whereNull('fecha_cierre')->firstOrFail();
 
-        // Validación (sin cambios)
-        $request->validate([
-            'fecha' => 'required|date',
-            'comprobante' => 'required|string|max:50',
-            'precio_total' => 'required|numeric|min:0',
-            'lotes' => 'required|array',
-            'lotes.*' => 'required|exists:lotes,id'
+    DB::beginTransaction();
+
+    try {
+        // Crear la compra
+        $compra = Compra::create([
+            'fecha' => $request->fecha,
+            'comprobante' => $request->comprobante,
+            'precio_total' => $request->precio_total,
+            'sucursal_id' => Auth::user()->sucursal_id,
+            'laboratorio_id' => $request->laboratorio_id
         ]);
 
-        $caja = Caja::whereNull('fecha_cierre')->firstOrFail();
+        // Movimiento de caja
+        MovimientoCaja::create([
+            'tipo' => "EGRESO",
+            'monto' => $request->precio_total,
+            'descripcion' => "Compra de productos",
+            'fecha_movimiento' => $request->fecha_movimiento ?? now(),
+            'caja_id' => $caja->id
+        ]);
 
-        DB::beginTransaction();
+        // Procesar productos temporales
+        $session_id = session()->getId();
+        $tmp_compras = TmpCompra::where('session_id', $session_id)->with('producto')->get();
 
-        try {
-            // Crear la compra (sin cambios)
-            $compra = Compra::create([
-                'fecha' => $request->fecha,
-                'comprobante' => $request->comprobante,
-                'precio_total' => $request->precio_total,
-                'sucursal_id' => Auth::user()->sucursal_id,
-                'laboratorio_id' => $request->laboratorio_id
-            ]);
+        // ✅ VERIFICAR QUE TODOS LOS PRODUCTOS TENGAN LOTE ASIGNADO
+        foreach ($tmp_compras as $tmp_compra) {
+            if (!$tmp_compra->lote_id) {
+                throw new \Exception("El producto '{$tmp_compra->producto->nombre}' no tiene un lote asignado. Por favor, crea un lote para este producto.");
+            }
+        }
 
-            // Movimiento de caja (sin cambios)
-            MovimientoCaja::create([
-                'tipo' => "EGRESO",
-                'monto' => $request->precio_total,
-                'descripcion' => "Compra de productos",
-                'fecha_movimiento' => $request->fecha_movimiento ?? now(),
-                'caja_id' => $caja->id
-            ]);
+        foreach ($tmp_compras as $tmp_compra) {
+            // ✅ CORRECCIÓN: Obtener lote_id directamente de tmp_compras, no del request
+            $lote_id = $tmp_compra->lote_id;
 
-            // Procesar productos temporales
-            $session_id = session()->getId();
-            $tmp_compras = TmpCompra::where('session_id', $session_id)->get();
+            $lote = Lote::findOrFail($lote_id);
+            $producto = Producto::findOrFail($tmp_compra->producto_id);
 
-            foreach ($tmp_compras as $tmp_compra) {
-                $lote_id = $request->lotes[$tmp_compra->producto_id] ?? null;
-
-                if (!$lote_id) {
-                    throw new \Exception("No se seleccionó lote para el producto ID: {$tmp_compra->producto_id}");
-                }
-
-
-                $lote = Lote::findOrFail($lote_id);
-                $producto = Producto::findOrFail($tmp_compra->producto_id);
-
-            // ✅ NUEVA VALIDACIÓN: Verificar stock máximo según los lotes
+            // Validación de stock máximo
             $stock_actual = Lote::where('producto_id', $producto->id)->sum('cantidad');
             $nuevo_stock = $stock_actual + $lote->cantidad;
 
@@ -138,95 +139,96 @@ class CompraController extends Controller
                     Con esta compra sería: {$nuevo_stock}.");
             }
 
-                // Crear detalle de compra
-                DetalleCompra::create([
-                    'cantidad' => $lote->cantidad,
-                    'compra_id' => $compra->id,
-                    'lote_id' => $lote_id,
-                    'producto_id' => $tmp_compra->producto_id
-                ]);
-
-                
-
-            }
-
-
-            // Eliminar temporales
-            TmpCompra::where('session_id', $session_id)->delete();
-
-            DB::commit();
-
-            return redirect()->route('admin.compras.index')
-                ->with('status', 'Compra registrada correctamente');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return back()->withInput()
-                ->with('status', 'Error al registrar la compra: ' . $e->getMessage());
+            // Crear detalle de compra
+            DetalleCompra::create([
+                'cantidad' => $lote->cantidad,
+                'compra_id' => $compra->id,
+                'lote_id' => $lote_id,
+                'producto_id' => $tmp_compra->producto_id
+            ]);
         }
+
+        // Eliminar temporales
+        TmpCompra::where('session_id', $session_id)->delete();
+
+        DB::commit();
+
+        return redirect()->route('admin.compras.index')
+            ->with('status', 'Compra registrada correctamente');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+
+        return back()->withInput()
+            ->with('status', 'Error al registrar la compra: ' . $e->getMessage());
     }
-    public function agregarLote(Request $request)
-    {
+}
+   public function agregarLote(Request $request)
+{
+    $validated = $request->validate([
+        'numero_lote' => 'required|string|unique:lotes,numero_lote',
+        'cantidad' => 'required|integer|min:1',
+        'fecha_ingreso' => 'required|date',
+        'fecha_vencimiento' => 'nullable|date|after_or_equal:fecha_ingreso',
+        'precio_compra' => 'required|numeric|min:0',
+        'precio_venta' => 'required|numeric|min:0',
+        'producto_id' => 'required|exists:productos,id',
+        'tmp_compra_id' => 'required|exists:tmp_compras,id' // AGREGAR ESTO
+    ]);
 
+    $precioCompraUnitario = $validated['precio_compra'] / $validated['cantidad'];
 
-        $validated = $request->validate([
-            'numero_lote' => 'required|string|unique:lotes,numero_lote',
-            'cantidad' => 'required|integer|min:1',
-            'fecha_ingreso' => 'required|date',
-            'fecha_vencimiento' => 'nullable|date|after_or_equal:fecha_ingreso',
-            'precio_compra' => 'required|numeric|min:0',
-            'precio_venta' => 'required|numeric|min:0',
-            'producto_id' => 'required|exists:productos,id',
-            
+    if ($validated['precio_venta'] <= $precioCompraUnitario) {
+        return response()->json([
+            'success' => false,
+            'message' => 'El precio de venta debe ser mayor al precio de compra unitario (Bs ' . number_format($precioCompraUnitario, 2) . ').'
+        ], 422);
+    }
+
+    try {
+        DB::beginTransaction();
+
+        // Crear el nuevo lote
+        $lote = Lote::create([
+            'producto_id' => $validated['producto_id'],
+            'numero_lote' => $validated['numero_lote'],
+            'fecha_ingreso' => $validated['fecha_ingreso'],
+            'fecha_vencimiento' => $validated['fecha_vencimiento'],
+            'cantidad' => $validated['cantidad'],
+            'cantidad_inicial' => $validated['cantidad'],
+            'activo' => true,
+            'precio_compra' => $validated['precio_compra'],
+            'precio_venta' => $validated['precio_venta'],
+            'precio_compra_unitario' => $precioCompraUnitario,
         ]);
 
-        $precioCompraUnitario = $validated['precio_compra'] / $validated['cantidad'];
+        // ACTUALIZAR EL TMP_COMPRA CON EL LOTE CREADO
+        TmpCompra::where('id', $validated['tmp_compra_id'])
+                ->update(['lote_id' => $lote->id]);
 
+        DB::commit();
 
-        if ($validated['precio_venta'] <= $precioCompraUnitario) {
-            return back()->withInput()->with('alert', [
-                'type' => 'error',
-                'message' => ' El precio de venta debe ser mayor al precio de compra unitario (Bs ' . number_format($precioCompraUnitario, 2) . ').'
-            ]);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Lote creado correctamente',
+            'lote_id' => $lote->id,
+            'tmp_compra_id' => $validated['tmp_compra_id'],
+            'producto_id' => $validated['producto_id'],
+            'numero_lote' => $validated['numero_lote'],
+            'precio_venta' => $validated['precio_venta'],
+          'cantidad_lote' => $validated['cantidad'] 
+        ]);
 
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error('Error al crear lote: ' . $e->getMessage());
 
-
-        try {
-            DB::beginTransaction();
-
-            // Obtener la sucursal del usuario autenticado
-            $sucursal_id = auth()->user()->sucursal_id;
-
-            // Crear el nuevo lote con sucursal
-            Lote::create([
-                'producto_id' => $validated['producto_id'],
-                'numero_lote' => $validated['numero_lote'],
-                'fecha_ingreso' => $validated['fecha_ingreso'],
-                'fecha_vencimiento' => $validated['fecha_vencimiento'],
-                'cantidad' => $validated['cantidad'],
-                'cantidad_inicial' => $validated['cantidad'],
-                'activo' => true,
-                'precio_compra' => $validated['precio_compra'],
-                'precio_venta' => $validated['precio_venta'],
-                  'precio_compra_unitario' => $precioCompraUnitario,
-            ]);
-
-            DB::commit();
-
-            return back()->with('status', 'Lote creado correctamente');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Error al crear lote: ' . $e->getMessage());
-
-            return back()->with('alert', [
-                'type' => 'error',
-                'message' => 'Error al crear el lote: ' . $e->getMessage()
-            ]);
-        }
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al crear el lote: ' . $e->getMessage()
+        ], 500);
     }
+}
 
     public function getStockTotalAttribute()
     {
@@ -316,38 +318,41 @@ class CompraController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
-    {
-        DB::beginTransaction();
-        try {
-            // 1. Obtener la compra con sus detalles
-            $compra = Compra::with(['detalles'])->findOrFail($id);
+public function destroy($id)
+{
+    DB::beginTransaction();
+    try {
+        // 1. Obtener la compra con detalles
+        $compra = Compra::with(['detalles'])->findOrFail($id);
 
-            // 2. Obtener los IDs de productos involucrados
-            $productosIds = $compra->detalles->pluck('producto_id')->unique();
-
-            // 3. Eliminar lotes asociados a esos productos
-            Lote::whereIn('producto_id', $productosIds)->delete();
-
-            // 4. Eliminar detalles de la compra
-            $compra->detalles()->delete();
-
-            // 5. Eliminar la compra
-            $compra->delete();
-
-            DB::commit();
-
-            return redirect()->route('admin.compras.index')
-                ->with('success', 'Compra eliminada con sus lotes asociados');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error("Error eliminando compra {$id}: " . $e->getMessage());
-
-            return redirect()->back()
-                ->with('error', 'No se pudo eliminar: ' . $e->getMessage());
+        // 2. Para cada detalle, eliminar solo el lote específico de ESTA compra
+        foreach ($compra->detalles as $detalle) {
+            // 3. Eliminar el lote específico asociado a ESTE detalle
+            if ($detalle->lote_id) {
+                Lote::where('id', $detalle->lote_id)->delete();
+                logger("Eliminado lote ID: {$detalle->lote_id} del producto en detalle: {$detalle->id}");
+            }
         }
+
+        // 4. Eliminar detalles de la compra
+        $compra->detalles()->delete();
+
+        // 5. Eliminar la compra
+        $compra->delete();
+
+        DB::commit();
+
+        return redirect()->route('admin.compras.index')
+            ->with('success', 'Compra eliminada correctamente. Solo se removieron los lotes específicos de esta compra.');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error("Error eliminando compra {$id}: " . $e->getMessage());
+
+        return redirect()->back()
+            ->with('error', 'No se pudo eliminar: ' . $e->getMessage());
     }
+}
     public function agregarTmp(Request $request)
     {
         $request->validate([
@@ -407,6 +412,155 @@ class CompraController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+
+
+
+public function reporteDiario()
+{
+    try {
+        // Obtener la fecha actual
+        $fechaHoy = Carbon::today();
+
+        // Obtener las compras del día actual - solo con proveedor
+        $compras = Compra::with(['laboratorio'])
+            ->where('sucursal_id', Auth::user()->sucursal_id)
+            ->whereDate('fecha', $fechaHoy)
+            ->get();
+
+        // Calcular estadísticas básicas
+        $totalCompras = $compras->count();
+        $totalEgresos = $compras->sum('precio_total');
+        
+        // No podemos calcular productos sin la relación detallesCompra
+        $totalProductos = 0; // O puedes eliminarlo si no es necesario
+
+        // Obtener sucursal
+        $sucursal = Sucursal::find(Auth::user()->sucursal_id);
+
+        $data = [
+            'compras' => $compras,
+            'fecha' => $fechaHoy,
+            'sucursal' => $sucursal,
+            'totalCompras' => $totalCompras,
+            'totalEgresos' => $totalEgresos,
+            'totalProductos' => $totalProductos, // O elimina esta línea
+            'fecha_generacion' => now()->format('d/m/Y H:i:s')
+        ];
+
+        // Generar el PDF
+        $pdf = Pdf::loadView('admin.compras.reporte_diario_pdf', $data);
+        return $pdf->download('reporte_compras_' . $fechaHoy->format('Y-m-d') . '.pdf');
+        
+        
+
+    } catch (\Exception $e) {
+        logger('ERROR en reporteDiario: ' . $e->getMessage());
+        return response()->json([
+            'error' => true,
+            'message' => $e->getMessage()
+        ], 500);
+    }
+}
+
+public function reporteDiaario(Request $request)
+{
+    try {
+        // DEBUG: Mostrar información básica
+        logger('=== INICIANDO REPORTE COMPRAS DÍA ===');
+        logger('Fecha: ' . $request->input('fecha', now()->format('Y-m-d')));
+        logger('Sucursal ID: ' . Auth::user()->sucursal_id);
+        logger('Usuario: ' . Auth::user()->name);
+
+        // Obtener fecha de hoy
+        $fecha = $request->input('fecha', now()->format('Y-m-d'));
+        
+        // DEBUG: Verificar consulta de COMPRAS
+        $comprasQuery = Compra::with(['detallesCompra.producto', 'detallesCompra.lote', 'proveedor'])
+            ->where('sucursal_id', Auth::user()->sucursal_id)
+            ->whereDate('fecha', $fecha)
+            ->orderBy('fecha', 'desc');
+
+        logger('SQL: ' . $comprasQuery->toSql());
+        logger('Bindings: ' . json_encode($comprasQuery->getBindings()));
+        
+        $compras = $comprasQuery->get();
+        
+        logger('Compras encontradas: ' . $compras->count());
+
+        // DEBUG: Verificar si hay compras
+        if ($compras->count() === 0) {
+            logger('NO HAY COMPRAS para esta fecha: ' . $fecha);
+            // Forzar error para ver qué pasa
+            throw new \Exception("No hay compras registradas para la fecha: " . $fecha);
+        }
+
+        // Calcular estadísticas
+        $totalCompras = $compras->count();
+        $totalEgresos = $compras->sum('precio_total');
+        $totalProductos = $compras->sum(function($compra) {
+            return $compra->detallesCompra->sum('cantidad');
+        });
+
+        logger('Estadísticas - Compras: ' . $totalCompras . ', Egresos: ' . $totalEgresos . ', Productos: ' . $totalProductos);
+
+        // Obtener sucursal
+        $sucursal = Sucursal::find(Auth::user()->sucursal_id);
+        
+        if (!$sucursal) {
+            throw new \Exception("No se encontró la sucursal con ID: " . Auth::user()->sucursal_id);
+        }
+
+        logger('Sucursal: ' . $sucursal->nombre);
+
+        $data = [
+            'compras' => $compras,
+            'fecha' => $fecha,
+            'sucursal' => $sucursal,
+            'totalCompras' => $totalCompras,
+            'totalEgresos' => $totalEgresos,
+            'totalProductos' => $totalProductos,
+            'fecha_generacion' => now()->format('d/m/Y H:i:s')
+        ];
+
+        // DEBUG: Verificar si la vista existe
+        if (!view()->exists('admin.compras.reporte_diario_pdf')) {
+            throw new \Exception("La vista no existe: admin.compras.reporte_diario_pdf");
+        }
+        
+        logger('Vista encontrada: admin.compras.reporte_diario_pdf');
+
+        // DEBUG: Antes de generar PDF
+        logger('Generando PDF...');
+
+        // Generar PDF
+        $pdf = PDF::loadView('admin.compras.reporte_diario_pdf', $data)
+                 ->setPaper('a4', 'portrait');
+
+        logger('PDF generado exitosamente');
+
+        // Cambiar nombre del archivo descargado
+        return $pdf->download('reporte_diario_pdf_' . $fecha . '.pdf');
+
+    } catch (\Exception $e) {
+        // DEBUG: Mostrar error COMPLETO
+        logger('=== ERROR EN REPORTE ===');
+        logger('Mensaje: ' . $e->getMessage());
+        logger('Archivo: ' . $e->getFile());
+        logger('Línea: ' . $e->getLine());
+        logger('Trace: ' . $e->getTraceAsString());
+
+        // Retornar error en pantalla para verlo directamente
+        return response()->json([
+            'error' => true,
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
+        ], 500);
+    }
+}
+
 
 
     public function reporte($tipo, Request $request)

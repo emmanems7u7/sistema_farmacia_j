@@ -333,77 +333,94 @@ public function reportebajoStock(Request $request)
 
 
 
-    public function productosPorVencer(Request $request)
-    {
+  public function productosPorVencer(Request $request)
+{
+    $breadcrumb = [
+        ['name' => 'Inicio', 'url' => route('home')],
+        ['name' => 'Inventario', 'url' => route('admin.inventario.index')],
+        ['name' => 'Productos por Vencer', 'url' => route('admin.inventario.index')],
+    ];
 
-        $breadcrumb = [
-            ['name' => 'Inicio', 'url' => route('home')],
-            ['name' => 'Inventario', 'url' => route('admin.inventario.index')],
-            ['name' => 'Productos por Vencer', 'url' => route('admin.inventario.index')],
+    // Obtener y validar parámetros
+    $sucursalId = $request->query('sucursal');
+    $dias = $request->query('dias');
+    $mostrarVencidos = $request->query('vencidos');
 
-        ];
+    $validator = Validator::make($request->all(), [
+        'sucursal' => 'nullable|integer|exists:sucursals,id',
+        'dias' => 'nullable|integer|min:1|max:365',
+        'vencidos' => 'nullable|boolean'
+    ]);
 
-        // Obtener y validar parámetros
-        $sucursalId = $request->query('sucursal');
-        $dias = $request->query('dias', 30);
-        $mostrarVencidos = $request->query('vencidos', false); // Nuevo parámetro
+    if ($validator->fails()) {
+        $sucursalId = null;
+        $dias = null;
+        $mostrarVencidos = null;
+    }
 
-        $validator = Validator::make($request->all(), [
-            'sucursal' => 'nullable|integer|exists:sucursals,id',
-            'dias' => 'nullable|integer|min:1|max:365',
-            'vencidos' => 'nullable|boolean'
-        ]);
+    // LÓGICA CORREGIDA: Determinar qué mostrar
+    $mostrandoVencidos = false;
+    $diasSeleccionados = 30; // Valor por defecto para días
 
-        if ($validator->fails()) {
-            $sucursalId = null;
-            $dias = 30;
-            $mostrarVencidos = false;
-        }
+    if ($mostrarVencidos === '1' || $mostrarVencidos === 'true') {
+        $mostrandoVencidos = true;
+    } elseif ($dias) {
+        $mostrandoVencidos = false;
+        $diasSeleccionados = (int)$dias;
+    } else {
+        // Por defecto mostrar vencidos si no hay parámetros
+        $mostrandoVencidos = true;
+    }
 
-        // Consulta optimizada
-        $query = Producto::select([
-            'productos.id',
-            'productos.codigo',
-            'productos.nombre',
-            'lotes.numero_lote',
-            'lotes.cantidad as cantidad_lote',
-            'lotes.fecha_vencimiento',
-            DB::raw('(CASE WHEN lotes.fecha_vencimiento < NOW() THEN 1 ELSE 0 END) as vencido') // Agregar campo vencido
-        ])
-            ->join('lotes', 'productos.id', '=', 'lotes.producto_id');
+    // Redirección automática si no hay parámetros
+    if (!$request->hasAny(['sucursal', 'dias', 'vencidos'])) {
+        return redirect()->route('admin.inventario.productos_porvencer', ['vencidos' => 1]);
+    }
 
-        // Filtro por sucursal
-        if ($sucursalId) {
-            $query->where('lotes.sucursal_id', $sucursalId);
-        }
+    // Consulta optimizada
+    $query = Producto::select([
+        'productos.id',
+        'productos.codigo',
+        'productos.nombre',
+        'lotes.numero_lote',
+        'lotes.cantidad as cantidad_lote',
+        'lotes.fecha_vencimiento',
+        DB::raw('(CASE WHEN lotes.fecha_vencimiento < NOW() THEN 1 ELSE 0 END) as vencido')
+    ])
+        ->join('lotes', 'productos.id', '=', 'lotes.producto_id')
+        ->where('lotes.cantidad', '>', 0); // Solo lotes con stock
 
-        // Filtro por fecha
-        if ($mostrarVencidos) {
-            // Mostrar solo productos vencidos
-            $query->whereDate('lotes.fecha_vencimiento', '<', now());
-        } else {
-            // Mostrar productos por vencer (dentro del rango de días)
-            $query->whereBetween('lotes.fecha_vencimiento', [
-                now(),
-                now()->addDays((int) $dias)
-            ]);
-        }
+    // Filtro por sucursal
+    if ($sucursalId) {
+        $query->where('lotes.sucursal_id', $sucursalId);
+    }
 
-        $productos = $query->orderBy('vencido', 'desc') // Primero los vencidos
-            ->orderBy('lotes.fecha_vencimiento', 'asc')
-            ->paginate(15)
-            ->withQueryString();
-
-        return view('admin.inventario.productos_porvencer', [
-            'productos' => $productos,
-            'sucursales' => Sucursal::all(),
-            'sucursalId' => $sucursalId,
-            'diasSeleccionados' => $dias,
-            'mostrarVencidos' => $mostrarVencidos,
-            'breadcrumb' => $breadcrumb
+    // Filtro por fecha - LÓGICA CORREGIDA
+    if ($mostrandoVencidos) {
+        // Mostrar solo productos vencidos
+        $query->whereDate('lotes.fecha_vencimiento', '<', now());
+    } else {
+        // Mostrar productos por vencer (dentro del rango de días)
+        $query->whereBetween('lotes.fecha_vencimiento', [
+            now(),
+            now()->addDays($diasSeleccionados)
         ]);
     }
 
+    $productos = $query->orderBy('vencido', 'desc') // Primero los vencidos
+        ->orderBy('lotes.fecha_vencimiento', 'asc')
+        ->paginate(15)
+        ->withQueryString();
+
+    return view('admin.inventario.productos_porvencer', [
+        'productos' => $productos,
+        'sucursales' => Sucursal::all(),
+        'sucursalId' => $sucursalId,
+        'diasSeleccionados' => $diasSeleccionados,
+        'mostrarVencidos' => $mostrandoVencidos, // Variable corregida
+        'breadcrumb' => $breadcrumb
+    ]);
+}
 
     public function comprasMensuales(Request $request)
     {

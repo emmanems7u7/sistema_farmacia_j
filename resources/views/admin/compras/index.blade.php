@@ -79,12 +79,24 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <p class="mb-0 small">Total: <span class="badge bg-primary">{{ count($compras) }}</span></p>
                             <!-- Texto más pequeño -->
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-sm btn-outline-secondary px-2" id="refreshTable">
-                                    <!-- Padding horizontal reducido -->
-                                    <i class="fas fa-sync-alt me-1"></i> Actualizar
-                                </button>
-                                <div class="dropdown">
+                            
+                                <div class="d-flex gap-2 align-items-center ms-auto position-relative">
+                    <div class="d-flex justify-content-end mb-3">
+                        <a href="{{ route('admin.compras.reporteDiario') }}" class="btn btn-sm btn-info text-white" target="_blank">
+                            <i class="fas fa-file-pdf me-2"></i> Reporte del Día
+                        </a>
+
+                        
+                    </div>
+
+
+                                
+
+                                <button class="btn btn-sm btn-outline-secondary" id="refreshTable">
+                                <i class="fas fa-sync-alt me-1"></i> Actualizar
+                            </button>
+                                
+                                    <div class="dropdown d-inline-block">
                                     <button class="btn btn-icon btn-outline-primary  dropdown-toggle" type="button"
                                         id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false"
                                         data-bs-toggle="tooltip" title="Exportar datos">
@@ -92,6 +104,8 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end shadow border-0">
                                         <li>
+
+
                                             <a class="dropdown-item d-flex align-items-center"
                                                 href="{{ route('admin.compras.reporte', ['tipo' => 'pdf']) }}?fecha_inicio={{ request('fecha_inicio') }}&fecha_fin={{ request('fecha_fin') }}&laboratorio_id={{ request('laboratorio_id') }}"
                                                 target="_blank">

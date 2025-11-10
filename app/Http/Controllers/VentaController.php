@@ -184,8 +184,167 @@ class VentaController extends Controller
 }
 
 
+public function verificarStock(Request $request)
+{
+    try {
+        $codigo = $request->codigo;
+        $cantidad_solicitada = $request->cantidad;
+
+        // Buscar el producto
+        $producto = Producto::where('codigo', $codigo)->first();
+
+        if (!$producto) {
+            return response()->json([
+                'error' => 'Producto no encontrado'
+            ], 404);
+        }
+
+        // Calcular stock total disponible
+        $stock_disponible = $producto->lotes()
+            ->where('cantidad', '>', 0)
+            ->sum('cantidad');
+
+        $faltante = max(0, $cantidad_solicitada - $stock_disponible);
+        $stock_suficiente = $stock_disponible >= $cantidad_solicitada;
+
+        return response()->json([
+            'stock_suficiente' => $stock_suficiente,
+            'stock_disponible' => $stock_disponible,
+            'faltante' => $faltante,
+            'producto_nombre' => $producto->nombre,
+            'cantidad_solicitada' => $cantidad_solicitada
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Error al verificar stock: ' . $e->getMessage()
+        ], 500);
+    }
+}
 
 
+
+public function updateTmp(Request $request, $id)
+{
+    try {
+        $tmp_venta = TmpVenta::findOrFail($id);
+        
+        $request->validate([
+            'cantidad' => 'required|integer|min:1'
+        ]);
+
+        $tmp_venta->cantidad = $request->cantidad;
+        $tmp_venta->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cantidad actualizada correctamente'
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al actualizar: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+public function reporteDia(Request $request)
+{
+    try {
+        // DEBUG: Mostrar información básica
+        logger('=== INICIANDO REPORTE DÍA ===');
+        logger('Fecha: ' . $request->input('fecha', now()->format('Y-m-d')));
+        logger('Sucursal ID: ' . Auth::user()->sucursal_id);
+        logger('Usuario: ' . Auth::user()->name);
+
+        // Obtener fecha de hoy
+        $fecha = $request->input('fecha', now()->format('Y-m-d'));
+        
+        // DEBUG: Verificar consulta de ventas
+        $ventasQuery = Venta::with(['detallesVenta.producto', 'detallesVenta.lote', 'cliente'])
+            ->where('sucursal_id', Auth::user()->sucursal_id)
+            ->whereDate('fecha', $fecha)
+            ->orderBy('fecha', 'desc');
+
+        logger('SQL: ' . $ventasQuery->toSql());
+        logger('Bindings: ' . json_encode($ventasQuery->getBindings()));
+        
+        $ventas = $ventasQuery->get();
+        
+        logger('Ventas encontradas: ' . $ventas->count());
+
+        // DEBUG: Verificar si hay ventas
+        if ($ventas->count() === 0) {
+            logger('NO HAY VENTAS para esta fecha: ' . $fecha);
+            // Forzar error para ver qué pasa
+            throw new \Exception("No hay ventas registradas para la fecha: " . $fecha);
+        }
+
+        // Calcular estadísticas
+        $totalVentas = $ventas->count();
+        $totalIngresos = $ventas->sum('precio_total');
+        $totalProductos = $ventas->sum(function($venta) {
+            return $venta->detallesVenta->sum('cantidad');
+        });
+
+        logger('Estadísticas - Ventas: ' . $totalVentas . ', Ingresos: ' . $totalIngresos . ', Productos: ' . $totalProductos);
+
+        // Obtener sucursal
+        $sucursal = Sucursal::find(Auth::user()->sucursal_id);
+        
+        if (!$sucursal) {
+            throw new \Exception("No se encontró la sucursal con ID: " . Auth::user()->sucursal_id);
+        }
+
+        logger('Sucursal: ' . $sucursal->nombre);
+
+        $data = [
+            'ventas' => $ventas,
+            'fecha' => $fecha,
+            'sucursal' => $sucursal,
+            'totalVentas' => $totalVentas,
+            'totalIngresos' => $totalIngresos,
+            'totalProductos' => $totalProductos,
+            'fecha_generacion' => now()->format('d/m/Y H:i:s')
+        ];
+
+        // DEBUG: Verificar si la vista existe
+        if (!view()->exists('admin.ventas.reporte_dia')) {
+            throw new \Exception("La vista no existe: admin.ventas.reporte_dia");
+        }
+        
+        logger('Vista encontrada: admin.ventas.reporte_dia');
+
+        // DEBUG: Antes de generar PDF
+        logger('Generando PDF...');
+
+        // Generar PDF
+        $pdf = PDF::loadView('admin.ventas.reporte_dia', $data)
+                 ->setPaper('a4', 'portrait');
+
+        logger('PDF generado exitosamente');
+
+        return $pdf->download('reporte_ventas_dia_' . $fecha . '.pdf');
+
+    } catch (\Exception $e) {
+        // DEBUG: Mostrar error COMPLETO
+        logger('=== ERROR EN REPORTE ===');
+        logger('Mensaje: ' . $e->getMessage());
+        logger('Archivo: ' . $e->getFile());
+        logger('Línea: ' . $e->getLine());
+        logger('Trace: ' . $e->getTraceAsString());
+
+        // Retornar error en pantalla para verlo directamente
+        return response()->json([
+            'error' => true,
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
+        ], 500);
+    }
+}
 
     public function pdf($id)
 {

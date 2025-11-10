@@ -265,31 +265,50 @@
                                     </div>
 
                                     @php
-                                        $lote = \App\Models\Lote::where('producto_id', $producto->id)
-                                            ->oldest('id')
+                                        // Obtener el primer lote disponible (con stock > 0) ordenado por fecha de ingreso (más antiguo primero)
+                                        $loteDisponible = \App\Models\Lote::where('producto_id', $producto->id)
+                                            ->where('cantidad', '>', 0)
+                                            ->oldest('fecha_ingreso')
+                                            ->oldest('id') // Por si hay misma fecha de ingreso
                                             ->first();
+                                        
+                                        // Si no hay lotes con stock, mostrar el primer lote (aunque esté agotado)
+                                        if (!$loteDisponible) {
+                                            $loteDisponible = \App\Models\Lote::where('producto_id', $producto->id)
+                                                ->oldest('fecha_ingreso')
+                                                ->oldest('id')
+                                                ->first();
+                                        }
                                     @endphp
 
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <span class="text-xs text-muted">Precio:</span>
                                         <span class="font-weight-bold text-success small">
-                                            Bs {{ number_format($lote->precio_venta ?? 0, 2) }}
+                                            Bs {{ number_format($loteDisponible->precio_venta ?? 0, 2) }}
                                         </span>
+                                        @if(!$loteDisponible || $loteDisponible->cantidad <= 0)
+                                            <span class="badge badge-warning badge-sm ml-1" title="Precio de lote agotado">
+                                                <i class="fas fa-exclamation-circle"></i>
+                                            </span>
+                                        @endif
                                     </div>
 
                                     <div class="d-flex justify-content-between align-items-center">
                                         <span class="text-xs text-muted">Vence:</span>
                                         <span class="font-weight-bold text-muted">
-                                            @if($lote && $lote->fecha_vencimiento)
+                                            @if($loteDisponible && $loteDisponible->fecha_vencimiento)
                                                 @php
-                                                    $fechaVencimiento = \Carbon\Carbon::parse($lote->fecha_vencimiento);
+                                                    $fechaVencimiento = \Carbon\Carbon::parse($loteDisponible->fecha_vencimiento);
                                                     $esProximoAVencer = $fechaVencimiento->lt(now()->addMonths(3));
+                                                    $estaVencido = $fechaVencimiento->lt(now());
                                                 @endphp
 
-                                                <span class="{{ $esProximoAVencer ? 'text-danger' : 'text-muted' }} small">
+                                                <span class="{{ $estaVencido ? 'text-danger' : ($esProximoAVencer ? 'text-warning' : 'text-muted') }} small">
                                                     {{ $fechaVencimiento->format('d/m/Y') }}
-                                                    @if($esProximoAVencer)
-                                                        <i class="fas fa-exclamation-triangle fa-xs ml-1"></i>
+                                                    @if($estaVencido)
+                                                        <i class="fas fa-skull-crossbones fa-xs ml-1" title="Producto vencido"></i>
+                                                    @elseif($esProximoAVencer)
+                                                        <i class="fas fa-exclamation-triangle fa-xs ml-1" title="Por vencer pronto"></i>
                                                     @endif
                                                 </span>
                                             @else
@@ -572,404 +591,457 @@
 
 
 
-        <!-- Modal para Ver Detalles -->
-        <div class="modal fade" id="verModal{{ $producto->id }}" tabindex="-1" role="dialog"
-            aria-labelledby="verModalLabel{{ $producto->id }}" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                <div class="modal-content border-0">
-                    <!-- Encabezado limpio -->
-                    <div class="modal-header bg-gradient-info">
-                        <div class="d-flex align-items-center w-100">
-                            <h5 class="modal-title text-dark mb-0" id="verModalLabel{{ $producto->id }}">
-                                {{ $producto->nombre }}
-                            </h5>
-                            <button type="button" class="btn-close text-black" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+       <!-- Modal para Ver Detalles -->
+<div class="modal fade" id="verModal{{ $producto->id }}" tabindex="-1" role="dialog"
+    aria-labelledby="verModalLabel{{ $producto->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content border-0">
+            <!-- Encabezado limpio -->
+            <div class="modal-header bg-gradient-info">
+                <div class="d-flex align-items-center w-100">
+                    <h5 class="modal-title text-dark mb-0" id="verModalLabel{{ $producto->id }}">
+                        {{ $producto->nombre }}
+                    </h5>
+                    <button type="button" class="btn-close text-black" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+            </div>
+
+            <div class="modal-body pt-0">
+                <div class="row">
+                    <!-- Columna Imagen -->
+                    <div class="col-md-5 mb-4 mb-md-0">
+                        <div class="bg-light rounded-lg p-3 text-center mb-3">
+                            @if($producto->imagen)
+                                {{-- Si la imagen es de storage (imagen subida) --}}
+                                @if(Str::startsWith($producto->imagen, 'productos/'))
+                                    <img src="{{ asset('storage/' . $producto->imagen) }}" class="img-fluid rounded"
+                                        style="max-height: 220px; width: auto; object-fit: contain;" alt="{{ $producto->nombre }}">
+                                @else
+                                    {{-- Si es la imagen por defecto en /assets/img --}}
+                                    <img src="{{ asset($producto->imagen) }}" class="img-fluid rounded"
+                                        style="max-height: 220px; width: auto; object-fit: contain;" alt="{{ $producto->nombre }}">
+                                @endif
+                            @else
+                                {{-- Si no hay imagen registrada, mostrar la imagen por defecto --}}
+                                <img src="{{ asset('assets/img/sinimagen.jpeg') }}" class="img-fluid rounded"
+                                    style="max-height: 220px; width: auto; object-fit: contain;" alt="Sin imagen">
+                            @endif
                         </div>
+
+                        @php
+                            // CORRECCIÓN: Buscar el PRIMER lote disponible (con stock)
+                            $loteActual = \App\Models\Lote::where('producto_id', $producto->id)
+                                ->where('cantidad', '>', 0)  // Solo lotes con stock
+                                ->orderBy('fecha_ingreso', 'asc')  // Más antiguo primero
+                                ->orderBy('id', 'asc')  // Por si hay misma fecha
+                                ->first();
+                            
+                            // Si no hay lotes con stock, mostrar el primer lote en general
+                            if (!$loteActual) {
+                                $loteActual = \App\Models\Lote::where('producto_id', $producto->id)
+                                    ->orderBy('fecha_ingreso', 'asc')
+                                    ->orderBy('id', 'asc')
+                                    ->first();
+                            }
+
+                            // Contar lotes disponibles para el indicador
+                            $lotesDisponibles = \App\Models\Lote::where('producto_id', $producto->id)
+                                ->where('cantidad', '>', 0)
+                                ->count();
+                        @endphp
+                        unit
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge badge-{{ $producto->stock > 0 ? 'success' : 'danger' }} px-3 py-1">
+                                {{ $producto->stock > 0 ? 'Disponible' : 'Agotado' }}
+                            </span>
+                            <div class="d-flex align-items-center">
+                                <span class="text-success font-weight-bold">
+                                    Bs {{ number_format($loteActual->precio_venta ?? 0, 2) }}
+                                </span>
+                                @if($lotesDisponibles > 1)
+                                    <span class="badge badge-info badge-sm ml-1" title="{{ $lotesDisponibles }} lotes disponibles">
+                                        +{{ $lotesDisponibles - 1 }}
+                                    </span>
+                                @endif
+                                @if(!$loteActual || $loteActual->cantidad <= 0)
+                                    <span class="badge badge-warning badge-sm ml-1" title="Precio de lote agotado">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="progress mb-3" style="height: 6px;">
+                            @php
+                                $porcentaje = $producto->stock_maximo > 0 ? ($producto->stock / $producto->stock_maximo) * 100 : 0;
+                                $color = $porcentaje < 20 ? 'bg-danger' : ($porcentaje < 50 ? 'bg-warning' : 'bg-success');
+                            @endphp
+                            <div class="progress-bar {{ $color }}" role="progressbar" style="width: {{ $porcentaje }}%">
+                            </div>
+                        </div>
+
+                        <div class="small text-muted text-center">
+                            {{ $producto->stock }} unidades en stock
+                        </div>
+
+                        <!-- Información del lote actual -->
+                        @if($loteActual)
+                        <div class="mt-3 p-2 bg-light rounded">
+                            <small class="text-muted d-block">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Lote actual: 
+                                @if($loteActual->cantidad > 0)
+                                    <span class="text-success">{{ $loteActual->cantidad }} unidades disponibles</span>
+                                @else
+                                    <span class="text-warning">Lote agotado - Mostrando histórico</span>
+                                @endif
+                            </small>
+                        </div>
+                        @endif
                     </div>
 
-                   
+                    <!-- Columna Información -->
+                    <div class="col-md-7">
+                        <div class="mb-4">
+                            <h6 class="text-muted small text-uppercase mb-2">Descripción</h6>
+                            <p class="text-dark">{{ $producto->descripcion ?: 'Sin descripción' }}</p>
+                        </div>
 
-                    <div class="modal-body pt-0">
                         <div class="row">
-                            <!-- Columna Imagen -->
-                            <div class="col-md-5 mb-4 mb-md-0">
-                                <div class="bg-light rounded-lg p-3 text-center mb-3">
-                                    @if($producto->imagen)
-                                        <img src="{{ asset('storage/' . $producto->imagen) }}" class="img-fluid rounded"
-                                            style="max-height: 220px; width: auto;" alt="{{ $producto->nombre }}">
-                                    @else
-                                        <div class="p-4 text-muted">
-                                            <i class="fas fa-box-open fa-3x mb-2"></i>
-                                            <p class="mb-0">Imagen no disponible</p>
-                                        </div>
-                                    @endif
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <h6 class="text-muted small text-uppercase mb-1">Categoría</h6>
+                                    <p class="font-weight-bold">{{ $producto->categoria->nombre }}</p>
                                 </div>
 
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="badge badge-{{ $producto->stock > 0 ? 'success' : 'danger' }} px-3 py-1">
-                                        {{ $producto->stock > 0 ? 'Disponible' : 'Agotado' }}
-                                    </span>
-                                    @php
-                                        $lote = \App\Models\Lote::where('producto_id', $producto->id)
-                                            ->latest('id')
-                                            ->first();
-                                    @endphp
-                                    <span class="text-success font-weight-bold">
-                                        Bs {{ number_format($lote->precio_venta ?? 0, 2) }}
-                                    </span>
-                                </div>
-
-                               <div class="progress mb-3" style="height: 6px;">
-                                    @php
-                                        $porcentaje = $producto->stock_maximo > 0 ? ($producto->stock / $producto->stock_maximo) * 100 : 0;
-                                        $color = $porcentaje < 20 ? 'bg-danger' : ($porcentaje < 50 ? 'bg-warning' : 'bg-success');
-                                    @endphp
-                                    <div class="progress-bar {{ $color }}" role="progressbar" style="width: {{ $porcentaje }}%">
-                                    </div>
-                                </div>
-
-
-                                <div class="small text-muted text-center">
-                                    {{ $producto->stock }} unidades en stock
+                                <div class="mb-3">
+                                    <h6 class="text-muted small text-uppercase mb-1">Laboratorio</h6>
+                                    <p class="font-weight-bold">{{ $producto->laboratorio->nombre }}</p>
                                 </div>
                             </div>
-
-                            <!-- Columna Información -->
-                            <div class="col-md-7">
-                                <div class="mb-4">
-                                    <h6 class="text-muted small text-uppercase mb-2">Descripción</h6>
-                                    <p class="text-dark">{{ $producto->descripcion ?: 'Sin descripción' }}</p>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <h6 class="text-muted small text-uppercase mb-1">Categoría</h6>
-                                            <p class="font-weight-bold">{{ $producto->categoria->nombre }}</p>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <h6 class="text-muted small text-uppercase mb-1">Laboratorio</h6>
-                                            <p class="font-weight-bold">{{ $producto->laboratorio->nombre }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="border-top pt-3 mt-3">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <h6 class="text-muted small text-uppercase mb-1">Fecha ingreso</h6>
-                                            <p class="font-weight-bold">
-                                                @if($lote && $lote->fecha_ingreso)
-                                                    {{ \Carbon\Carbon::parse($lote->fecha_ingreso)->format('d/m/Y') }}
-                                                @else
-                                                    <span class="text-info">No registrada</span>
-                                                @endif
-                                            </p>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <h6 class="text-muted small text-uppercase mb-1">Vencimiento</h6>
-                                            <p class="font-weight-bold">
-                                                @if($lote && $lote->fecha_vencimiento)
-                                                    @php
-                                                        $vencimiento = \Carbon\Carbon::parse($lote->fecha_vencimiento);
-                                                        $vencida = $vencimiento->lt(now());
-                                                        $prontoVencer = $vencimiento->lt(now()->addMonths(3));
-                                                    @endphp
-                                                    <span
-                                                        class="{{ $vencida ? 'text-danger' : ($prontoVencer ? 'text-warning' : 'text-success') }}">
-                                                        {{ $vencimiento->format('d/m/Y') }}
-                                                        @if($vencida)
-                                                            <small class="d-block text-danger">Producto vencido</small>
-                                                        @elseif($prontoVencer)
-                                                            <small class="d-block text-warning">Por vencer pronto</small>
-                                                        @endif
-                                                    </span>
-                                                @else
-                                                    <span class="text-info">No tiene fecha de vencimiento</span>
-                                                @endif
-                                            </p>
-                                        </div>
-                                    </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <h6 class="text-muted small text-uppercase mb-1">Código</h6>
+                                    <p class="font-weight-bold">{{ $producto->codigo }}</p>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Pie del modal -->
-                    <div class="modal-footer border-0 pt-0">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                            <i class="fas fa-times me-1"></i> Cerrar
-                        </button>
-                        <button type="button" class="btn bg-gradient-success text-white" onclick="openModal('editarModal{{ $producto->id }}')"
-                            data-bs-dismiss="modal">
-                            Editar Producto
-                        </button>
-                        
+                        <div class="border-top pt-3 mt-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="text-muted small text-uppercase mb-1">Fecha ingreso</h6>
+                                    <p class="font-weight-bold">
+                                        {{-- CORRECCIÓN: Usar $loteActual en lugar de $lote --}}
+                                        @if($loteActual && $loteActual->fecha_ingreso)
+                                            {{ \Carbon\Carbon::parse($loteActual->fecha_ingreso)->format('d/m/Y') }}
+                                        @else
+                                            <span class="text-info">No registrada</span>
+                                        @endif
+                                    </p>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <h6 class="text-muted small text-uppercase mb-1">Vencimiento</h6>
+                                    <p class="font-weight-bold">
+                                        {{-- CORRECCIÓN: Usar $loteActual en lugar de $lote --}}
+                                        @if($loteActual && $loteActual->fecha_vencimiento)
+                                            @php
+                                                $vencimiento = \Carbon\Carbon::parse($loteActual->fecha_vencimiento);
+                                                $vencida = $vencimiento->lt(now());
+                                                $prontoVencer = $vencimiento->lt(now()->addMonths(3));
+                                            @endphp
+                                            <span class="{{ $vencida ? 'text-danger' : ($prontoVencer ? 'text-warning' : 'text-success') }}">
+                                                {{ $vencimiento->format('d/m/Y') }}
+                                                @if($vencida)
+                                                    <small class="d-block text-danger">Producto vencido</small>
+                                                @elseif($prontoVencer)
+                                                    <small class="d-block text-warning">Por vencer pronto</small>
+                                                @endif
+                                            </span>
+                                        @else
+                                            <span class="text-info">No tiene fecha de vencimiento</span>
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información de todos los lotes -->
+                        @php
+    // SOLO obtener lotes disponibles (con stock > 0)
+    $lotesDisponibles = \App\Models\Lote::where('producto_id', $producto->id)
+        ->where('cantidad', '>', 0)
+        ->orderBy('fecha_ingreso', 'asc')
+        ->orderBy('id', 'asc')
+        ->get();
+@endphp
+
+@if($lotesDisponibles->count() > 1)
+<div class="border-top pt-3 mt-3">
+    <h6 class="text-muted small text-uppercase mb-2">
+        <i class="fas fa-layer-group mr-1"></i>
+        Lotes disponibles ({{ $lotesDisponibles->count() }})
+    </h6>
+    <div style="max-height: 150px; overflow-y: auto;">
+        @foreach($lotesDisponibles as $index => $loteItem)
+            <div class="d-flex justify-content-between align-items-center py-1 {{ $loteItem->id == $loteActual->id ? 'bg-success bg-opacity-10 rounded px-2' : '' }}">
+                <small class="text-dark">
+                    Lote {{ $index + 1 }}: 
+                    <span class="text-dark">
+                        Bs {{ number_format($loteItem->precio_venta, 2) }}
+                    </span>
+                    @if($loteItem->id == $loteActual->id)
+                        <span class="badge badge-success badge-sm ml-1">Actual</span>
+                    @endif
+                </small>
+                <small class="text-muted">
+                    {{ $loteItem->cantidad }} unid.
+                </small>
+            </div>
+        @endforeach
+    </div>
+</div>
+@endif
                     </div>
                 </div>
             </div>
+
+            <!-- Pie del modal -->
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Cerrar
+                </button>
+                <button type="button" class="btn bg-gradient-success text-white" onclick="openModal('editarModal{{ $producto->id }}')"
+                    data-bs-dismiss="modal">
+                    Editar Producto
+                </button>
+            </div>
         </div>
+    </div>
+</div>
 
-        <style>
-            .modal-content {
-                border-radius: 0.5rem;
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-            }
+<style>
+    .modal-content {
+        border-radius: 0.5rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
 
-            .modal-header {
-                padding: 1.25rem 1.5rem 0;
-            }
+    .modal-header {
+        padding: 1.25rem 1.5rem 0;
+    }
 
-            .modal-body {
-                padding: 0 1.5rem;
-            }
+    .modal-body {
+        padding: 0 1.5rem;
+    }
 
-            .modal-footer {
-                padding: 0 1.5rem 1.5rem;
-            }
+    .modal-footer {
+        padding: 0 1.5rem 1.5rem;
+    }
 
-            .bg-light {
-                background-color: #f8f9fa !important;
-            }
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
 
-            .rounded-lg {
-                border-radius: 0.5rem !important;
-            }
-        </style>
+    .rounded-lg {
+        border-radius: 0.5rem !important;
+    }
+    .badge-sm {
+        font-size: 0.6rem;
+        padding: 0.2rem 0.3rem;
+    }
+</style>
 
         <!-- Modal para Editar -->
      
         <div class="modal fade" id="editarModal{{ $producto->id }}" tabindex="-1" role="dialog"
-            aria-labelledby="editarModalLabel{{ $producto->id }}" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                <div class="modal-content border-0 shadow-lg">
-                    <!-- Encabezado del Modal -->
-                    <div class="modal-header bg-gradient-success text-white">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-pencil-alt fa-lg mr-3"></i>
-                            <h5 class="modal-title text-white font-weight-bold" id="editarModalLabel{{ $producto->id }}">EDITAR PRODUCTO
-                            </h5>
-                        </div>
-                        <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
+    aria-labelledby="editarModalLabel{{ $producto->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content border-0 shadow-lg">
+            <!-- Encabezado del Modal -->
+            <div class="modal-header bg-gradient-success text-white">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-pencil-alt fa-lg mr-3"></i>
+                    <h5 class="modal-title text-white font-weight-bold" id="editarModalLabel{{ $producto->id }}">EDITAR PRODUCTO
+                    </h5>
+                </div>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
 
-                    <form action="{{ url('/admin/productos', $producto->id) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
-                        <div class="modal-body py-4">
+            @php
+                // AGREGAR ESTA LÓGICA AL INICIO DEL MODAL
+                $loteActual = \App\Models\Lote::where('producto_id', $producto->id)
+                    ->where('cantidad', '>', 0)
+                    ->orderBy('fecha_ingreso', 'asc')
+                    ->orderBy('id', 'asc')
+                    ->first();
+                
+                if (!$loteActual) {
+                    $loteActual = \App\Models\Lote::where('producto_id', $producto->id)
+                        ->orderBy('fecha_ingreso', 'asc')
+                        ->orderBy('id', 'asc')
+                        ->first();
+                }
+            @endphp
+
+            <form action="{{ url('/admin/productos', $producto->id) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                <div class="modal-body py-4">
+                    <div class="row">
+                        <!-- Sección de Formulario -->
+                        <div class="col-lg-8 pr-lg-4">
+
+                            <div class="d-flex align-items-center mb-4">
+                                <!-- Laboratorio -->
+                                <div class="flex-grow-1 mr-3">
+                                    <label for="laboratorio_id" class="font-weight-bold text-black mb-1 d-block">
+                                        <i class="fas fa-flask mr-2" style="color: green;"></i>Laboratorio
+                                    </label>
+                                    <select name="laboratorio_id" class="form-control border-primary w-100" required>
+                                        @foreach($laboratorios as $laboratorio)
+                                            <option value="{{ $laboratorio->id }}" {{ $laboratorio->id == $producto->laboratorio_id ? 'selected' : '' }}>
+                                                {{ $laboratorio->nombre }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-auto px-2 mb-3 d-flex align-items-center">
+                                    <span class="text-muted"></span>
+                                </div>
+                                <!-- Categoría -->
+                                <div class="flex-grow-1 ml-3">
+                                    <label for="categoria_id" class="font-weight-bold text-black mb-1 d-block">
+                                        <i class="fas fa-tag mr-2" style="color: green;"></i>Categoría
+                                    </label>
+                                    <select name="categoria_id" class="form-control border-primary w-100" required>
+                                        @foreach($categorias as $categoria)
+                                            <option value="{{ $categoria->id }}" {{ $categoria->id == $producto->categoria_id ? 'selected' : '' }}>
+                                                {{ $categoria->nombre }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center mb-4">
+                                <!-- Código -->
+                                <div class="flex-grow-1 mr-3" style="flex-basis: 30%;">
+                                    <label for="codigo" class="font-weight-bold text-black mb-1 d-block">
+                                        <i class="fas fa-barcode mr-2" style="color: green;"></i>Código
+                                    </label>
+                                    <input type="text" class="form-control border-primary w-100" name="codigo"
+                                        value="{{ $producto->codigo }}" required>
+                                </div>
+                                <div class="col-auto px-2 mb-3 d-flex align-items-center">
+                                    <span class="text-muted"></span>
+                                </div>
+                                <!-- Nombre del Producto -->
+                                <div class="flex-grow-1 ml-3" style="flex-basis: 70%;">
+                                    <label for="nombre" class="font-weight-bold text-black mb-1 d-block">
+                                        <i class="fas fa-box mr-2" style="color: green;"></i>Nombre del Producto
+                                    </label>
+                                    <input type="text" class="form-control border-primary w-100" name="nombre"
+                                        value="{{ $producto->nombre }}" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <div class="form-group">
+                                    <label for="descripcion" class="font-weight-bold text-black mb-1">
+                                        <i class="fas fa-align-left mr-2" style="color: green;"></i>Descripción
+                                    </label>
+                                    <textarea class="form-control border-primary" name="descripcion"
+                                        rows="2">{{ $producto->descripcion }}</textarea>
+                                </div>
+                            </div>
+
                             <div class="row">
-                                <!-- Sección de Formulario -->
-                                <div class="col-lg-8 pr-lg-4">
-
-                                    <div class="d-flex align-items-center mb-4">
-                                        <!-- Laboratorio -->
-                                        <div class="flex-grow-1 mr-3">
-                                            <label for="laboratorio_id" class="font-weight-bold text-black mb-1 d-block">
-                                                <i class="fas fa-flask mr-2" style="color: green;"></i>Laboratorio
-                                            </label>
-                                            <select name="laboratorio_id" class="form-control border-primary w-100" required>
-                                                @foreach($laboratorios as $laboratorio)
-                                                    <option value="{{ $laboratorio->id }}" {{ $laboratorio->id == $producto->laboratorio_id ? 'selected' : '' }}>
-                                                        {{ $laboratorio->nombre }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                <!-- Card 1: Control de Inventario -->
+                                <div class="col-12">
+                                    <div class="card border-0 shadow-sm mb-3">
+                                        <div class="card-header bg-light py-2">
+                                            <h6 class="mb-0">Control de Inventario</h6>
                                         </div>
-                                        <div class="col-auto px-2 mb-3 d-flex align-items-center">
-                                            <span class="text-muted"></span>
-                                        </div>
-                                        <!-- Categoría -->
-                                        <div class="flex-grow-1 ml-3">
-                                            <label for="categoria_id" class="font-weight-bold text-black mb-1 d-block">
-                                                <i class="fas fa-tag mr-2" style="color: green;"></i>Categoría
-                                            </label>
-                                            <select name="categoria_id" class="form-control border-primary w-100" required>
-                                                @foreach($categorias as $categoria)
-                                                    <option value="{{ $categoria->id }}" {{ $categoria->id == $producto->categoria_id ? 'selected' : '' }}>
-                                                        {{ $categoria->nombre }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="d-flex align-items-center mb-4">
-                                        <!-- Código -->
-                                        <div class="flex-grow-1 mr-3" style="flex-basis: 30%;">
-                                            <label for="codigo" class="font-weight-bold text-black mb-1 d-block">
-                                                <i class="fas fa-barcode mr-2" style="color: green;"></i>Código
-                                            </label>
-                                            <input type="text" class="form-control border-primary w-100" name="codigo"
-                                                value="{{ $producto->codigo }}" required>
-                                        </div>
-                                        <div class="col-auto px-2 mb-3 d-flex align-items-center">
-                                            <span class="text-muted"></span>
-                                        </div>
-                                        <!-- Nombre del Producto -->
-                                        <div class="flex-grow-1 ml-3" style="flex-basis: 70%;">
-                                            <label for="nombre" class="font-weight-bold text-black mb-1 d-block">
-                                                <i class="fas fa-box mr-2" style="color: green;"></i>Nombre del Producto
-                                            </label>
-                                            <input type="text" class="form-control border-primary w-100" name="nombre"
-                                                value="{{ $producto->nombre }}" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <div class="form-group">
-                                            <label for="descripcion" class="font-weight-bold text-black mb-1">
-                                                <i class="fas fa-align-left mr-2" style="color: green;"></i>Descripción
-                                            </label>
-                                            <textarea class="form-control border-primary" name="descripcion"
-                                                rows="2">{{ $producto->descripcion }}</textarea>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <!-- Card 1: Control de Inventario -->
-                                        <div class="col-12">
-                                            <div class="card border-0 shadow-sm mb-3">
-                                                <div class="card-header bg-light py-2">
-                                                    <h6 class="mb-0">Control de Inventario</h6>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="stock_minimo"
+                                                            class="font-weight-bold text-black mb-1">
+                                                            <i class="fas fa-exclamation-triangle mr-2"
+                                                                style="color: green;"></i>Stock Mínimo
+                                                        </label>
+                                                        <input type="number" class="form-control border-primary"
+                                                            name="stock_minimo" value="{{ $producto->stock_minimo }}"
+                                                            >
+                                                    </div>
                                                 </div>
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="stock_minimo"
-                                                                    class="font-weight-bold text-black mb-1">
-                                                                    <i class="fas fa-exclamation-triangle mr-2"
-                                                                        style="color: green;"></i>Stock Mínimo
-                                                                </label>
-                                                                <input type="number" class="form-control border-primary"
-                                                                    name="stock_minimo" value="{{ $producto->stock_minimo }}"
-                                                                    >
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="stock_maximo"
-                                                                    class="font-weight-bold text-black mb-1">
-                                                                    <i class="fas fa-warehouse mr-2"
-                                                                        style="color: green;"></i>Stock Máximo
-                                                                </label>
-                                                                <input type="number" class="form-control border-primary"
-                                                                    name="stock_maximo" value="{{ $producto->stock_maximo }}"
-                                                                    >
-                                                            </div>
-                                                        </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="stock_maximo"
+                                                            class="font-weight-bold text-black mb-1">
+                                                            <i class="fas fa-warehouse mr-2"
+                                                                style="color: green;"></i>Stock Máximo
+                                                        </label>
+                                                        <input type="number" class="form-control border-primary"
+                                                            name="stock_maximo" value="{{ $producto->stock_maximo }}"
+                                                            >
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
 
-                                        <!-- Card 2: Precios -->
-                                        <div class="col-12">
-                                            <div class="card border-0 shadow-sm mb-3">
-                                                <div class="card-header bg-light py-2">
-                                                    <h6 class="mb-0">Información de Precios</h6>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="precio_compra"
-                                                                    class="font-weight-bold text-black mb-1">
-                                                                    <i class="fas fa-money-bill-wave mr-2"
-                                                                        style="color: green;"></i>Precio de Compra
-                                                                </label>
-                                                                <div class="input-group">
-                                                                    <div class="input-group-prepend">
-                                                                        <span
-                                                                            class="input-group-text bg-success text-white">Bs</span>
-                                                                    </div>
-                                                                    <input type="number" step="0.01"
-                                                                        class="form-control border-primary" name="precio_compra"
-                                                                        value="{{ $lote ? $lote->precio_compra : '' }}"
-                                                                        >
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="precio_venta"
-                                                                    class="font-weight-bold text-black mb-1">
-                                                                    <i class="fas fa-tags mr-2" style="color: green;"></i>Precio
-                                                                    de Venta
-                                                                </label>
-                                                                <div class="input-group">
-                                                                    <div class="input-group-prepend">
-                                                                        <span
-                                                                            class="input-group-text bg-success text-white">Bs</span>
-                                                                    </div>
-                                                                    <input type="number" step="0.01"
-                                                                        class="form-control border-primary" name="precio_venta"
-                                                                        value="{{ $lote ? $lote->precio_venta : '' }}" >
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                <!-- Card 2: Precios -->
+                                <div class="col-12">
+                                    <div class="card border-0 shadow-sm mb-3">
+                                        <div class="card-header bg-light py-2">
+                                            <h6 class="mb-0">Información de Precios</h6>
                                         </div>
-
-                                        <!-- Card 3: Fechas y Lote -->
-                                        <div class="col-12">
-                                            <div class="card border-0 shadow-sm mb-3">
-                                                <div class="card-header bg-light py-2">
-                                                    <h6 class="mb-0">Gestión de Lote</h6>
-                                                </div>
-                                                <div class="card-body">
-                                                    <!-- Campo oculto para el ID del lote -->
-                                                    <input type="hidden" name="lote_id" value="{{ $lote ? $lote->id : '' }}">
-
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="fecha_ingreso"
-                                                                    class="font-weight-bold text-black mb-1">
-                                                                    <i class="fas fa-calendar-plus mr-2"
-                                                                        style="color: green;"></i> Fecha de Ingreso
-                                                                </label>
-                                                                <input type="date" class="form-control border-primary"
-                                                                    name="fecha_ingreso"
-                                                                    value="{{ $lote ? \Carbon\Carbon::parse($lote->fecha_ingreso)->format('Y-m-d') : '' }}"
-                                                                    >
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="precio_compra"
+                                                            class="font-weight-bold text-black mb-1">
+                                                            <i class="fas fa-money-bill-wave mr-2"
+                                                                style="color: green;"></i>Precio de Compra
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span
+                                                                    class="input-group-text bg-success text-white">Bs</span>
                                                             </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="fecha_vencimiento"
-                                                                    class="font-weight-bold text-black mb-1">
-                                                                    <i class="fas fa-calendar-times mr-2"
-                                                                        style="color: green;"></i> Fecha de Vencimiento
-                                                                </label>
-                                                                <input type="date" class="form-control border-primary"
-                                                                    name="fecha_vencimiento"
-                                                                    value="{{ $lote ? \Carbon\Carbon::parse($lote->fecha_vencimiento)->format('Y-m-d') : '' }}">
-                                                            </div>
+                                                            {{-- CORRECCIÓN: Usar $loteActual en lugar de $lote --}}
+                                                            <input type="number" step="0.01"
+                                                                class="form-control border-primary" name="precio_compra"
+                                                                value="{{ $loteActual ? $loteActual->precio_compra : '' }}"
+                                                                >
                                                         </div>
                                                     </div>
-
-                                                    <div class="row mt-3">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="cantidad" class="font-weight-bold text-black mb-1">
-                                                                    <i class="fas fa-boxes mr-2"
-                                                                        style="color: green;"></i>Cantidad en Lote
-                                                                </label>
-                                                                <input type="number" class="form-control border-primary"
-                                                                    name="cantidad" value="{{ $lote ? $lote->cantidad : '' }}"
-                                                                     >
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="precio_venta"
+                                                            class="font-weight-bold text-black mb-1">
+                                                            <i class="fas fa-tags mr-2" style="color: green;"></i>Precio
+                                                            de Venta
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span
+                                                                    class="input-group-text bg-success text-white">Bs</span>
                                                             </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            
+                                                            {{-- CORRECCIÓN: Usar $loteActual en lugar de $lote --}}
+                                                            <input type="number" step="0.01"
+                                                                class="form-control border-primary" name="precio_venta"
+                                                                value="{{ $loteActual ? $loteActual->precio_venta : '' }}" >
                                                         </div>
                                                     </div>
                                                 </div>
@@ -978,51 +1050,76 @@
                                     </div>
                                 </div>
 
-                                <!-- Sección de Imagen -->
-                                <div class="col-lg-4 pl-lg-4">
-                                    <!-- Card de Imagen -->
-                                    <div class="card mb-4 border-0"
-                                        style="box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.03); border-radius: 0.75rem; overflow: hidden;">
-                                        <div class="card-header bg-white py-3"
-                                            style="border-bottom: 1px solid rgba(0,0,0,0.03);">
-                                            <h6 class="mb-0 font-weight-600 d-flex align-items-center text-black">
-                                                <i class="fas fa-camera mr-2" style="color: green;"></i>
-                                                <span style="letter-spacing: 0.5px;">Imagen del Producto</span>
-                                            </h6>
+                                <!-- Card 3: Fechas y Lote -->
+                                <div class="col-12">
+                                    <div class="card border-0 shadow-sm mb-3">
+                                        <div class="card-header bg-light py-2">
+                                            <h6 class="mb-0">Gestión de Lote</h6>
                                         </div>
-                                        <div class="card-body p-4">
-                                            <!-- Upload Area -->
-                                            <div class="mb-4">
-                                                <div class="file-upload-wrapper">
-                                                    <input type="file" id="imagen{{ $producto->id }}" name="imagen"
-                                                        accept="image/*" class="file-upload-input" data-height="200"
-                                                        style="display: none;">
-                                                    <label for="imagen{{ $producto->id }}"
-                                                        class="file-upload-label bg-light-success text-black d-flex flex-column align-items-center justify-content-center"
-                                                        style="border: 2px dashed green; border-radius: 0.5rem; padding: 1.5rem; cursor: pointer; transition: all 0.3s;">
-                                                        <i class="fas fa-cloud-upload-alt mb-2"
-                                                            style="font-size: 1.5rem; color: green;"></i>
-                                                        <span class="text-center">Haz clic para subir una imagen</span>
-                                                        <small class="text-muted mt-1">Formatos: JPG, PNG, GIF</small>
-                                                    </label>
+                                        <div class="card-body">
+                                            <!-- Campo oculto para el ID del lote -->
+                                            {{-- CORRECCIÓN: Usar $loteActual en lugar de $lote --}}
+                                            <input type="hidden" name="lote_id" value="{{ $loteActual ? $loteActual->id : '' }}">
+
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="fecha_ingreso"
+                                                            class="font-weight-bold text-black mb-1">
+                                                            <i class="fas fa-calendar-plus mr-2"
+                                                                style="color: green;"></i> Fecha de Ingreso
+                                                        </label>
+                                                        {{-- CORRECCIÓN: Usar $loteActual en lugar de $lote --}}
+                                                        <input type="date" class="form-control border-primary"
+                                                            name="fecha_ingreso"
+                                                            value="{{ $loteActual ? \Carbon\Carbon::parse($loteActual->fecha_ingreso)->format('Y-m-d') : '' }}"
+                                                            >
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="fecha_vencimiento"
+                                                            class="font-weight-bold text-black mb-1">
+                                                            <i class="fas fa-calendar-times mr-2"
+                                                                style="color: green;"></i> Fecha de Vencimiento
+                                                        </label>
+                                                        {{-- CORRECCIÓN: Usar $loteActual en lugar de $lote --}}
+                                                        <input type="date" class="form-control border-primary"
+                                                            name="fecha_vencimiento"
+                                                            value="{{ $loteActual ? \Carbon\Carbon::parse($loteActual->fecha_vencimiento)->format('Y-m-d') : '' }}">
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            <!-- iamgen -->
-                                            <div class="image-preview-container d-flex flex-column align-items-center justify-content-center"
-                                                style="min-height: 200px; background-color: #f8fafc; border-radius: 0.5rem; padding: 1rem;">
-                                                @if($producto->imagen)
-                                                    <img id="preview{{ $producto->id }}"
-                                                        src="{{ asset('storage/' . $producto->imagen) }}" class="img-fluid rounded"
-                                                        style="max-height: 200px; object-fit: contain; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                                                @else
-                                                    <div class="icon-placeholder bg-soft-success text-success rounded-circle d-flex align-items-center justify-content-center"
-                                                        style="width: 80px; height: 80px; margin-bottom: 1rem;">
-                                                        <i class="fas fa-box-open" style="font-size: 1.75rem;"></i>
+                                            <div class="row mt-3">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="cantidad" class="font-weight-bold text-black mb-1">
+                                                            <i class="fas fa-boxes mr-2"
+                                                                style="color: green;"></i>Cantidad en Lote
+                                                        </label>
+                                                        {{-- CORRECCIÓN: Usar $loteActual en lugar de $lote --}}
+                                                        <input type="number" class="form-control border-primary"
+                                                            name="cantidad" value="{{ $loteActual ? $loteActual->cantidad : '' }}"
+                                                             >
                                                     </div>
-                                                    <p class="text-muted mb-0" style="font-size: 0.875rem; font-weight: 500;">No hay
-                                                        imagen disponible</p>
-                                                @endif
+                                                </div>
+                                                <div class="col-md-6">
+                                                    {{-- Información del lote actual --}}
+                                                    @if($loteActual)
+                                                    <div class="p-2 bg-light rounded mt-2">
+                                                        <small class="text-muted d-block">
+                                                            <i class="fas fa-info-circle mr-1"></i>
+                                                            Editando lote actual
+                                                            @if($loteActual->cantidad > 0)
+                                                                <span class="text-success">({{ $loteActual->cantidad }} disponibles)</span>
+                                                            @else
+                                                                <span class="text-warning">(Lote agotado)</span>
+                                                            @endif
+                                                        </small>
+                                                    </div>
+                                                    @endif
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1030,68 +1127,120 @@
                             </div>
                         </div>
 
-                        <!-- Pie del Modal -->
-                        <div class="modal-footer bg-light">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                <i class="fas fa-times me-1"></i> Cancelar
-                            </button>
+                        <!-- Sección de Imagen -->
+                        <div class="col-lg-4 pl-lg-4">
+                            <!-- Card de Imagen -->
+                            <div class="card mb-4 border-0"
+                                style="box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.03); border-radius: 0.75rem; overflow: hidden;">
+                                <div class="card-header bg-white py-3"
+                                    style="border-bottom: 1px solid rgba(0,0,0,0.03);">
+                                    <h6 class="mb-0 font-weight-600 d-flex align-items-center text-black">
+                                        <i class="fas fa-camera mr-2" style="color: green;"></i>
+                                        <span style="letter-spacing: 0.5px;">Imagen del Producto</span>
+                                    </h6>
+                                </div>
+                                <div class="card-body p-4">
+                                    <!-- Upload Area -->
+                                    <div class="mb-4">
+                                        <div class="file-upload-wrapper">
+                                            <input type="file" id="imagen{{ $producto->id }}" name="imagen"
+                                                accept="image/*" class="file-upload-input" data-height="200"
+                                                style="display: none;">
+                                            <label for="imagen{{ $producto->id }}"
+                                                class="file-upload-label bg-light-success text-black d-flex flex-column align-items-center justify-content-center"
+                                                style="border: 2px dashed green; border-radius: 0.5rem; padding: 1.5rem; cursor: pointer; transition: all 0.3s;">
+                                                <i class="fas fa-cloud-upload-alt mb-2"
+                                                    style="font-size: 1.5rem; color: green;"></i>
+                                                <span class="text-center">Haz clic para subir una imagen</span>
+                                                <small class="text-muted mt-1">Formatos: JPG, PNG, GIF</small>
+                                            </label>
+                                        </div>
+                                    </div>
 
-                            <button type="submit" class="btn bg-gradient-success text-white ">
-                                <i class="fas fa-save me-1"></i>Guardar Cambios
-                            </button>
+                                    <!-- Imagen -->
+                                    <div class="image-preview-container d-flex flex-column align-items-center justify-content-center"
+                                        style="min-height: 200px; background-color: #f8fafc; border-radius: 0.5rem; padding: 1rem;">
+                                        @if($producto->imagen)
+                                            <img id="preview{{ $producto->id }}"
+                                                src="{{ asset('storage/' . $producto->imagen) }}" class="img-fluid rounded"
+                                                style="max-height: 200px; object-fit: contain; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                                        @else
+                                            <div class="icon-placeholder bg-soft-success text-success rounded-circle d-flex align-items-center justify-content-center"
+                                                style="width: 80px; height: 80px; margin-bottom: 1rem;">
+                                                <i class="fas fa-box-open" style="font-size: 1.75rem;"></i>
+                                            </div>
+                                            <p class="text-muted mb-0" style="font-size: 0.875rem; font-weight: 500;">No hay
+                                                imagen disponible</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        
-                    </form>
-
-                    <style>
-                        /* Efectos hover para interactividad */
-                        .file-upload-label:hover {
-                            background-color: rgba(0, 128, 0, 0.05) !important;
-                            border-color: darkgreen !important;
-                        }
-
-                        .form-control:focus,
-                        .form-control-border-primary:focus {
-                            border-color: green !important;
-                            box-shadow: 0 0 0 0.2rem rgba(0, 128, 0, 0.25) !important;
-                        }
-
-                        .card {
-                            transition: transform 0.3s ease, box-shadow 0.3s ease;
-                        }
-
-                        .card:hover {
-                            transform: translateY(-2px);
-                            box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.08) !important;
-                        }
-
-                        .input-group-text {
-                            background-color: green;
-                            color: white;
-                            border-color: green;
-                        }
-                    </style>
-
-                    <script>
-                        // Script para previsualizar la imagen seleccionada
-                        document.getElementById('imagen{{ $producto->id }}').addEventListener('change', function (e) {
-                            const preview = document.getElementById('preview{{ $producto->id }}');
-                            const file = e.target.files[0];
-                            const reader = new FileReader();
-
-                            reader.onload = function (e) {
-                                preview.src = e.target.result;
-                                preview.style.display = 'block';
-                            }
-
-                            if (file) {
-                                reader.readAsDataURL(file);
-                            }
-                        });
-                    </script>
+                    </div>
                 </div>
-            </div>
+
+                <!-- Pie del Modal -->
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Cancelar
+                    </button>
+
+                    <button type="submit" class="btn bg-gradient-success text-white ">
+                        <i class="fas fa-save me-1"></i>Guardar Cambios
+                    </button>
+                </div>
+                
+            </form>
+
+            <style>
+                /* Efectos hover para interactividad */
+                .file-upload-label:hover {
+                    background-color: rgba(0, 128, 0, 0.05) !important;
+                    border-color: darkgreen !important;
+                }
+
+                .form-control:focus,
+                .form-control-border-primary:focus {
+                    border-color: green !important;
+                    box-shadow: 0 0 0 0.2rem rgba(0, 128, 0, 0.25) !important;
+                }
+
+                .card {
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                }
+
+                .card:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.08) !important;
+                }
+
+                .input-group-text {
+                    background-color: green;
+                    color: white;
+                    border-color: green;
+                }
+            </style>
+
+            <script>
+                // Script para previsualizar la imagen seleccionada
+                document.getElementById('imagen{{ $producto->id }}').addEventListener('change', function (e) {
+                    const preview = document.getElementById('preview{{ $producto->id }}');
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                    }
+
+                    if (file) {
+                        reader.readAsDataURL(file);
+                    }
+                });
+            </script>
         </div>
+    </div>
+</div>
     @endforeach
 
 

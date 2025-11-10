@@ -1,4 +1,4 @@
- @extends('layouts.argon')
+@extends('layouts.argon')
 
 @section('content')
 
@@ -27,31 +27,33 @@
             agregarProductoDesdeCodigo();
         });
 
-        // === VALIDACIÓN FORMULARIO PRINCIPAL - SOLO ESTA PARTE MODIFICADA ===
-       // === VALIDACIÓN FORMULARIO PRINCIPAL - VERSIÓN SIMPLIFICADA ===
+        // === VALIDACIÓN FORMULARIO PRINCIPAL CORREGIDA ===
+        // === VALIDACIÓN FORMULARIO PRINCIPAL CORREGIDA ===
 $('#form_compra').submit(function (e) {
     let formularioValido = true;
     let productosSinLote = 0;
 
-    // Verificar cada fila de producto
     $('tbody tr').each(function () {
         if ($(this).find('td').length > 1) {
-            // Buscar si en la columna de Lote hay texto "Lote asignado" o información de lote
-            const textoColumnaLote = $(this).find('td:nth-child(5)').text();
-            const tieneLoteAsignado = textoColumnaLote.includes('Lote asignado') || 
-                                     textoColumnaLote.includes('Lote:');
+            // VERIFICAR DE DOS FORMAS:
+            // 1. Si el botón "Crear Lote" está oculto (ya se creó lote)
+            // 2. O si existe el mensaje "Lote asignado"
+            const botonLote = $(this).find('.btn-agregar-lote');
+            const mensajeLoteAsignado = $(this).find('.text-success'); // Buscar el mensaje que agregamos
             
-            // Si NO tiene lote asignado Y el botón de crear lote es visible
-            const botonLoteVisible = $(this).find('.btn-agregar-lote').is(':visible');
+            const tieneLote = botonLote.is(':hidden') || mensajeLoteAsignado.length > 0;
             
-            if (!tieneLoteAsignado && botonLoteVisible) {
+            if (!tieneLote) {
                 productosSinLote++;
                 formularioValido = false;
+                // Resaltar la fila que falta lote
+                $(this).addClass('table-danger');
+            } else {
+                $(this).removeClass('table-danger');
             }
         }
     });
 
-    // Otras validaciones
     if ($('tbody tr').length <= 1) {
         alertify.error('Debes agregar al menos un producto');
         formularioValido = false;
@@ -62,17 +64,18 @@ $('#form_compra').submit(function (e) {
         formularioValido = false;
     }
 
-    if (!formularioValido) {
-        e.preventDefault();
-        if (productosSinLote > 0) {
-            alertify.error('Hay ' + productosSinLote + ' producto(s) sin lote asignado');
-        }
-        return false;
+    if (productosSinLote > 0) {
+        alertify.error('Tienes ' + productosSinLote + ' producto(s) sin lote asignado');
+        formularioValido = false;
     }
 
-    console.log('Formulario válido, enviando compra...');
+    if (!formularioValido) {
+        e.preventDefault();
+        return false;
+    }
 });
 
+        
         // === ELIMINAR PRODUCTOS ===
         $(document).on('click', '.delete-btn', function () {
             var id = $(this).data('id');
@@ -196,24 +199,21 @@ $('#form_compra').submit(function (e) {
 
         $('tbody tr').each(function () {
             if ($(this).find('td').length > 1) {
-                // Solo sumar si NO es "Pendiente"
-                const subtotalText = $(this).find('.subtotal').text();
+                const subtotalText = $(this).find('.subtotal').text().replace('Bs ', '') || '0';
+                const subtotal = parseFloat(subtotalText.replace(',', '')) || 0;
                 
-                // Si no contiene "Pendiente", calcular
-                if (!subtotalText.includes('Pendiente')) {
-                    const subtotal = parseFloat(subtotalText.replace('Bs ', '').replace(',', '')) || 0;
-                    totalCompra += subtotal;
-                }
-                
-                // Sumar empaques siempre
                 const cantidadEmpaques = parseInt($(this).find('td:nth-child(3)').text()) || 0;
+
                 totalEmpaques += cantidadEmpaques;
+                totalCompra += subtotal;
             }
         });
 
         $('tfoot th:nth-child(3)').text(totalEmpaques);
         $('tfoot .total-compra').text('Bs ' + totalCompra.toFixed(2));
         $('input[name="precio_total"]').val(totalCompra.toFixed(2));
+
+        $('button[type="submit"]').prop('disabled', totalCompra <= 0);
     }
 
     // === FUNCIÓN PARA ABRIR MODAL DE LOTE ===
@@ -226,7 +226,6 @@ $('#form_compra').submit(function (e) {
         $('#stock-maximo-text').text('Stock máximo: ' + stockMaximo + ' unidades');
         $('#cantidadInput').attr('max', stockMaximo);
 
-        
         $('#formLote')[0].reset();
         
         $('#formLote input[name="fecha_ingreso"]').val(new Date().toISOString().split('T')[0]);
@@ -251,89 +250,101 @@ $('#form_compra').submit(function (e) {
 
         abrirModalLoteAutomatico(productoId, nombreProducto, stockMaximo, tmpCompraId);
     });
-
-    // === MANEJADOR FORMULARIO DE LOTE ===
-    $(document).on('submit', '#formLote', function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        const productoId = $('#modalProductoId').val();
-        const tmpCompraId = $('#modalTmpCompraId').val();
-        const cantidad = $('#cantidadInput').val();
-        const stockMaximo = $('#cantidadInput').attr('max') || 50;
-
-        if (parseInt(cantidad) > parseInt(stockMaximo)) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Stock máximo excedido',
-                text: 'La cantidad no puede ser mayor a ' + stockMaximo + ' unidades.',
-                confirmButtonText: 'Entendido'
-            });
-            return false;
-        }
-
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function (response) {
-    console.log('Respuesta del servidor:', response);
     
-    if (response.success) {
-        const botonLote = $(`.btn-agregar-lote[data-tmp-compra-id="${tmpCompraId}"]`);
-        botonLote.hide();
-        
-        // Mostrar información del lote creado
-        botonLote.after(`
-            <div class="mt-1">
-                <small class="text-success">
-                    <i class="fas fa-check-circle me-1"></i>
-                    Lote: ${response.numero_lote}
-                </small>
-                <br>
-                <small class="text-muted">
-                    ${$('#cantidadInput').val()} und - Bs ${parseFloat(response.precio_compra_unitario).toFixed(2)}
-                </small>
-            </div>
-        `);
 
-        $('#loteModal').modal('hide');
+    // === MANEJADOR FORMULARIO DE LOTE CORREGIDO ===
+   // === MANEJADOR FORMULARIO DE LOTE MEJORADO ===
+$(document).on('submit', '#formLote', function (e) {
+    e.preventDefault();
 
-        const cantidadLote = $('#cantidadInput').val();
-        const subtotal = cantidadLote * response.precio_compra_unitario;
-        
-        // Actualizar precios en la tabla directamente
-        botonLote.closest('tr').find('.precio-unitario').text('Bs ' + parseFloat(response.precio_compra_unitario).toFixed(2));
-        botonLote.closest('tr').find('.subtotal').text('Bs ' + subtotal.toFixed(2));
+    const formData = new FormData(this);
+    const productoId = $('#modalProductoId').val();
+    const tmpCompraId = $('#modalTmpCompraId').val();
+    const cantidad = $('#cantidadInput').val();
+    const stockMaximo = $('#cantidadInput').attr('max') || 50;
 
-        calcularTotales();
-
-        alertify.success(response.message);
-
-    } else {
-        alertify.error(response.message || 'Error al crear el lote');
-    }
-},
-            error: function (xhr) {
-                console.error('Error en AJAX:', xhr);
-                let errorMessage = 'Error desconocido';
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    errorMessage = xhr.responseJSON.message;
-                } else if (xhr.responseText) {
-                    errorMessage = xhr.responseText;
-                }
-                alertify.error(errorMessage);
-            }
+    if (parseInt(cantidad) > parseInt(stockMaximo)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Stock máximo excedido',
+            text: 'La cantidad no puede ser mayor a ' + stockMaximo + ' unidades.',
+            confirmButtonText: 'Entendido'
         });
+        return false;
+    }
+
+    // Mostrar loading en el botón
+    const btnGuardar = $('#btnGuardarLote');
+    btnGuardar.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i> Guardando...');
+
+    $.ajax({
+        url: $(this).attr('action'),
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (response) {
+            console.log('Respuesta del servidor:', response);
+            
+            if (response.success) {
+                const botonLote = $(`.btn-agregar-lote[data-tmp-compra-id="${tmpCompraId}"]`);
+                
+                // Ocultar botón y mostrar información del lote
+                botonLote.hide();
+                
+                // AGREGAR UNA CLASE ESPECÍFICA PARA IDENTIFICAR QUE TIENE LOTE
+                botonLote.closest('tr').addClass('lote-asignado');
+                
+                // Mostrar información del lote creado
+                botonLote.after(`
+                    <div class="mt-1 lote-info">
+                        <small class="text-success">
+                            <i class="fas fa-check-circle me-1"></i>
+                            Lote: ${response.numero_lote}
+                        </small>
+                        <br>
+                        <small class="text-muted">
+                            ${$('#cantidadInput').val()} und - Bs ${parseFloat(response.precio_compra_unitario).toFixed(2)}
+                        </small>
+                    </div>
+                `);
+
+                $('#loteModal').modal('hide');
+
+                const cantidadLote = $('#cantidadInput').val();
+                const subtotal = cantidadLote * response.precio_compra_unitario;
+                
+                // Actualizar precios en la tabla
+                botonLote.closest('tr').find('.precio-unitario').text('Bs ' + parseFloat(response.precio_compra_unitario).toFixed(2));
+                botonLote.closest('tr').find('.subtotal').text('Bs ' + subtotal.toFixed(2));
+
+                calcularTotales();
+
+                alertify.success(response.message);
+
+            } else {
+                alertify.error(response.message || 'Error al crear el lote');
+            }
+        },
+        error: function (xhr) {
+            console.error('Error en AJAX:', xhr);
+            let errorMessage = 'Error desconocido';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
+            } else if (xhr.responseText) {
+                errorMessage = xhr.responseText;
+            }
+            alertify.error(errorMessage);
+        },
+        complete: function() {
+            // Rehabilitar botón
+            btnGuardar.prop('disabled', false).html('<i class="fas fa-save me-2"></i> Guardar Lote');
+        }
     });
-
-
-
+});
     // === CÁLCULOS AUTOMÁTICOS MODAL LOTE ===
     document.addEventListener("DOMContentLoaded", function () {
         const cantidadInput = document.getElementById("cantidadInput");
@@ -450,14 +461,14 @@ $('#form_compra').submit(function (e) {
                                             <div class="d-flex justify-content-end gap-2 pt-3">
                                                 <button type="button" class="btn btn-primary flex-grow-1"
                                                     data-bs-toggle="modal" data-bs-target="#productosModal">
-                                                    <i class="fas fa-search me-2"></i> 
+                                                    <i class="fas fa-search me-2"></i> Buscar
                                                 </button>
                                                 <button type="button" class="btn btn-success flex-grow-1" id="btn-agregar-producto">
-                                                    <i class="fas fa-plus me-2"></i> 
+                                                    <i class="fas fa-plus me-2"></i> Agregar
                                                 </button>
                                                 <a href="{{ route('admin.productos.create') }}"
                                                     class="btn btn-info flex-grow-1">
-                                                    <i class="fas fa-plus me-2"></i> 
+                                                    <i class="fas fa-plus me-2"></i> Nuevo
                                                 </a>
                                             </div>
                                         </div>
@@ -728,3 +739,32 @@ $('#form_compra').submit(function (e) {
         }
     </style>
 @endsection
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

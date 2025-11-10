@@ -17,6 +17,7 @@
                         <span class="badge bg-gradient-info me-3">
                             <i class="fas fa-database me-1"></i> {{ $lotes->count() }} Lotes
                         </span>
+                       
 
                         <div class="dropdown me-2">
                             <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="exportDropdown"
@@ -73,9 +74,7 @@
                                     <option value="activos" {{ request('estado') == 'activos' ? 'selected' : '' }}>
                                         Activos (con stock)
                                     </option>
-                                    <option value="inactivos" {{ request('estado') == 'inactivos' ? 'selected' : '' }}>
-                                        Inactivos
-                                    </option>
+                                    
                                     <option value="vencidos" {{ request('estado') == 'vencidos' ? 'selected' : '' }}>
                                         Vencidos o agotados
                                     </option>

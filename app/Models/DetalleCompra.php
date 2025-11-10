@@ -33,11 +33,10 @@ public function laboratorio(){
 
     }
 
-    public function lote()
+public function lote()
 {
-    return $this->belongsTo(Lote::class);
+    return $this->belongsTo(Lote::class, 'lote_id');
 }
-
 
 
 }

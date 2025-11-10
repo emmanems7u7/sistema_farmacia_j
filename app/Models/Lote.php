@@ -73,11 +73,9 @@ public function scopeVencidos($query)
 
 
 
- 
-
-
-    public function detalles() {
-    return $this->belongsTo(DetalleCompra::class);
+public function detalle()
+{
+    return $this->hasOne(DetalleCompra::class, 'lote_id');
 }
 
 

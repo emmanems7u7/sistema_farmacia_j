@@ -376,6 +376,9 @@ Route::post('/admin/compras/agregar-lote', [App\Http\Controllers\CompraControlle
 
 Route::get('/admin/compras/tmp', [App\Http\Controllers\CompraController::class, 'mostrarTmpCompras'])->name('compras.tmp');
 
+Route::get('/admin/compras/reporte/diario', [App\Http\Controllers\CompraController::class, 'reporteDiario'])->name('admin.compras.reporteDiario');
+
+
 //RUTAS PARA CLIENTES
 Route::get('/admin/clientes/reporte', [App\Http\Controllers\ClienteController::class, 'generarReporte'])
     ->name('admin.clientes.reporte');
@@ -388,6 +391,8 @@ Route::put('/admin/clientes/{id}', [App\Http\Controllers\ClienteController::clas
 Route::delete('/admin/clientes/{id}', [App\Http\Controllers\ClienteController::class, 'destroy'])->name('admin.clientes.destroy')->middleware('auth');
 
 //RUTAS PARA VENTAS
+Route::get('/admin/ventas/reporte_dia', [App\Http\Controllers\VentaController::class, 'reporteDia'])->name('admin.ventas.reporte_dia')->middleware('auth');
+
 
 Route::get('/admin/ventas', [App\Http\Controllers\VentaController::class, 'index'])->name('admin.ventas.index')->middleware('auth');
 Route::get('/admin/ventas/create', [App\Http\Controllers\VentaController::class, 'create'])->name('admin.ventas.create')->middleware('auth');
@@ -406,6 +411,12 @@ Route::post('/admin/ventas/cliente/create', [App\Http\Controllers\VentaControlle
 Route::get('/admin/ventas/reporte/{tipo}', [App\Http\Controllers\VentaController::class, 'reporte'])
     ->where('tipo', 'pdf|excel|csv')
     ->name('admin.ventas.reporte');
+
+Route::post('/admin/ventas/verificar-stock', [App\Http\Controllers\VentaController::class, 'verificarStock'])->name('admin.ventas.verificar_stock');
+
+
+Route::put('/admin/ventas/create/tmp/{id}', [App\Http\Controllers\VentaController::class, 'updateTmp'])->name('admin.ventas.tmp_update');
+
 
 //tmp ventas
 Route::post('/admin/ventas/create/tmp', [App\Http\Controllers\TmpVentaController::class, 'tmp_ventas'])->name('admin.ventas.tmp_ventas')->middleware('auth');
