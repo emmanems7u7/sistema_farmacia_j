@@ -443,68 +443,74 @@
             </div>
         </div>
         
-        <div class="d-flex flex-nowrap overflow-auto pb-3 px-2" style="gap: 1rem; scroll-snap-type: x mandatory;">
-            @foreach($topProductos as $producto)
-            <div class="col-6 col-md-4 col-lg-3 col-xl-2">
-                <div class="card h-100 product-card shadow-sm border-0">
-                    <!-- Badge de más vendido -->
-                    <div class="position-absolute top-0 start-0 m-2">
-                        <span class="badge bg-danger">🔥 Más vendido</span>
+       <div class="d-flex flex-nowrap overflow-auto pb-3 px-2" style="gap: 1rem; scroll-snap-type: x mandatory;">
+    @foreach($topProductos as $producto)
+    <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+        <div class="card h-100 product-card shadow-sm border-0">
+            <!-- Badge de más vendido -->
+            <div class="position-absolute top-0 start-0 m-2">
+                <span class="badge bg-danger">🔥 Más vendido</span>
+            </div>
+            
+            <div class="card h-100 border-0 product-card @if($producto->stock == 0) out-of-stock @endif">
+                <!-- Contenedor de imagen con efecto hover -->
+                <div class="product-image-container position-relative overflow-hidden">
+                    @if($producto->imagen)
+                        {{-- Si la imagen existe y es de storage --}}
+                        @if(Str::startsWith($producto->imagen, 'productos/'))
+                            <img src="{{ asset('storage/'.$producto->imagen) }}" 
+                                 class="product-image" alt="{{ $producto->nombre }}">
+                        @else
+                            {{-- Si la imagen existe pero no es de storage (imagen por defecto) --}}
+                            <img src="{{ asset($producto->imagen) }}" 
+                                 class="product-image" alt="{{ $producto->nombre }}">
+                        @endif
+                    @else
+                        {{-- Si no hay imagen, mostrar la imagen por defecto --}}
+                        <img src="{{ asset('assets/img/sinimagen.jpeg') }}" 
+                             class="product-image" alt="Sin imagen">
+                    @endif
+                    <div class="image-overlay"></div>
+                </div>
+
+                <!-- Detalles del producto -->
+                <div class="card-body p-3">
+                    <h6 class="product-title mb-2">
+                        {{ Str::limit($producto->nombre, 30) }}
+                        @if($producto->stock == 0)
+                            <span class="out-of-stock-badge">AGOTADO</span>
+                        @endif
+                    </h6>
+                    
+                    <div class="product-price mb-2">
+                        <strong>Bs {{ number_format($producto->precio_minimo, 2) }}</strong>
                     </div>
                     
-                    <div class="card h-100 border-0 product-card @if($producto->stock == 0) out-of-stock @endif">
-                        <!-- Contenedor de imagen con efecto hover -->
-                        <div class="product-image-container position-relative overflow-hidden">
-                          
-                            <img src="{{ $producto->imagen ? asset('storage/'.$producto->imagen) : asset('assets/img/sinimagen.jpeg') }}" 
-                         class="product-image" alt="{{ $producto->nombre }}">
-                         
-
-                            <div class="image-overlay"></div>
-                        </div>
-
-                        <!-- Detalles del producto -->
-                        <div class="card-body p-3">
-                            <h6 class="product-title mb-2">
-                                {{ Str::limit($producto->nombre, 30) }}
-                                @if($producto->stock == 0)
-                                    <span class="out-of-stock-badge">AGOTADO</span>
-                                @endif
-                            </h6>
-                            
-                            <div class="product-price mb-2">
-                            
-                                <strong>Bs {{ number_format($producto->precio_minimo, 2) }}</strong>
-
-
-                            </div>
-                            
-                            <div class="product-meta d-flex justify-content-between align-items-center">
-                                <span class="stock-badge {{ $producto->stock > 10 ? 'in-stock' : ($producto->stock > 0 ? 'low-stock' : 'no-stock') }}">
-                                    {{ $producto->stock }}u disponible{{ $producto->stock != 1 ? 's' : '' }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Botón de acción -->
-                        <div class="card-footer p-3 bg-white border-top">
-                            @if($producto->stock == 0)
-                                <button class="btn w-100 disabled out-of-stock-btn">
-                                    <i class="fas fa-ban me-2"></i>Agotado
-                                </button>
-                            @else
-                                <a href="{{ route('admin.catalogo.show', $producto->id) }}" 
-                                class="btn w-100 view-product-btn">
-                                    <i class="fas fa-eye me-2"></i>Ver detalles
-                                </a>
-                            @endif
-                        </div>
+                    <div class="product-meta d-flex justify-content-between align-items-center">
+                        <span class="stock-badge {{ $producto->stock > 10 ? 'in-stock' : ($producto->stock > 0 ? 'low-stock' : 'no-stock') }}">
+                            {{ $producto->stock }}u disponible{{ $producto->stock != 1 ? 's' : '' }}
+                        </span>
                     </div>
-        
+                </div>
+
+                <!-- Botón de acción -->
+                <div class="card-footer p-3 bg-white border-top">
+                    @if($producto->stock == 0)
+                        <button class="btn w-100 disabled out-of-stock-btn">
+                            <i class="fas fa-ban me-2"></i>Agotado
+                        </button>
+                    @else
+                        <a href="{{ route('admin.catalogo.show', $producto->id) }}" 
+                        class="btn w-100 view-product-btn">
+                            <i class="fas fa-eye me-2"></i>Ver detalles
+                        </a>
+                    @endif
                 </div>
             </div>
-            @endforeach
         </div>
+    </div>
+    @endforeach
+</div>
     </div>
 </section>
 @else

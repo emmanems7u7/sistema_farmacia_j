@@ -27,8 +27,21 @@
             <div class="card h-100 border-0 product-card @if($producto->stock == 0) out-of-stock @endif">
                 <!-- Contenedor de imagen con efecto hover -->
                 <div class="product-image-container position-relative overflow-hidden">
-                    <img src="{{ $producto->imagen ? asset('storage/'.$producto->imagen) : asset('assets/img/sinimagen.jpeg') }}" 
-                         class="product-image" alt="{{ $producto->nombre }}">
+                    @if($producto->imagen)
+                        {{-- Si la imagen existe y es de storage --}}
+                        @if(Str::startsWith($producto->imagen, 'productos/'))
+                            <img src="{{ asset('storage/'.$producto->imagen) }}" 
+                                 class="product-image" alt="{{ $producto->nombre }}">
+                        @else
+                            {{-- Si la imagen existe pero no es de storage (imagen por defecto) --}}
+                            <img src="{{ asset($producto->imagen) }}" 
+                                 class="product-image" alt="{{ $producto->nombre }}">
+                        @endif
+                    @else
+                        {{-- Si no hay imagen, mostrar la imagen por defecto --}}
+                        <img src="{{ asset('assets/img/sinimagen.jpeg') }}" 
+                             class="product-image" alt="Sin imagen">
+                    @endif
                     <div class="image-overlay"></div>
                 </div>
 
