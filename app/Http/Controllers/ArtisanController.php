@@ -24,7 +24,7 @@ class ArtisanController extends Controller
             return back()->with('error', 'Contraseña incorrecta');
         }
         $clave_segura = $request->clave_segura;
-        return view('admin.artisan-panel', compact('clave_segura', 'breadcrumb'));
+        return view('admin_artisan.artisan-panel', compact('clave_segura', 'breadcrumb'));
     }
 
     public function run(Request $request)
@@ -45,19 +45,19 @@ class ArtisanController extends Controller
             Artisan::call($request->comando);
             $output = Artisan::output();
 
-            return view('admin.artisan-panel', [
+            return view('admin_artisan.artisan-panel', [
                 'output' => $output,
                 'breadcrumb' => $breadcrumb,
                 'clave_segura' => $request->clave_segura
             ]);
         } catch (CommandNotFoundException $e) {
-            return view('admin.artisan-panel', [
+            return view('admin_artisan.artisan-panel', [
                 'error' => 'Comando no reconocido.',
                 'breadcrumb' => $breadcrumb,
                 'clave_segura' => $request->clave_segura
             ]);
         } catch (\Exception $e) {
-            return view('admin.artisan-panel', [
+            return view('admin_artisan.artisan-panel', [
                 'error' => 'Error al ejecutar: ' . $e->getMessage(),
                 'breadcrumb' => $breadcrumb,
                 'clave_segura' => $request->clave_segura
@@ -71,7 +71,7 @@ class ArtisanController extends Controller
             ['name' => 'Inicio', 'url' => route('home')],
             ['name' => 'Panel de Artisan', 'url' => route('artisan.admin')],
         ];
-        return view('admin.artisan-verificacion', compact('breadcrumb'));
+        return view('admin_artisan.artisan-verificacion', compact('breadcrumb'));
     }
     public function verificar(Request $request)
     {
