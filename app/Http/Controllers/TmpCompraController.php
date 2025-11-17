@@ -13,7 +13,7 @@ class TmpCompraController extends Controller
 public function tmp_compras(Request $request){
         //buscar el producto envase al codigo que estamo
         $producto = Producto::where('codigo',$request->codigo)->first();
-        //si el producto existe se registra en la tabla temporal 
+      
 
 $session_id = session()->getId();
 
@@ -37,7 +37,7 @@ if($tmp_compra_existe){
         $tmp_compra->cantidad = $request->cantidad;
         $tmp_compra->producto_id = $producto->id;
 
-        //diferencia un usuario logiado en otro equipo
+       
 
          $tmp_compra->session_id = session()->getId();
          $tmp_compra->save();
@@ -104,19 +104,18 @@ public function destroy($id)
 {
     \DB::beginTransaction();
     try {
-        // 1. Obtener el registro temporal
+        
         $tmpCompra = TmpCompra::findOrFail($id);
 
-        // 2. Eliminar el lote relacionado con este producto (si existe)
+      
         $lote = Lote::where('producto_id', $tmpCompra->producto_id)
-                    ->latest('id') // Puedes quitar esto si quieres eliminar todos
+                    ->latest('id') 
                     ->first();
 
         if ($lote) {
             $lote->delete();
         }
 
-        // 3. Eliminar el registro temporal
         $tmpCompra->delete();
 
         \DB::commit();

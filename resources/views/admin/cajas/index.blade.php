@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col">
             <div class="card" style="height: auto;">
-            <div class="card-header border-0 p-2"> <!-- p-2 es un padding más pequeño -->
+            <div class="card-header border-0 p-2"> 
                 <div class="d-flex justify-content-between align-items-center">
                     <h3 class="mb-0"><b>Listado de cajas</b></h3>
                     <div class="card-header bg-transparent border-0">
@@ -24,7 +24,7 @@
                         <button class="btn btn-sm btn-outline-secondary" id="refreshTable">
                             <i class="fas fa-sync-alt me-1"></i> Actualizar
                         </button>
-                        <div class="position-relative"> <!-- Contenedor relativo importante -->
+                        <div class="position-relative"> 
                             <div class="dropdown">
                                 <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" 
                                         id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -171,17 +171,19 @@
         </button>-->
         
         <!-- Botón eliminar -->
-           @if(!$caja->fecha_cierre)
-        <button type="button" class="btn btn-action btn-outline-danger"
-            onclick="confirmDelete({{$caja->id}})"
-             style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
-            data-bs-tooltip="tooltip" title="Eliminar Caja">
-            <i class="fas fa-trash-alt"></i>
-        </button>
-        <form id="deleteForm{{$caja->id}}" action="{{url('/admin/cajas/'.$caja->id)}}" method="POST" class="d-none">
-            @csrf @method('DELETE')
-        </form>
-         @endif
+        @if(!$caja->fecha_cierre)
+            @can('ventas.eliminar')
+                <button type="button" class="btn btn-action btn-outline-danger"
+                        onclick="confirmDelete({{$caja->id}})"
+                        style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
+                        data-bs-tooltip="tooltip" title="Eliminar Caja">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <form id="deleteForm{{$caja->id}}" action="{{url('/admin/cajas/'.$caja->id)}}" method="POST" class="d-none">
+                    @csrf @method('DELETE')
+                </form>
+            @endcan
+        @endif
     </div>
 </td>
                         </tr>
@@ -310,7 +312,7 @@
             
             <div class="modal-body p-0">
                 <div class="row g-0">
-                    <!-- Panel izquierdo - Datos de Caja -->
+                    <!--  Datos de Caja -->
                     <div class="col-lg-4 border-end">
                         <div class="p-3">
                             <div class="card border-0 shadow-none">
@@ -337,7 +339,7 @@
                                             </div>
                                         </div>
                                         
-                                        <!-- Item de línea de tiempo para cierre (si existe) -->
+                                        <!-- Item de línea de tiempo para cierre  -->
                                         @if($caja->fecha_cierre)
                                         <div class="timeline-block mb-3">
                                             <span class="timeline-step bg-success">
@@ -725,13 +727,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endsection
 
-@section('css')
 
-@endsection
-
-@section('js')
-
-@endsection
 
 
 

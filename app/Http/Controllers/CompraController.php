@@ -15,8 +15,8 @@ use NumberFormatter;
 use App\Models\Proveedor;
 use App\Models\Laboratorio;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; // Importar Auth
-use Illuminate\Support\Facades\DB; // ¡Este es el import que faltaba!
+use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\DB; 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -24,10 +24,9 @@ use Maatwebsite\Excel\Facades\Excel;
 
 use Carbon\Carbon;
 
-use DatePeriod; // Importación añadida
-use DateInterval; // Importación añadida
-use DateTime; // Importación añadida
-// Asegúrate de tener este modelo para acceder a los datos de ingresos
+use DatePeriod; 
+use DateInterval; 
+use DateTime; 
 use PDF;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -78,7 +77,7 @@ class CompraController extends Controller
 
   public function store(Request $request)
 {
-    // Validación (sin cambios)
+    
     $request->validate([
         'fecha' => 'required|date',
         'comprobante' => 'required|string|max:50',
@@ -114,7 +113,7 @@ class CompraController extends Controller
         $session_id = session()->getId();
         $tmp_compras = TmpCompra::where('session_id', $session_id)->with('producto')->get();
 
-        // ✅ VERIFICAR QUE TODOS LOS PRODUCTOS TENGAN LOTE ASIGNADO
+        //  VERIFICAR QUE TODOS LOS PRODUCTOS TENGAN LOTE ASIGNADO
         foreach ($tmp_compras as $tmp_compra) {
             if (!$tmp_compra->lote_id) {
                 throw new \Exception("El producto '{$tmp_compra->producto->nombre}' no tiene un lote asignado. Por favor, crea un lote para este producto.");
@@ -122,22 +121,22 @@ class CompraController extends Controller
         }
 
         foreach ($tmp_compras as $tmp_compra) {
-            // ✅ CORRECCIÓN: Obtener lote_id directamente de tmp_compras, no del request
+            //  Obtener lote_id directamente de tmp_compras, no del request
             $lote_id = $tmp_compra->lote_id;
 
             $lote = Lote::findOrFail($lote_id);
             $producto = Producto::findOrFail($tmp_compra->producto_id);
 
             // Validación de stock máximo
-            $stock_actual = Lote::where('producto_id', $producto->id)->sum('cantidad');
-            $nuevo_stock = $stock_actual + $lote->cantidad;
+          //  $stock_actual = Lote::where('producto_id', $producto->id)->sum('cantidad');
+           // $nuevo_stock = $stock_actual + $lote->cantidad;
 
-            if ($producto->stock_maximo !== null && $producto->stock_maximo > 0 && $nuevo_stock > $producto->stock_maximo) {
-                throw new \Exception("No se puede registrar la compra del producto '{$producto->nombre}'. 
-                    Stock máximo permitido: {$producto->stock_maximo}. 
-                    Stock actual: {$stock_actual}. 
-                    Con esta compra sería: {$nuevo_stock}.");
-            }
+           // if ($producto->stock_maximo !== null && $producto->stock_maximo > 0 && $nuevo_stock > $producto->stock_maximo) {
+            //    throw new \Exception("No se puede registrar la compra del producto '{$producto->nombre}'. 
+             //       Stock máximo permitido: {$producto->stock_maximo}. 
+             //       Stock actual: {$stock_actual}. 
+              //      Con esta compra sería: {$nuevo_stock}.");
+          //  }
 
             // Crear detalle de compra
             DetalleCompra::create([
@@ -163,7 +162,7 @@ class CompraController extends Controller
             ->with('status', 'Error al registrar la compra: ' . $e->getMessage());
     }
 }
-   public function agregarLote(Request $request)
+ public function agregarLote(Request $request)
 {
     $validated = $request->validate([
         'numero_lote' => 'required|string|unique:lotes,numero_lote',
@@ -173,8 +172,24 @@ class CompraController extends Controller
         'precio_compra' => 'required|numeric|min:0',
         'precio_venta' => 'required|numeric|min:0',
         'producto_id' => 'required|exists:productos,id',
-        'tmp_compra_id' => 'required|exists:tmp_compras,id' // AGREGAR ESTO
+        'tmp_compra_id' => 'required|exists:tmp_compras,id'
     ]);
+
+    // AGREGAR ESTA VALIDACIÓN DEL STOCK MÁXIMO =====
+    $producto = Producto::find($validated['producto_id']);
+    $stockActual = $producto->lotes()->sum('cantidad');
+    $nuevaCantidad = $validated['cantidad'];
+    $totalFinal = $stockActual + $nuevaCantidad;
+    
+    if ($totalFinal > $producto->stock_maximo) {
+        return response()->json([
+            'success' => false,
+            'message' => "No puedes agregar {$nuevaCantidad} unidades. 
+                         Stock actual: {$stockActual} unidades + {$nuevaCantidad} unidades = {$totalFinal} unidades
+                         Stock máximo permitido: {$producto->stock_maximo} unidades"
+        ], 422);
+    }
+
 
     $precioCompraUnitario = $validated['precio_compra'] / $validated['cantidad'];
 
@@ -216,7 +231,8 @@ class CompraController extends Controller
             'producto_id' => $validated['producto_id'],
             'numero_lote' => $validated['numero_lote'],
             'precio_venta' => $validated['precio_venta'],
-          'cantidad_lote' => $validated['cantidad'] 
+            'cantidad_lote' => $validated['cantidad'],
+            'precio_compra_unitario' => $precioCompraUnitario
         ]);
 
     } catch (\Exception $e) {
@@ -322,22 +338,22 @@ public function destroy($id)
 {
     DB::beginTransaction();
     try {
-        // 1. Obtener la compra con detalles
+        // Obtener la compra con detalles
         $compra = Compra::with(['detalles'])->findOrFail($id);
 
-        // 2. Para cada detalle, eliminar solo el lote específico de ESTA compra
+        // ara cada detalle, eliminar solo el lote específico de ESTA compra
         foreach ($compra->detalles as $detalle) {
-            // 3. Eliminar el lote específico asociado a ESTE detalle
+           
             if ($detalle->lote_id) {
                 Lote::where('id', $detalle->lote_id)->delete();
                 logger("Eliminado lote ID: {$detalle->lote_id} del producto en detalle: {$detalle->id}");
             }
         }
 
-        // 4. Eliminar detalles de la compra
+       
         $compra->detalles()->delete();
 
-        // 5. Eliminar la compra
+      
         $compra->delete();
 
         DB::commit();
@@ -428,14 +444,14 @@ public function reporteDiario()
             ->whereDate('fecha', $fechaHoy)
             ->get();
 
-        // Calcular estadísticas básicas
+        
         $totalCompras = $compras->count();
         $totalEgresos = $compras->sum('precio_total');
         
-        // No podemos calcular productos sin la relación detallesCompra
-        $totalProductos = 0; // O puedes eliminarlo si no es necesario
+      
+        $totalProductos = 0; 
 
-        // Obtener sucursal
+        
         $sucursal = Sucursal::find(Auth::user()->sucursal_id);
 
         $data = [
@@ -444,11 +460,11 @@ public function reporteDiario()
             'sucursal' => $sucursal,
             'totalCompras' => $totalCompras,
             'totalEgresos' => $totalEgresos,
-            'totalProductos' => $totalProductos, // O elimina esta línea
+            'totalProductos' => $totalProductos, 
             'fecha_generacion' => now()->format('d/m/Y H:i:s')
         ];
 
-        // Generar el PDF
+      
         $pdf = Pdf::loadView('admin.compras.reporte_diario_pdf', $data);
         return $pdf->download('reporte_compras_' . $fechaHoy->format('Y-m-d') . '.pdf');
         
@@ -466,7 +482,7 @@ public function reporteDiario()
 public function reporteDiaario(Request $request)
 {
     try {
-        // DEBUG: Mostrar información básica
+        // DEBUG: mostrar información básica
         logger('=== INICIANDO REPORTE COMPRAS DÍA ===');
         logger('Fecha: ' . $request->input('fecha', now()->format('Y-m-d')));
         logger('Sucursal ID: ' . Auth::user()->sucursal_id);
@@ -570,7 +586,7 @@ public function reporteDiaario(Request $request)
             abort(400, 'Tipo de reporte no válido');
         }
 
-        // Obtener filtros
+        
         $fecha_inicio = $request->input('fecha_inicio');
         $fecha_fin = $request->input('fecha_fin');
         $laboratorio_id = $request->input('laboratorio_id');
@@ -579,7 +595,7 @@ public function reporteDiaario(Request $request)
         $query = Compra::with(['detalles', 'laboratorio'])
             ->where('sucursal_id', Auth::user()->sucursal_id);
 
-        // Aplicar filtros
+       
         if ($fecha_inicio && $fecha_fin) {
             $query->whereBetween('fecha', [$fecha_inicio, $fecha_fin]);
         }
@@ -590,7 +606,7 @@ public function reporteDiaario(Request $request)
 
         $compras = $query->get();
 
-        // Verificar si hay datos
+      
         if ($compras->isEmpty()) {
             return back()->with('error', 'No hay compras con los filtros seleccionados');
         }
@@ -664,7 +680,7 @@ public function reporteDiaario(Request $request)
             public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
             {
                 return [
-                    // Estilo encabezados
+                    
                     1 => [
                         'font' => [
                             'bold' => true,
@@ -673,14 +689,14 @@ public function reporteDiaario(Request $request)
                         ],
                         'fill' => [
                             'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                            'startColor' => ['rgb' => '3498DB'] // Azul
+                            'startColor' => ['rgb' => '3498DB'] 
                         ],
                         'alignment' => [
                             'horizontal' => 'center',
                             'vertical' => 'center'
                         ]
                     ],
-                    // Estilo cuerpo
+                    
                     'A2:F' . $sheet->getHighestRow() => [
                         'alignment' => [
                             'vertical' => 'center',
@@ -693,13 +709,13 @@ public function reporteDiaario(Request $request)
                             ]
                         ]
                     ],
-                    // Alineación izquierda para laboratorio
+                  
                     'C2:C' . $sheet->getHighestRow() => [
                         'alignment' => [
                             'horizontal' => 'left'
                         ]
                     ],
-                    // Formato numérico para total
+                    
                     'D2:D' . $sheet->getHighestRow() => [
                         'numberFormat' => [
                             'formatCode' => '#,##0.00'
@@ -733,7 +749,7 @@ public function reporteDiaario(Request $request)
             $id_sucursal = Auth::user()->sucursal_id;
             $sucursal = Sucursal::findOrFail($id_sucursal);
 
-            // 2. Obtener la compra con relaciones (incluyendo lotes)
+            // 2. Obtener la compra con relaciones 
             $compra = Compra::with([
                 'detalles.producto.lotes' => function ($query) {
                     $query->orderBy('created_at', 'desc');
@@ -752,10 +768,10 @@ public function reporteDiaario(Request $request)
                 $subtotal_calculado += $detalle->subtotal_calculado;
             }
 
-            // 4. Convertir total a letras
+          
             $literal = $this->numerosALetrasConDecimales($compra->precio_total);
 
-            // 5. Generar PDF con datos
+            
             $pdf = PDF::loadView('admin.compras.pdf', [
                 'sucursal' => $sucursal,
                 'compra' => $compra,
@@ -784,12 +800,12 @@ private function numerosALetrasConDecimales($numero)
     $decenas = ['', '', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
     $centenas = ['', 'cien', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos'];
 
-    // Dividir parte entera y decimal
+    
     $partes = explode('.', number_format(abs($numero), 2, '.', ''));
     $entero = intval($partes[0]);
     $decimal = intval($partes[1]);
 
-    // Función interna para convertir hasta 999
+   
     $convertir = function ($n) use ($unidades, $decenas, $centenas, &$convertir) {
         if ($n == 0) return 'cero';
         elseif ($n < 21) return $unidades[$n];
@@ -816,7 +832,7 @@ private function numerosALetrasConDecimales($numero)
         }
     };
 
-    // Convertir partes
+  
     $textoEntero = $convertir($entero) . ' boliviano' . ($entero != 1 ? 's' : '');
     $textoDecimal = $decimal == 0 ? 'exactos' : $convertir($decimal) . ' centavo' . ($decimal != 1 ? 's' : '');
 

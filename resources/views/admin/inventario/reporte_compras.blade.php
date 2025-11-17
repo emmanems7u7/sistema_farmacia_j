@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Reporte de Compras - {{ $mes->translatedFormat('F Y') }}</title>
     <style>
-        /* Estilos generales */
+        
         body { 
             font-family: 'Arial', sans-serif; 
             font-size: 10pt; 
@@ -77,14 +77,14 @@
             text-align: left; 
         }
         
-        /* Estilos específicos para cada compra (colores alternados) */
+     
         .compra-header { 
             background: linear-gradient(to right, #6c5ce7, #5649d2);
             color: white;
             font-weight: bold;
         }
         
-        /* Colores alternados para cada compra */
+       
         .compra-0 {
             border: 2px solid #6c5ce7;
         }
@@ -112,14 +112,14 @@
             background-color: #f1f3f9;
         }
         
-        /* Total de cada compra */
+       
         .compra-total { 
             background-color: #e8f1e8ef;
             color: black;
             font-weight: bold;
         }
         
-        /* Total general */
+  
         .total-general { 
             background-color: #e8f1e8ef;
             color: black;
@@ -127,7 +127,7 @@
             font-size: 11pt;
         }
         
-        /* Footer */
+       
         .footer { 
             margin-top: 30px; 
             font-size: 8pt; 
@@ -209,10 +209,6 @@
     </tr>
 </table>
 
-
-
-        
-        <!-- Salto de página cada 5 compras (excepto la última) -->
         @if(($index + 1) % 5 === 0 && !$loop->last)
             <div class="page-break"></div>
         @else
@@ -226,7 +222,6 @@
         </table>
     @endforelse
 
-    <!-- Total general -->
     @if($compras->count() > 0)
 <table class="total-general-table">
     <tr class="total-general">

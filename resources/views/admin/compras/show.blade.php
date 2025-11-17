@@ -263,10 +263,10 @@
             });
         });
 
-        //para que aparesca al presionar enter
+        
         document.getElementById('codigo').focus();
 
-        //prevenir el submit al presionar enter
+       
         document.getElementById('form_compra').addEventListener('keypress', function (e) {
             if (e.keyCode === 13) {
                 e.preventDefault();

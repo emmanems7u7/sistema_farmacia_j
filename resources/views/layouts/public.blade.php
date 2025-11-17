@@ -54,7 +54,7 @@ body {
     font-weight: 600;
 }
 
-/* ✅ PRODUCTOS Y CARRUSEL (igual que antes) */
+/*  PRODUCTOS Y CARRUSEL  */
 .hero-carousel {
     margin-bottom: 2rem;
 }
@@ -98,9 +98,9 @@ body {
     transform: scale(1.05);
 }
 
-/* ✅ DISEÑO RESPONSIVE SOLO PARA MÓVIL */
+/*  DISEÑO RESPONSIVE SOLO PARA MÓVIL */
 @media (max-width: 991.98px) {
-    /* 🔹 OCULTAR solo el texto "Categorías" del botón - CORREGIDO */
+  
     #dropdownCategorias {
         font-size: 0 !important;
         padding: 0.5rem !important;
@@ -111,7 +111,7 @@ body {
         margin-right: 0 !important;
     }
     
-    /* 🔹 OCULTAR texto "Ingresar" y mostrar solo ícono */
+  
     .btn-ingresar-text {
         display: none !important;
     }
@@ -120,7 +120,7 @@ body {
         display: inline-block !important;
     }
     
-    /* 🔹 Hacer más pequeño el nombre FARMACIA MARIEL */
+    
     .navbar-brand h2 {
         font-size: 0.9rem !important;
         margin-bottom: 0.1rem !important;
@@ -139,7 +139,7 @@ body {
         font-size: 1.2rem;
     }
 
-    /* 🔹 Mantener todo en una sola línea */
+  
     .navbar,
     .navbar .container,
     .navbar .d-flex,
@@ -150,7 +150,7 @@ body {
         justify-content: space-between !important;
     }
 
-    /* 🔹 Evitar que los elementos bajen */
+   
     .navbar .nav-item,
     .navbar .d-flex.align-items-center {
         display: flex !important;
@@ -160,19 +160,19 @@ body {
         flex-wrap: nowrap !important;
     }
 
-    /* 🔹 Reducir espacios entre botones */
+    
     .navbar .gap-3 {
         gap: 0.3rem !important;
     }
 
-    /* 🔹 Ajustar padding de los botones */
+    
     .navbar .btn,
     .navbar .nav-link {
         padding: 0.3rem 0.4rem !important;
         font-size: 1rem !important;
     }
 
-    /* 🔹 Eliminar colapso del menú (nunca se apila) */
+   
     .navbar-collapse {
         display: flex !important;
         flex-direction: row !important;
@@ -181,7 +181,7 @@ body {
         flex-wrap: nowrap !important;
     }
 
-    /* 🔹 Ajustar ancho del buscador */
+   
     .search-container {
         width: 150px !important;
         margin: 0 !important;
@@ -191,7 +191,7 @@ body {
         font-size: 0.8rem !important;
     }
 
-    /* 🔹 Ajustar tamaño del icono de WhatsApp */
+    
     .bg-white.rounded-circle {
         transform: scale(0.85);
     }
@@ -201,10 +201,10 @@ body {
 </head>
 
 <body>
-    <!-- Menú de navegación (EXACTAMENTE IGUAL) -->
+    <!-- Menú de navegación  -->
     <nav class="navbar navbar-expand-lg sticky-top" style="background-color: #5BC0EB;">
         <div class="container-fluid">
-            <!-- Nombre de la farmacia en el navbar -->
+         
                <!-- Botón Categorías -->
              <div class="d-flex me-3">
                     <div class="dropdown">
@@ -262,7 +262,6 @@ body {
             <!-- Contenido del navbar -->
             <div class="collapse navbar-collapse" id="navbarContent">
 
-                <!-- Botón Categorías -->
                 
 
                 <!-- Buscador -->
@@ -277,7 +276,7 @@ body {
                                 value="{{ request('search') }}" autocomplete="off" aria-label="Buscar productos"
                                 data-min-chars="1">
                             <button class="btn btn-light px-4" type="submit">
-                                <i class="fas fa-search" style="color: #0dcaf0;"></i> <!-- celeste -->
+                                <i class="fas fa-search" style="color: #0dcaf0;"></i> 
                             </button>
 
                         </div>
@@ -288,20 +287,15 @@ body {
                             </div>
                             <div class="dropdown-divider"></div>
                             <div id="suggestions-list" class="px-2">
-                                <!-- Las sugerencias se cargarán aquí -->
+                            
                             </div>
                         </div>
                     </form>
                 </div>
 
                 <div class="d-flex align-items-center gap-3 ms-auto">
-                    <!-- Botón WhatsApp resaltado sobre un card pequeño -->
-                    <div class="bg-white shadow rounded-circle p-2">
-                        <a href="https://wa.me/59169917597" target="_blank"
-                            class="text-decoration-none d-flex align-items-center justify-content-center">
-                            <i class="fab fa-whatsapp fa-2x" style="color: #25D366;"></i>
-                        </a>
-                    </div>
+                  
+                   
 
                     <!-- Login / Inicio -->
                     <ul class="nav navbar-nav mb-0">
@@ -349,17 +343,17 @@ body {
             // Configuración del carrusel automático
             const myCarousel = document.getElementById('productCarousel');
             const carousel = new bootstrap.Carousel(myCarousel, {
-                interval: 3000, // Cambia cada 3 segundos
-                ride: true,     // Inicia automáticamente
-                wrap: true      // Vuelve al inicio después del último
+                interval: 3000, 
+                ride: true,     
+                wrap: true      
             });
 
-            // Pausar al pasar el ratón
+            // Pausar al pasar el maus
             myCarousel.addEventListener('mouseenter', function () {
                 carousel.pause();
             });
 
-            // Reanudar al quitar el ratón
+            // Reanudar al quitar el masu
             myCarousel.addEventListener('mouseleave', function () {
                 carousel.cycle();
             });
@@ -368,12 +362,12 @@ body {
             const searchForm = document.querySelector('form[action="{{ route('admin.catalogo.index') }}"]');
             if (searchForm) {
                 searchForm.addEventListener('submit', function (e) {
-                    // Validación adicional si es necesaria
+                   
                 });
             }
         });
 
-        // Script del buscador (EXACTAMENTE IGUAL)
+        // Script del buscador )
         document.addEventListener('DOMContentLoaded', function () {
             // Elementos del DOM
             const searchInput = document.getElementById('search-input');
@@ -444,7 +438,7 @@ body {
             }
 
             async function fetchSuggestions(query) {
-                // Cancelar petición anterior si existe
+               
                 if (lastAbortController) {
                     lastAbortController.abort();
                 }
@@ -475,7 +469,6 @@ body {
                         throw new Error('No se recibieron datos');
                     }
 
-                    // Manejar diferentes formatos de respuesta
                     const results = Array.isArray(data) ? data :
                         (data.results ? data.results : []);
 
@@ -509,14 +502,14 @@ body {
                     suggestionItem.className = 'dropdown-item d-flex align-items-center gap-3 py-2';
                     suggestionItem.href = url;
 
-                    // Estructura con imagen y nombre 
+                
                     suggestionItem.innerHTML = `
-            <img src="${imageUrl}" 
-                 alt="${name}" 
-                 class="rounded" 
-                 style="width: 40px; height: 40px; object-fit: cover;">
-            <span>${highlightMatch(name, searchInput.value.trim())}</span>
-        `;
+                        <img src="${imageUrl}" 
+                            alt="${name}" 
+                            class="rounded" 
+                            style="width: 40px; height: 40px; object-fit: cover;">
+                        <span>${highlightMatch(name, searchInput.value.trim())}</span>
+                    `;
 
                     suggestionItem.addEventListener('click', function (e) {
                         e.preventDefault();

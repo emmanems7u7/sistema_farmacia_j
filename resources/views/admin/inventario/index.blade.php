@@ -3,12 +3,12 @@
 @section('content')
 
 <div class="container-fluid py-4">
-    <!-- Tarjeta de título mejorada -->
+
     <div class="row">
         <div class="col-12 mb-2">
             
                 
-               <!-- Filtro por Sucursal -->
+             
     <div class="row mb-4">
         <div class="col-12">
             <div class="card shadow-sm border-0">
@@ -38,11 +38,9 @@
         </div>
     </div>
 
-    <!-- Cards de Resumen -->
+
     <div class="row">
-        <!-- Card 1: Total Productos -->
-        
-        <!-- Card de Productos por Sucursal -->
+    
 <div class="col-lg-4 col-md-6 mb-4">
     <div class="card border-left-primary shadow h-100 py-2">
         <div class="card-body">
@@ -236,10 +234,10 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-        <!-- Card 5: Ventas Totales -->
+      
 <div class="col-lg-4 col-md-6 mb-4">
     <div class="card border-left-success shadow h-100">
-        <!-- Card Header con Filtro -->
+       
         <div class="card-header bg-white py-2">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="text-xs font-weight-bold text-success text-uppercase">
@@ -250,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     @if($sucursalId > 0)
                         <input type="hidden" name="sucursal" value="{{ $sucursalId }}">
                     @endif
-                    <!-- Mantener otros parámetros GET existentes -->
+                   
                     @foreach(request()->except(['month', 'sucursal', '_token']) as $key => $value)
                         <input type="hidden" name="{{ $key }}" value="{{ $value }}">
                     @endforeach

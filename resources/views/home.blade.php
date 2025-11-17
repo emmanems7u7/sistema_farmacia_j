@@ -256,12 +256,12 @@
                 <div class="col-lg-5 mb-4">
                     <div class="card shadow h-100">
                         <!-- Encabezado -->
-                        <div class="card-header bg-gradient-info py-2"> <!-- py-1 reduce el padding vertical -->
+                        <div class="card-header bg-gradient-info py-2"> 
                             <div class="row align-items-center">
                                 <div class="col">
                                     <p class="mb-0 text-white fw-bold" style="font-size: 0.8rem; letter-spacing: 0.5px;">
                                         PRODUCTOS MÁS VENDIDOS
-                                    </p> <!-- Usamos <p> en lugar de <h> para más control -->
+                                    </p> 
                                 </div>
                             </div>
                         </div>
@@ -285,73 +285,6 @@
 
     @endif
 
-<!-- Contenedor Toasts -->
-<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 1rem; right: 1rem; z-index: 9999;">
-    <div id="toast-container"></div>
-</div>
-
-<script>
-function mostrarToast(mensaje, tipo) {
-    let toastContainer = document.getElementById('toast-container');
-
-    let toast = document.createElement('div');
-    toast.className = `toast align-items-center text-white bg-${tipo} border-0`;
-    toast.role = "alert";
-    toast.ariaLive = "assertive";
-    toast.ariaAtomic = "true";
-    toast.style.minWidth = "250px";
-    toast.style.marginBottom = "0.5rem";
-
-    toast.innerHTML = `
-        <div class="d-flex">
-            <div class="toast-body">${mensaje}</div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-    `;
-
-    toastContainer.appendChild(toast);
-
-    let bsToast = new bootstrap.Toast(toast, { delay: 10000 }); // 10 segundos
-    bsToast.show();
-
-    toast.addEventListener('hidden.bs.toast', () => {
-        toast.remove();
-    });
-}
-
-// Función para obtener alertas de productos ya vencidos
-function cargarVencidos() {
-    fetch("{{ route('alertas.productos') }}")
-        .then(response => response.json())
-        .then(data => {
-            data.vencidos.forEach(producto => {
-                mostrarToast(`${producto.nombre} ya venció`, 'danger');
-            });
-        });
-}
-
-// Función para obtener alertas de productos próximos a vencer
-function cargarPorVencer() {
-    fetch("{{ route('alertas.productos') }}")
-        .then(response => response.json())
-        .then(data => {
-            data.por_vencer.forEach(producto => {
-                let dias = Math.ceil((new Date(producto.fecha_vencimiento) - new Date()) / (1000*60*60*24));
-                mostrarToast(`${producto.nombre} vence en ${dias} día(s)`, 'warning');
-            });
-        });
-}
-
-// Mostrar alertas al entrar al dashboard
-cargarVencidos();
-cargarPorVencer();
-
-// Refrescar productos vencidos cada 1 hora (3600000 ms)
-setInterval(cargarVencidos, 3600000);
-
-// Refrescar productos por vencer cada 4 horas (14400000 ms)
-setInterval(cargarPorVencer, 14400000);
-</script>
 
 
 @endsection
@@ -446,7 +379,7 @@ setInterval(cargarPorVencer, 14400000);
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Verificar si el elemento canvas existe
+            
             var canvas = document.getElementById('topProductsChart');
             if (!canvas) {
                 console.error('No se encontró el elemento canvas con ID topProductsChart');
@@ -455,11 +388,11 @@ setInterval(cargarPorVencer, 14400000);
 
             var ctx = canvas.getContext('2d');
 
-            // Datos desde el controlador (PHP)
+       
             var productLabels = @json($labels);
             var productData = @json($data);
 
-            // Colores pastel para la gráfica
+            
             var backgroundColors = [
                 '#b6d6ffff', '#d8bfd8', '#ffdfba', '#94f3d0ff', '#c7ceea'
             ];

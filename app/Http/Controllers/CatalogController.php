@@ -30,9 +30,9 @@ class CatalogController extends Controller
 
         $search = $request->input('search');
         $categoriaId = $request->input('categoria');
-        $sort = $request->input('sort', 'newest'); // Valor por defecto 'newest'
+        $sort = $request->input('sort', 'newest'); 
 
-        // Consulta de productos más vendidos (se mantiene igual)
+        // Consulta de productos más vendidos 
         $topProductos = Producto::withSum('lotes as total_cantidad', 'cantidad')
             ->join('detalle_ventas', 'productos.id', '=', 'detalle_ventas.producto_id')
             ->select(
@@ -71,16 +71,16 @@ class CatalogController extends Controller
             $query->where('categoria_id', $categoriaId);
         }
 
-        // Lógica de ordenamiento MEJORADA
+        
         $query = Producto::with('categoria')->withSum('lotes as total_cantidad', 'cantidad')->withMin('lotes as precio_minimo', 'precio_venta');
 
         switch ($sort) {
             case 'price_asc':
-                $query->orderBy('precio_minimo'); // de los lotes
+                $query->orderBy('precio_minimo'); 
                 break;
 
             case 'price_desc':
-                $query->orderByDesc('precio_minimo'); // de los lotes
+                $query->orderByDesc('precio_minimo');
                 break;
 
             case 'popular':
@@ -123,7 +123,7 @@ class CatalogController extends Controller
 
     public function ver(Categoria $categoria)
     {
-        $productosPaginados = $categoria->productos()->with('lotes')->paginate(30);
+        $productosPaginados = $categoria->productos()->with('lotes')->paginate(1000);
 
         // Calcular precio mínimo y stock total por producto
         foreach ($productosPaginados as $producto) {
@@ -165,8 +165,8 @@ class CatalogController extends Controller
         $termino = $request->input('search');
 
         $productos = Producto::with('categoria')
-            ->withMin('lotes as precio_minimo', 'precio_venta') // Precio más bajo desde Lotes
-            ->withSum('lotes as total_cantidad', 'cantidad')    // Stock total desde Lotes (opcional)
+            ->withMin('lotes as precio_minimo', 'precio_venta') 
+            ->withSum('lotes as total_cantidad', 'cantidad')    
             ->where('nombre', 'LIKE', "%{$termino}%")
             ->orWhere('descripcion', 'LIKE', "%{$termino}%")
             ->orWhereHas('categoria', function ($query) use ($termino) {
@@ -190,7 +190,7 @@ class CatalogController extends Controller
     {
         $query = $request->input('query', '');
 
-        $results = Producto::with('lotes') // Asegúrate que la relación esté definida en el modelo Producto
+        $results = Producto::with('lotes') 
             ->where('nombre', 'like', "%$query%")
             ->take(10)
             ->get()
@@ -200,12 +200,11 @@ class CatalogController extends Controller
 
                 return [
                     'nombre' => $item->nombre,
-                    'url' => route('admin.catalogo.show', $item->id), // Asegúrate que esta sea la ruta correcta
-                   
+                    'url' => route('admin.catalogo.show', $item->id), 
                     'imagen' => $item->imagen && file_exists(public_path('storage/'.$item->imagen)) 
                     ? asset('storage/' . $item->imagen) 
                     : asset('assets/img/sinimagen.jpeg'),
-                    'precio' => 'Bs ' . number_format($precio_venta, 2) // Ahora se incluye el precio correcto
+                    'precio' => 'Bs ' . number_format($precio_venta, 2) 
                 ];
             });
 

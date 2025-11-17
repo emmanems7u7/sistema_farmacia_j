@@ -86,7 +86,7 @@ class ProductoController extends Controller
             // Guardar la ruta relativa en la BD
             $producto->imagen = 'productos/' . $filename;
         } else {
-        // ⚙️ Si no se sube imagen, usar la predeterminada
+        //ssi no se sube imagen, usar la predeterminada
         $producto->imagen = 'assets/img/sinimagen.jpeg';
     }
 
@@ -125,7 +125,7 @@ class ProductoController extends Controller
         'precio_venta' => 'nullable|numeric|min:0',
         'fecha_ingreso' => 'nullable|date',
         'fecha_vencimiento' => 'nullable|date',
-        'cantidad' => 'nullable|integer|min:0' // 🔹 Cambiado a min:0 para permitir 0
+        'cantidad' => 'nullable|integer|min:0' 
     ]);
 
     // Actualizar el producto
@@ -154,7 +154,7 @@ class ProductoController extends Controller
         $producto->save();
     }
 
-    // 🔹 Solo procesar el lote si hay datos válidos
+    // lo procesar el lote si hay datos válidos
     if (
         $request->filled('precio_compra') ||
         $request->filled('precio_venta') ||
@@ -165,16 +165,16 @@ class ProductoController extends Controller
             'precio_venta' => $request->precio_venta,
             'fecha_ingreso' => $request->fecha_ingreso,
             'fecha_vencimiento' => $request->fecha_vencimiento,
-            'cantidad' => $request->cantidad ?? 0, // 🔹 Si no se envía, por defecto 0
+            'cantidad' => $request->cantidad ?? 0, 
             'cantidad_inicial' => 1
         ];
 
         if ($request->has('lote_id') && $request->lote_id) {
-            // Actualizar lote existente
+           
             $lote = Lote::findOrFail($request->lote_id);
             $lote->update($loteData);
         } else {
-            // Crear nuevo lote solo si tiene sentido (precio o cantidad)
+            
             $loteData['producto_id'] = $producto->id;
             $loteData['numero_lote'] = 'LOTE-' . strtoupper(Str::random(6));
             Lote::create($loteData);
@@ -194,7 +194,6 @@ class ProductoController extends Controller
             unlink(public_path('storage/productos/' . basename($producto->imagen)));
         }
 
-        // Eliminar los lotes asociados primero
         $producto->lotes()->delete();
         $producto->delete();
 
@@ -239,21 +238,21 @@ class ProductoController extends Controller
             abort(400, 'Tipo de reporte no válido');
         }
 
-        // Obtener y procesar filtros
+      
         $filtros = $this->procesarFiltros($request);
 
-        // Obtener productos con filtros aplicados
+       
         $productos = $this->obtenerProductosFiltrados($filtros);
 
-        // Verificar si hay datos
+    
         if ($productos->isEmpty()) {
             return back()->with('error', 'No hay productos con los filtros seleccionados');
         }
 
-        // Convertir fechas a objetos Carbon
+       
         $productos = $this->convertirFechas($productos);
 
-        // Generar el reporte según el tipo
+    
         return $this->generarReportePorTipo($tipo, $productos);
     }
 
@@ -326,7 +325,7 @@ class ProductoController extends Controller
     private function generarExcel($productos)
     {
         $data = $productos->map(function ($producto) {
-            // Si el producto tiene lotes, usamos los datos del primer lote
+           
             if ($producto->lotes->isNotEmpty()) {
                 $lote = $producto->lotes->first();
                 return [
@@ -335,7 +334,7 @@ class ProductoController extends Controller
                     'Descripción' => $producto->descripcion ?? 'N/A',
                     'Categoría' => $producto->categoria->nombre ?? 'N/A',
                     'Laboratorio' => $producto->laboratorio->nombre ?? 'N/A',
-                    'Stock' => $producto->lotes->sum('cantidad'), // Suma de todos los lotes
+                    'Stock' => $producto->lotes->sum('cantidad'), 
                     'Stock Mínimo' => $producto->stock_minimo,
                     'Stock Máximo' => $producto->stock_maximo,
                     'Precio Compra' => $lote->precio_compra,
@@ -343,7 +342,7 @@ class ProductoController extends Controller
                     'Fecha Ingreso' => $lote->fecha_ingreso->format('d/m/Y'),
                     'Fecha Vencimiento' => $producto->lotes->pluck('fecha_vencimiento')
                         ->filter()
-                        ->min()?->format('d/m/Y') ?? 'N/A' // Fecha más próxima a vencer
+                        ->min()?->format('d/m/Y') ?? 'N/A' 
                 ];
             }
 
@@ -424,9 +423,5 @@ class ProductoController extends Controller
         );
     }
 
-    private function generarCSV($productos): BinaryFileResponse
-    {
-        return $this->generarExcel($productos)
-            ->setContentDisposition('attachment', 'reporte_productos_' . now()->format('YmdHis') . '.csv');
-    }
+    
 }

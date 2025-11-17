@@ -25,7 +25,7 @@
                         <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search"></i>
                             Buscar</button>
                     </form>
-                </div>
+                </div>   
             </div>
 
         </div>

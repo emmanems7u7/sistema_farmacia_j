@@ -25,7 +25,7 @@
     }
 
     .compact-logo {
-        margin: 0 auto 10px; /* Centrado con margen inferior reducido */
+        margin: 0 auto 10px; 
     }
 
     .compact-logo img {

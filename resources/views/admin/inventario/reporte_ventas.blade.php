@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Reporte de Ventas - {{ $mes }}</title>
     <style>
-        /* Estilos generales */
+        
         body { 
             font-family: 'Arial', sans-serif; 
             font-size: 10pt; 
@@ -16,7 +16,7 @@
             page-break-after: always; 
         }
         
-        /* Encabezado */
+       
         .header { 
             text-align: center; 
             margin-bottom: 20px; 
@@ -77,14 +77,14 @@
             text-align: left; 
         }
         
-        /* Estilos específicos para cada venta (colores alternados) */
+      
         .venta-header { 
             background: linear-gradient(to right, #66BB6A, #43A047);
             color: white;
             font-weight: bold;
         }
         
-        /* Colores alternados para cada venta */
+      
         .venta-0 {
             border: 2px solid #66BB6A;
         }
@@ -112,22 +112,21 @@
             background-color: #f1f3f9;
         }
         
-        /* Total de cada venta */
+        
         .venta-total { 
             background-color: #e8f1e8ef;
             color: black;
             font-weight: bold;
         }
         
-        /* Total general */
+        
         .total-general { 
             background-color: #e8f1e8ef;
             color: black;
             font-weight: bold;
             font-size: 11pt;
         }
-        
-        /* Footer */
+       
         .footer { 
             margin-top: 30px; 
             font-size: 8pt; 
@@ -210,7 +209,6 @@
             </tr>
         </table>
         
-        <!-- Salto de página cada 5 ventas (excepto la última) -->
         @if(($index + 1) % 5 === 0 && !$loop->last)
             <div class="page-break"></div>
         @else

@@ -39,7 +39,7 @@
                 <hr>
                 <!-- Cuerpo de la tarjeta -->
 
-                <!-- Estadísticas en formato moderno -->
+                
                 <div class="row g-4 mb-4">
                     <div class="col-md-4">
                         <div class="card border-0 shadow-sm rounded-3 h-100 hover-scale">
@@ -113,7 +113,7 @@
                     </div>
                     <script>
                         document.addEventListener('DOMContentLoaded', function () {
-                            // Escuchar eventos de eliminación 
+                            
                             document.addEventListener('ventaEliminada', function () {
                                 fetch('/actualizar-ventas-mes')
                                     .then(response => response.json())
@@ -132,7 +132,7 @@
     </div>
 
     <style>
-        /* Efectos adicionales */
+    
         .hover-scale {
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
@@ -161,7 +161,7 @@
         }
     </style>
 
-    <!-- Card Inferior - Tabla de Ventas -->
+    <!--  Tabla de Ventas -->
     <div class="card shadow-lg rounded-3 border-0 overflow-hidden" style="max-width: 1020px; margin: 0 auto;">
         <div class="row">
             <div class="col-12">
@@ -172,14 +172,14 @@
                              <i class="fas fa-list-check me-2 text-primary"></i>
                             Registro de Ventas
                         </h5>
-                        <!-- Barra de acciones - Contenedor modificado -->
+                       
                         <div class="d-flex gap-2 align-items-center ms-auto position-relative">
                             <button class="btn btn-sm btn-info text-white" onclick="generarReporteDia()">
                                 <i class="fas fa-file-alt me-1"></i> Reporte del Día
                             </button>
 
 <script>
-    // Función para generar reporte del día
+    
 function generarReporteDia() {
     Swal.fire({
         title: 'Generar Reporte del Día',
@@ -192,13 +192,10 @@ function generarReporteDia() {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Mostrar loading
-           
-
-            // Obtener fecha actual
+            
             const hoy = new Date().toISOString().split('T')[0];
             
-            // Redirigir a la ruta del reporte
+            
             window.location.href = "{{ route('admin.ventas.reporte_dia') }}?fecha=" + hoy;
         }
     });
@@ -319,14 +316,14 @@ function generarReporteDia() {
                                                     <a href="{{ url('/admin/ventas/pdf/' . $venta->id) }}" target="_blank"
                                                     class="btn btn-sm btn-outline-primary mx-1 d-flex align-items-center justify-content-center"
                                                     style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
-                                                    title="Imprimir comprobante">
+                                                    title="Imprimir nota de venta">
                                                         <i class="fas fa-print"></i>
                                                     </a>
 
 
                                                     
 
-
+                                                    @can('ventas.eliminar')
                                                     <form action="{{ route('admin.ventas.destroy', $venta->id) }}" method="POST"
                                                         class="d-inline eliminar-venta-form" data-id="{{ $venta->id }}"
                                                         data-nombre="{{ $venta->nombre }}">
@@ -341,11 +338,8 @@ function generarReporteDia() {
                                                             </span>
                                                             <span class="btn-inner--text"></span>
                                                         </button>
-
-
-
                                                     </form>
-
+                                                    @endcan
                                                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                                                     <script>
                                                         function confirmarEliminacionSucursal(event) {
@@ -628,21 +622,18 @@ width: '350px',
                 });
 
 
-            // Manejar el clic en los botones de detalles
             $('.toggle-details').click(function () {
                 const target = $(this).data('target');
                 const content = $(target);
 
-                // Cerrar todos los demás detalles abiertos
                 $('.details-content').not(content).slideUp();
                 $('.toggle-details').not(this).removeClass('collapsed');
 
-                // Alternar el contenido actual
                 content.slideToggle();
                 $(this).toggleClass('collapsed');
             });
 
-            // Inicializar tooltips
+           
             $('[data-toggle="tooltip"]').tooltip();
         });
     </script>

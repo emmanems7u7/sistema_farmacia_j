@@ -14,7 +14,7 @@
         <div class="text-danger small">{{ $message }}</div>
     @enderror
 </div>
-
+  
 <div class="mb-3">
     <label for="catalogo_parent" class="form-label">{{ __('ui.depends_on_text') }}:</label>
     <input type="text" class="form-control" id="catalogo_parent" name="catalogo_parent"

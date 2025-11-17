@@ -50,11 +50,12 @@
                                     </li>
                                 </ul>
                             </div>
-
+                           @can('categorias.crear')
                             <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"
                                 data-bs-target="#modalCrear">
                                 <i class="fas fa-plus-circle me-1"></i> Nuevo
                             </button>
+                            @endcan  
                         </div>
                     </div>
                 </div>
@@ -123,6 +124,9 @@
                                                     <td class="text-center align-middle">
                                                         <div class="d-flex justify-content-center">
                                                             <!-- Botón Editar -->
+                                                            @can('categorias.editar')
+                            
+                          
                                                             <button type="button"
                                                                 class="btn btn-sm btn-outline-success  mx-1"
                                                                 data-bs-toggle="modal"
@@ -131,14 +135,14 @@
                                                                 title="Editar categoría">
                                                                 <i class="fas fa-pen"></i>
                                                             </button>
-
+                                                            @endcan 
                                             
                                                             <!-- Botón Eliminar -->
 
 
 
 
-
+                                                            @can('categorias.eliminar')
                                                             <form
                                                                 action="{{ route('admin.categorias.destroy', $categoria->id) }}"
                                                                 method="POST" class="d-inline"
@@ -156,7 +160,7 @@
 
                                                                 </button>
                                                             </form>
-
+                                                            @endcan 
                                                             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                                                             <script>
                                                                 function confirmarEliminacionSucursal(event) {
@@ -178,7 +182,7 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>`,
-width: '350px',
+                                                                        width: '350px',
                                                                         showCancelButton: true,
                                                                         focusConfirm: false,
                                                                         confirmButtonText: `<i class="fas fa-trash-alt me-"></i> Eliminar`,
@@ -436,16 +440,18 @@ width: '350px',
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                     <i class="fas fa-times me-1"></i> Cancelar
                                 </button>
+                                @can('categorias.guardar')
                                 <button type="submit" class="btn bg-gradient-primary">
                                     <i class="fas fa-save me-1"></i> Guardar
                                 </button>
+                                @endcan
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
 
-            <!-- Modales de Edición (generados dinámicamente) -->
+            <!-- Modales de Edición  -->
             @foreach($categorias as $categoria)
                 <div class="modal fade" id="editModal{{ $categoria->id }}" tabindex="-1"
                     aria-labelledby="editModalLabel{{ $categoria->id }}" aria-hidden="true">
@@ -491,9 +497,11 @@ width: '350px',
                                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                         <i class="fas fa-times me-1"></i> Cancelar
                                     </button>
+                                     @can('categorias.actualizar')
                                     <button type="submit" class="btn bg-gradient-success text-white">
                                         <i class="fas fa-save me-1"></i> Actualizar
                                     </button>
+                                     @endcan
                                 </div>
                             </form>
                         </div>

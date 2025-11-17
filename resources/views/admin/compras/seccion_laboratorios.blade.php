@@ -41,14 +41,11 @@
                 </div>
 
 
-                <div class="col-md-6">
-                    <label for="comprobante" class="form-label fw-bold text-sm">Comprobante</label>
-                    <select name="comprobante" id="comprobante" class="form-select form-select-sm border" required>
-                        
-                        <option value="RECIBO">RECIBO</option>
-                        <option value="NOTA">NOTA</option>
-                    </select>
-                </div>
+              <div class="col-md-6">
+    <label for="comprobante" class="form-label fw-bold text-sm">Comprobante</label>
+    <input type="text" class="form-control form-control-sm border bg-light" 
+           name="comprobante" value="RECIBO" readonly>
+</div>
             </div>
 
             <div class="mb-4">
@@ -59,7 +56,8 @@
 
 
             <div class="d-grid mt-4">
-                <button type="submit" class="btn btn-primary shadow-sm py-2" {{ $total_compra <= 0 ? 'disabled' : '' }}>
+                <button type="submit" id="btn-registrar-compra" class="btn btn-primary shadow-sm py-2" 
+                        {{ $total_compra <= 0 ? 'disabled' : '' }}>
                     <i class="fas fa-save me-2"></i> Registrar Compra
                 </button>
             </div>

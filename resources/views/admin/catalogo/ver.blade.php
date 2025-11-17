@@ -2,14 +2,14 @@
 
 @section('content')
 
-<!-- Header del catálogo -->
+<!-- catálogo -->
 <div class="container mb-5">
     <div class="text-center mb-5">
         <h1 class="display-5 fw-bold text-primary mb-3"></h1>
         @if(request()->has('categoria') && $categoriaSeleccionada = $categorias->firstWhere('id', request('categoria')))
             <div class="d-inline-flex align-items-center gap-3">
                 <p class="lead text-muted mb-0">
-                    Categoría: 
+                    Categoría:
                     <span class="badge bg-primary">
                         <i class="fas fa-tag me-1"></i> {{ $categoriaSeleccionada->nombre }}
                     </span>
@@ -33,7 +33,7 @@
         @php
             $categoria = $productosCategoria->first()->categoria ?? null;
             $cantidadProductos = count($productosCategoria);
-            $productosMostrar = $productosCategoria->take(6);
+            $productosMostrar = $productosCategoria->take(1000);
             
         @endphp
 
@@ -82,11 +82,6 @@
 
                             </div>
                             
-                            <div class="product-meta d-flex justify-content-between align-items-center">
-                                <span class="stock-badge {{ $producto->stock > 10 ? 'in-stock' : ($producto->stock > 0 ? 'low-stock' : 'no-stock') }}">
-                                    {{ $producto->stock }}u disponible{{ $producto->stock != 1 ? 's' : '' }}
-                                </span>
-                            </div>
                         </div>
 
                         <!-- Botón de acción -->
@@ -116,17 +111,10 @@
     @endforelse
 </div>
 
-<!-- Paginación mejorada -->
-@if($productos->hasPages())
-    <div class="container mt-5">
-        <nav aria-label="Page navigation">
-            {{ $productos->links('pagination::bootstrap-5') }}
-        </nav>
-    </div>
-@endif
+
 
 <style>
-    /* Estilos generales de la tarjeta */
+    /* Estilos generales  */
     .product-card {
         border-radius: 12px !important;
         transition: all 0.3s ease;
@@ -272,7 +260,7 @@
         cursor: not-allowed;
     }
     
-    /* Efecto de pulso para el botón de ver */
+  
     @keyframes pulse {
         0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4); }
         70% { box-shadow: 0 0 0 8px rgba(40, 167, 69, 0); }

@@ -146,12 +146,12 @@
                                 <!-- Columna de información -->
                                 <div class="col-8">
                                     <div style="font-size: 0.8rem;">
-                                        <!-- Nombre del producto -->
+                                        
                                         <p class="mb-1 fw-bold text-truncate small">
                                             {{ $lote->producto->nombre ?? 'N/A' }}
                                         </p>
 
-                                        <!-- Datos compactos -->
+                                       
                                         <div class="d-flex justify-content-between mb-1">
                                             <span class="text-muted">Cant:</span>
                                             <span>{{ $lote->cantidad }}u</span>

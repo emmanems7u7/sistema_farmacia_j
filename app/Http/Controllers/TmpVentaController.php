@@ -16,11 +16,11 @@ $session_id = session()->getId();
 
        if($producto){
 
-//si la compra existe que se pregunte en el productos id y tmb se pregunte en la session 
+
         $tmp_venta_existe = TmpVenta::where('producto_id',$producto->id)
                                         ->where('session_id',$session_id)
                                         ->first();
-//si existe en ta compra en la base de datos  no se cree una nueva intansacion
+
 if($tmp_venta_existe){
     $tmp_venta_existe->cantidad += $request->cantidad;
     $tmp_venta_existe->save();
@@ -34,7 +34,6 @@ if($tmp_venta_existe){
         $tmp_venta->cantidad = $request->cantidad;
         $tmp_venta->producto_id = $producto->id;
 
-        //diferencia un usuario logiado en otro equipo
 
          $tmp_venta->session_id = session()->getId();
          $tmp_venta->save();
@@ -106,7 +105,7 @@ if($tmp_venta_existe){
     {
         //
 
-        TmpVenta::destroy($id); // Buscar el usuario por ID
+        TmpVenta::destroy($id); 
       
 
         return response()->json(['success'=>true]);

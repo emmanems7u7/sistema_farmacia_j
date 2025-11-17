@@ -30,8 +30,6 @@
 
 
 
-<!-- Reemplaza el kit por CDN oficial -->
-
 
 <!-- Nucleo Icons -->
 
@@ -321,23 +319,152 @@
                             </li>
 
                             <li class="nav-item px-3 d-flex align-items-center">
-                            
-                        </li>
-                        <li class="nav-item px-3 d-flex align-items-center">
+                           
 
-<div class="notification-wrapper">
-@php
-    use Illuminate\Support\Facades\Schema;
 
-    $tieneNotificaciones = false;
-    $cantidadNotificaciones = 0;
+<!-- Alerta integrada en el menú -->
 
-    if (Schema::hasTable('notifications') && Auth::check()) {
-        $cantidadNotificaciones = Auth::user()->unreadNotifications->count();
-        $tieneNotificaciones = $cantidadNotificaciones > 0;
+    @can('alertas')
+       
+<li class="nav-item">
+    <div id="alerta-vencidos" class="alert-menu-item" style="display: none;">
+        <div class="d-flex align-items-center px-3 py-2">
+            <i class="fas fa-exclamation-triangle text-white me-2"></i>
+            <span id="contador-vencidos" class="text-white fw-bold fs-6">0</span>
+            <span class="text-white ms-2 fw-medium">Productos Vencidos</span>
+            <a id="btn-ver-mas" href="{{ url('/admin/inventario/productos_porvencer') }}" class="btn-ver-mas-link ms-3">
+                Ver más <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+</li>
+@endcan
+
+<style>
+.alert-menu-item {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    border: 2px solid #ff6b7a;
+    border-radius: 8px;
+    margin: 0 0.5rem;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.alert-menu-item.visible {
+    display: block !important;
+    animation: alarm-pulse 2s infinite;
+}
+
+@keyframes alarm-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+        transform: scale(1);
     }
-@endphp
+    50% {
+        box-shadow: 0 0 0 12px rgba(220, 53, 69, 0);
+        transform: scale(1.02);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+        transform: scale(1);
+    }
+}
 
+.btn-ver-mas-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-ver-mas-link:hover {
+    color: #ffd1d1;
+    text-decoration: underline;
+}
+
+.text-white {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.fs-6 {
+    font-size: 1.1rem !important;
+}
+</style>
+
+
+<script>
+// Elementos DOM
+const alertaVencidos = document.getElementById('alerta-vencidos');
+const contadorVencidos = document.getElementById('contador-vencidos');
+const btnVerMas = document.getElementById('btn-ver-mas');
+
+// Función para mostrar la alerta
+function mostrarAlertaVencidos(cantidad) {
+    console.log('Cantidad de productos vencidos:', cantidad);
+    
+    if (cantidad > 0) {
+       
+        contadorVencidos.textContent = `${cantidad}`;
+        
+       
+        alertaVencidos.classList.add('visible');
+    } else {
+        
+        alertaVencidos.classList.remove('visible');
+    }
+}
+
+// Función para obtener TODOS los productos vencidos
+function cargarVencidos() {
+    fetch("{{ route('alertas.productos') }}")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Datos completos recibidos:', data);
+            
+            let cantidadTotal = 0;
+            
+            if (data.vencidos && Array.isArray(data.vencidos)) {
+                cantidadTotal = data.vencidos.length;
+            } else if (data.productos_vencidos && Array.isArray(data.productos_vencidos)) {
+                cantidadTotal = data.productos_vencidos.length;
+            } else if (data.total_vencidos !== undefined) {
+                cantidadTotal = data.total_vencidos;
+            } else if (Array.isArray(data)) {
+                cantidadTotal = data.length;
+            }
+            
+            console.log('Cantidad total calculada:', cantidadTotal);
+            mostrarAlertaVencidos(cantidadTotal);
+        })
+        .catch(error => {
+            console.error('Error al cargar productos vencidos:', error);
+            alertaVencidos.classList.remove('visible');
+        });
+}
+
+// Mostrar alertas al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Iniciando carga de productos vencidos...');
+    cargarVencidos();
+    
+    setInterval(cargarVencidos, 3600000);
+});
+
+function forzarRecargaVencidos() {
+    console.log('Forzando recarga de productos vencidos...');
+    cargarVencidos();
+}
+function filtrarLotesActivosVencidos(lotes) {
+    return lotes.filter(lote => {
+        return lote.cantidad > 0 && 
+               new Date(lote.fecha_vencimiento) < new Date();
+    });
+}
+</script>
 
 
 

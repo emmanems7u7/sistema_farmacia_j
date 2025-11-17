@@ -16,7 +16,7 @@
 
 
                             <i class="fas fa-flask  me-3 text-primary"></i>
-                            <strong>GESTION DE PROVEEDORES</strong>
+                            <strong>GESTION DE LABORATORIOS</strong>
                         </h5>
                     </div>
 
@@ -52,11 +52,12 @@
                                 </li>
                             </ul>
                         </div>
-
+  @can('laboratorio.crear')
                         <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"
                             data-bs-target="#modalCrear">
                             <i class="fas fa-plus-circle me-1"></i> Nuevo
                         </button>
+                        @endcan
                     </div>
                 </div>
             </div>
@@ -69,7 +70,7 @@
                         <div class="card-header bg-white d-flex justify-content-between align-items-center border-bottom">
                             <h5 class="mb-0 text-black">
                                 <i class="fas fa-list-check me-2 text-primary"></i>
-                                <strong>Proveedores Registrados</strong>
+                                <strong>Laboratorios Registrados</strong>
                             </h5>
 
 
@@ -141,7 +142,7 @@
                                                     <div class="d-flex justify-content-center">
                                                         <div class="d-inline-flex gap-2">
                                                                 <!-- Botón Ver -->
-                                                            
+                                                              @can('laboratorio.ver')
                                                         <button type="button"
                                                             class="btn btn-sm btn-outline-info mx-1 d-flex justify-content-center align-items-center"
                                                             style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
@@ -149,14 +150,14 @@
                                                             data-bs-target="#verModal{{ $laboratorio->id }}" title="Ver detalles">
                                                             <i class="fas fa-eye" style="font-size: 0.8rem;"></i>
                                                         </button>
-
+  @endcan
 
                                                            
 
                                                             <!-- Botón Eliminar -->
 
 
-
+                                                            @can('laboratorio.eliminar')
                                                             <form
                                                                 action="{{ route('admin.laboratorios.destroy', $laboratorio->id) }}"
                                                                 method="POST" class="d-inline"
@@ -173,6 +174,7 @@
 
                                                                 </button>
                                                             </form>
+                                                              @endcan
                                                         </div>
                                                         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                                                         <script>
@@ -390,19 +392,6 @@
                                                             }
                                                         </style>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
                                                     </div>
                                                 </td>
                                             </tr>
@@ -417,7 +406,7 @@
         </div>
 
         <!-- Modal para Crear Nuevo Laboratorio -->
-        <div class="modal fade" id="modalCrear" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
+   <div class="modal fade" id="modalCrear" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
             
@@ -438,7 +427,7 @@
                         <div class="input-group input-group-outline">
                             <span class="input-group-text"><i class="fas fa-flask"></i></span>
                             <input type="text" class="form-control" name="nombre" value="{{ old('nombre') }}"
-                                required placeholder="Ej: Laboratorio ">
+                                required placeholder="Ej: Laboratorio " onkeypress="return validarSoloLetras(event)">
                         </div>
                         @error('nombre')
                             <div class="text-danger small mt-2">{{ $message }}</div>
@@ -451,7 +440,7 @@
                         <div class="input-group input-group-outline">
                             <span class="input-group-text"><i class="fas fa-phone"></i></span>
                             <input type="text" class="form-control" name="telefono" value="{{ old('telefono') }}"
-                             placeholder="Ej: 22445566">
+                            placeholder="Ej: 22445566" onkeypress="return validarSoloNumeros(event)" maxlength="10">
                         </div>
                         @error('telefono')
                             <div class="text-danger small mt-2">{{ $message }}</div>
@@ -477,7 +466,7 @@
                         <div class="input-group input-group-outline">
                             <span class="input-group-text"><i class="fas fa-file-invoice"></i></span>
                             <input type="text" class="form-control" name="nit" value="{{ old('nit') }}"
-                                placeholder="Ej: 123456789">
+                                placeholder="Ej: 123456789" onkeypress="return validarSoloNumeros(event)" maxlength="15">
                         </div>
                         @error('nit')
                             <div class="text-danger small mt-2">{{ $message }}</div>
@@ -503,7 +492,7 @@
                         <div class="input-group input-group-outline">
                             <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
                             <input type="text" class="form-control" name="nombre_proveedor" value="{{ old('nombre_proveedor') }}"
-                                placeholder="Ej: Distribuidora Farma S.R.L.">
+                                placeholder="Ej: Distribuidora Farma S.R.L." onkeypress="return validarSoloLetras(event)">
                         </div>
                         @error('nombre_proveedor')
                             <div class="text-danger small mt-2">{{ $message }}</div>
@@ -516,7 +505,7 @@
                         <div class="input-group input-group-outline">
                             <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
                             <input type="text" class="form-control" name="celular" value="{{ old('celular') }}"
-                                placeholder="Ej: 76543210">
+                                placeholder="Ej: 76543210" onkeypress="return validarSoloNumeros(event)" maxlength="8">
                         </div>
                         @error('celular')
                             <div class="text-danger small mt-2">{{ $message }}</div>
@@ -528,14 +517,50 @@
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times me-1"></i> Cancelar
                     </button>
+                    @can('laboratorio.guardar')
                     <button type="submit" class="btn bg-gradient-primary">
                         <i class="fas fa-save me-1"></i> Guardar
                     </button>
+                    @endcan
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+// Función para validar solo letras 
+function validarSoloLetras(event) {
+    const charCode = event.which ? event.which : event.keyCode;
+    const charStr = String.fromCharCode(charCode);
+    
+
+    return /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/.test(charStr);
+}
+
+
+function validarSoloNumeros(event) {
+    const charCode = event.which ? event.which : event.keyCode;
+    const charStr = String.fromCharCode(charCode);
+    
+
+    return /^[0-9]$/.test(charStr);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const camposNumericos = ['telefono', 'nit', 'celular'];
+    
+    camposNumericos.forEach(campo => {
+        const input = document.querySelector(`input[name="${campo}"]`);
+        if (input) {
+            input.addEventListener('input', function() {
+                // Remover cualquier carácter que no sea número
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        }
+    });
+});
+</script>
 
 
 <!-- Modal Ver Laboratorio -->
@@ -544,7 +569,7 @@
 
 @foreach($laboratorios as $laboratorio)
 <div class="modal fade" id="verModal{{ $laboratorio->id }}" tabindex="-1" aria-labelledby="verModalLabel{{ $laboratorio->id }}" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- más ancho -->
+    <div class="modal-dialog modal-dialog-centered modal-lg"> 
         <div class="modal-content border-0 shadow-lg">
             
             <!-- Encabezado -->
@@ -557,7 +582,7 @@
 
             <!-- Cuerpo -->
             <div class="modal-body">
-                <div class="row g-3"> <!-- separación uniforme -->
+                <div class="row g-3"> 
                     
                     <!-- Nombre -->
                     <div class="col-md-6">
@@ -659,16 +684,18 @@
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                     <i class="fas fa-times me-1"></i> Cerrar
                 </button>
+                 @can('laboratorio.editar')
                 <button type="button" class="btn bg-gradient-success text-white" data-bs-toggle="modal" data-bs-target="#editModal{{ $laboratorio->id }}" title="Editar">
                     <i class="fas fa-edit me-1"></i> Actualizar
                 </button>
+                @endcan
             </div>
         </div>
     </div>
 </div>
 
 @endforeach
-        <!-- Modales de Edición (generados dinámicamente) -->
+        
         @foreach($laboratorios as $laboratorio)
         
 <div class="modal fade" id="editModal{{ $laboratorio->id }}" tabindex="-1"
@@ -788,9 +815,11 @@
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times me-1"></i> Cancelar
                     </button>
+                     @can('laboratorio.actualizar')
                     <button type="submit" class="btn bg-gradient-success text-white">
                         <i class="fas fa-save me-1"></i> Actualizar
                     </button>
+                    @endcan
                 </div>
             </form>
         </div>

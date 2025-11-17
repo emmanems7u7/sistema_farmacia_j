@@ -19,7 +19,7 @@
     </style>
 </head>
 <body>
-    <!-- Encabezado -->
+
     <div class="header">
         <h2> {{ $sucursal->nombre }}</h2>
         <p>{{ $sucursal->direccion }}</p>
@@ -28,8 +28,7 @@
         <p>N°: {{ $compra->comprobante }} | Fecha: {{ date('d/m/Y', strtotime($compra->fecha)) }}</p>
     </div>
 
-    <!-- Datos del Laboratorio/Proveedor -->
- <!-- Tabla de Información del Proveedor Mejorada -->
+
 <table class="table" style="width: 100%; border-collapse: collapse; margin: 3px 0; font-family: 'Courier New', monospace; font-size: 10px;">
     
     <tr>
@@ -64,7 +63,7 @@
 </tr>
 </table>
 
-<!-- Tabla de Detalle de Productos Mejorada -->
+
 <table class="table" style="width: 100%; border-collapse: collapse; margin: 5px 0; font-family: 'Courier New', monospace; font-size: 10px;">
     <thead>
         <tr>

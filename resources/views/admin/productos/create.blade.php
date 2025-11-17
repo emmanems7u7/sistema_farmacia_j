@@ -26,8 +26,8 @@
                         <div class="row">
                             <!-- Main Form Section -->
                             <div class="col-lg-8">
-                                <!-- Basic Info -->
-                                <div class="form-row d-flex align-items-end"> <!-- align-items-end para alinear los labels -->
+                               
+                                <div class="form-row d-flex align-items-end"> 
                                 <div class="flex-grow-1 mr-2 mb-4"> 
                                         <label class="form-control-label">Código <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="codigo" value="{{ old('codigo') }}" required>
@@ -49,8 +49,8 @@
                                     </div>
                                 </div>
                                 
-                                <div class="form-row d-flex align-items-end"> <!-- align-items-end para alinear los labels -->
-    <div class="flex-grow-1 mr-2 mb-4"> <!-- flex-grow-1 para que ocupen el espacio disponible -->
+                                <div class="form-row d-flex align-items-end"> 
+    <div class="flex-grow-1 mr-2 mb-4"> 
         <label class="form-control-label font-weight-bold">Categoría <span class="text-danger">*</span></label>
         <select name="categoria_id" class="form-control form-control-lg" required>
             <option value="">Seleccionar categoría</option>
@@ -68,7 +68,7 @@
         <span class="text-muted"></span>
     </div>
     
-    <div class="flex-grow-1 mb-4"> <!-- flex-grow-1 para que ocupen el mismo ancho -->
+    <div class="flex-grow-1 mb-4"> 
         <label class="form-control-label font-weight-bold">Laboratorio <span class="text-danger">*</span></label>
         <select name="laboratorio_id" class="form-control form-control-lg" required>
             <option value="">Seleccionar laboratorio</option>
@@ -84,8 +84,8 @@
     </div>
 </div>
                                 
-                                <!-- Dates Row - Diseño Rectangular Compacto -->
-                                <div class="form-row d-flex align-items-end"> <!-- align-items-end para alinear los labels -->
+                                
+                                <div class="form-row d-flex align-items-end"> 
                                
                                 
                                 <div class="col-auto px-2 mb-3 d-flex align-items-center">
@@ -105,7 +105,7 @@
                                     @enderror
                                 </div>
                                 
-                                <!-- Inventory and Pricing Cards Side by Side -->
+                               
                                 <div class="row">
                                     <div class="col-md-6 pr-md-2">
                                         <div class="card border-0 shadow-sm mb-3 h-100">
@@ -148,7 +148,7 @@
                                         </h6>
                                     </div>
                                     <div class="card-body p-4">
-                                        <!-- Upload Area -->
+                                
                                         <div class="upload-area border-2 border-dashed rounded-lg p-4 mb-4 text-center">
                                             <div class="file-upload-wrapper">
                                                 <input type="file" id="file" name="imagen" accept=".jpg, .jpeg, .png" class="file-upload-input" 
@@ -159,8 +159,7 @@
                                                 <p class="small text-muted mt-2 mb-0">Formatos: JPG, PNG (Máx. 2MB)</p>
                                             </div>
                                         </div>
-                                        
-                                        <!-- Preview Area -->
+                                      
                                         <div class="preview-container border rounded-lg overflow-hidden bg-white">
                                             <div id="no-image" class="empty-state text-center p-4">
                                                 <div class="icon-container bg-light-primary rounded-circle p-3 mb-3 d-inline-block">
@@ -257,15 +256,17 @@ function previewImage(input) {
 </script>
                         </div>
                         
-                        <!-- Form Actions -->
+                       
                         <div class="row mt-4">
                             <div class="col-12 text-right">
                                 <button type="reset" class="btn btn-outline-secondary mr-2">
                                     <i class="fas fa-undo mr-1"></i> Limpiar
                                 </button>
+                                 @can('productos.guardar')
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save mr-1"></i> Guardar
                                 </button>
+                                @endcan
                             </div>
                         </div>
                     </form>
@@ -278,7 +279,7 @@ function previewImage(input) {
 
 @push('js')
 <script>
-    // Image Preview Script
+
     document.getElementById('file').addEventListener('change', function(e) {
         const preview = document.getElementById('preview');
         const noImage = document.getElementById('no-image');
@@ -355,7 +356,7 @@ function previewImage(input) {
         font-weight: 600;
     }
     
-    /* Ajustes para las tarjetas lado a lado */
+    
     @media (min-width: 768px) {
         .pr-md-2 {
             padding-right: 0.5rem !important;

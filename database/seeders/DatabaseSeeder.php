@@ -85,6 +85,20 @@ class DatabaseSeeder extends Seeder
         // FIN PERMISOS
 
         // Fin Seeders creados automaticamente 24-08-2025
+
+        // Seeders creados automaticamente 12-11-2025
+        // PERMISOS
+        $this->call(Generado_SeederPermisos_20251112::class);
+
+        // FIN PERMISOS
+        // Fin Seeders creados automaticamente 12-11-2025
+
+        // Seeders creados automaticamente 17-11-2025
+        // PERMISOS
+        $this->call(Generado_SeederPermisos_20251117::class);
+
+        // FIN PERMISOS
+        // Fin Seeders creados automaticamente 17-11-2025
     }
 
 

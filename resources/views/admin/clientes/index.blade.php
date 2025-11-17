@@ -59,88 +59,125 @@
 
 
         <!-- Tarjeta de registro -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card border-radius-lg shadow-sm">
-                    <div class="card-header pb-0" style="background-color: #f8fafc;">
-                        <h6 class="mb-0">
-                            <i class="fas fa-user-plus me-2 text-primary"></i>
-                            <strong>Registro de Nuevo Cliente</strong>
-                        </h6>
-                    </div>
+       <div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-radius-lg shadow-sm">
+            <div class="card-header pb-0" style="background-color: #f8fafc;">
+                <h6 class="mb-0">
+                    <i class="fas fa-user-plus me-2 text-primary"></i>
+                    <strong>Registro de Nuevo Cliente</strong>
+                </h6>
+            </div>
 
-                    <div class="card-body">
-                        <form action="{{ url('/admin/clientes/create') }}" method="post">
-                            @csrf
-                            <div class="row">
-                                <!-- Campo Nombre -->
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="nombre_cliente">Nombre</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                            <input type="text" class="form-control" value="{{ old('nombre_cliente') }}"
-                                                name="nombre_cliente" required>
-                                        </div>
-                                        @error('nombre_cliente')
-                                            <small class="text-danger">{{$message}}</small>
-                                        @enderror
-                                    </div>
+            <div class="card-body">
+                <form action="{{ url('/admin/clientes/create') }}" method="post">
+                    @csrf
+                    <div class="row">
+                        <!-- Campo Nombre -->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="nombre_cliente">Nombre</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" value="{{ old('nombre_cliente') }}"
+                                        name="nombre_cliente" required onkeypress="return validarSoloLetras(event)">
                                 </div>
-
-                                <!-- Campo NIT/CI -->
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="nit_ci">NIT/CI</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                                            <input type="text" class="form-control" value="{{ old('nit_ci') }}"
-                                                name="nit_ci">
-                                        </div>
-                                        @error('nit_ci')
-                                            <small class="text-danger">{{$message}}</small>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <!-- Campo Celular -->
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="celular">Celular</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
-                                            <input type="text" class="form-control" value="{{ old('celular') }}"
-                                                name="celular">
-                                        </div>
-                                        @error('celular')
-                                            <small class="text-danger">{{$message}}</small>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <!-- Campo Correo -->
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="email">Correo</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                            <input type="email" value="{{ old('email') }}" class="form-control"
-                                                name="email">
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fas fa-save me-1"></i> Registrar
-                                            </button>
-                                        </div>
-                                        @error('email')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-                                </div>
+                                @error('nombre_cliente')
+                                    <small class="text-danger">{{$message}}</small>
+                                @enderror
                             </div>
-                        </form>
+                        </div>
+
+                        <!-- Campo NIT/CI -->
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="nit_ci">NIT/CI</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                    <input type="text" class="form-control" value="{{ old('nit_ci') }}"
+                                        name="nit_ci" onkeypress="return validarSoloNumeros(event)" maxlength="15">
+                                </div>
+                                @error('nit_ci')
+                                    <small class="text-danger">{{$message}}</small>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <!-- Campo Celular -->
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="celular">Celular</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+                                    <input type="text" class="form-control" value="{{ old('celular') }}"
+                                        name="celular" onkeypress="return validarSoloNumeros(event)" maxlength="8">
+                                </div>
+                                @error('celular')
+                                    <small class="text-danger">{{$message}}</small>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <!-- Campo Correo -->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="email">Correo</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" value="{{ old('email') }}" class="form-control"
+                                        name="email">
+                                    @can('clientes.guardar')
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-1"></i> Registrar
+                                    </button>
+                                    @endcan
+                                </div>
+                                @error('email')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
+    </div>
+</div>
+
+<script>
+// Función para validar solo letras 
+function validarSoloLetras(event) {
+    const charCode = event.which ? event.which : event.keyCode;
+    const charStr = String.fromCharCode(charCode);
+    
+    
+    return /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/.test(charStr);
+}
+
+// Función para validar solo números
+function validarSoloNumeros(event) {
+    const charCode = event.which ? event.which : event.keyCode;
+    const charStr = String.fromCharCode(charCode);
+    
+    // Permitir solo números
+    return /^[0-9]$/.test(charStr);
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const camposNumericos = ['nit_ci', 'celular'];
+    
+    camposNumericos.forEach(campo => {
+        const input = document.querySelector(`input[name="${campo}"]`);
+        if (input) {
+            input.addEventListener('input', function() {
+                // Remover cualquier carácter que no sea número
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        }
+    });
+});
+</script>
 
         <!-- Tarjeta de lista de clientes -->
         <div class="row">
@@ -201,18 +238,18 @@
                                                 <div class="d-flex justify-content-center">
                                                     <!-- Botón Editar -->
 
-
+                                                    @can('clientes.editar')
                                                     <button type="button" class="btn btn-sm btn-outline-success  mx-1"
                                                         data-bs-toggle="modal"
                                                         style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
                                                         data-bs-target="#editModal{{ $cliente->id }}" title="Editar cliente">
                                                         <i class="fas fa-pen"></i>
                                                     </button>
-
+                                                    @endcan
                                                     <!-- Botón Eliminar -->
 
 
-
+                                                    @can('clientes.eliminar')
                                                     <form action="{{ route('admin.clientes.destroy', $cliente->id) }}"
                                                         method="POST" class="d-inline"
                                                         data-cliente='{"nombre":"{{ $cliente->nombre }}"}'>
@@ -227,10 +264,8 @@
                                                             </span>
                                                             <span class="btn-inner--text"></span>
                                                         </button>
-
-
-
                                                     </form>
+                                                   @endcan
                                                     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
                                                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -473,7 +508,7 @@
         </div>
     </div>
 
-    <!-- Modales para Editar (se generan dinámicamente para cada cliente) -->
+    <!-- Modales para Editar -->
     @foreach($clientes as $cliente)
         <div class="modal fade" id="editModal{{ $cliente->id }}" tabindex="-1" role="dialog"
             aria-labelledby="editModalLabel{{ $cliente->id }}" aria-hidden="true">
@@ -540,9 +575,11 @@
                             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                 <i class="fas fa-times me-1"></i> Cancelar
                             </button>
+                             @can('clientes.actualizar')
                             <button type="submit" class="btn bg-gradient-success text-white">
                                 <i class="fas fa-save me-1"></i> Actualizar
                             </button>
+                            @endcan
                         </div>
                        
                     </form>
@@ -558,12 +595,6 @@
 
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-
-
-<!-- DataTables CSS para Bootstrap 5 -->
-
-
-
 
             <script>
 

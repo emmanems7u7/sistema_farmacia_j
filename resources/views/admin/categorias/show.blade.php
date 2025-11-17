@@ -72,7 +72,7 @@
         <p>Sistema de Gestión - {{ config('app.name') }}</p>
     </div>
 
-    <!-- Solo para vista de impresión -->
+
     
 </body>
 </html>

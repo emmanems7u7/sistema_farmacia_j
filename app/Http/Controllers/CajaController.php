@@ -93,9 +93,9 @@ class CajaController extends Controller
         $caja->fecha_apertura = $request->fecha_apertura;
         $caja->monto_inicial = $request->monto_inicial;
         $caja->descripcion = $request->descripcion;
-        $caja->sucursal_id = Auth::user()->sucursal_id; // asignar sucursal_id
+        $caja->sucursal_id = Auth::user()->sucursal_id; 
 
-        $caja->save(); // guardar la nueva caja en la base de datos
+        $caja->save(); 
 
         return redirect()->route('admin.cajas.index')->with('success', 'Caja registrada exitosamente.');
 
@@ -107,9 +107,9 @@ class CajaController extends Controller
     public function show($id)
     {
         $caja = Caja::with([
-            'movimientos.venta.detalles.producto', // Cambié detalleventa a detalles
+            'movimientos.venta.detalles.producto', 
             'movimientos.venta.cliente',
-            'movimientos.compra.detalles.producto', // Cambié detallecompra a detalles
+            'movimientos.compra.detalles.producto', 
             'movimientos.compra.proveedor',
             'sucursal'
         ])->findOrFail($id);
@@ -147,9 +147,9 @@ class CajaController extends Controller
         $caja->fecha_apertura = $request->fecha_apertura;
         $caja->monto_inicial = $request->monto_inicial;
         $caja->descripcion = $request->descripcion;
-        $caja->sucursal_id = 1; // asignar sucursal_id
+        $caja->sucursal_id = 1;
 
-        $caja->save(); // guardar la nueva caja en la base de datos
+        $caja->save(); 
 
         return redirect()->route('admin.cajas.index')->with('success', 'Caja actualizada exitosamente.');
 
@@ -171,7 +171,7 @@ class CajaController extends Controller
         // Validación adicional para asegurarse de que el ID no sea nulo y exista
         $request->validate([
             'monto' => 'required',
-            'id' => 'required|exists:cajas,id', // Validamos que el id exista en la tabla `cajas`
+            'id' => 'required|exists:cajas,id', 
         ]);
 
         $movimiento = new MovimientoCaja();
@@ -179,9 +179,8 @@ class CajaController extends Controller
         $movimiento->tipo = $request->tipo;
         $movimiento->monto = $request->monto;
         $movimiento->descripcion = $request->descripcion;
-        $movimiento->caja_id = $request->id; // Ahora podemos estar más seguros de que no será null
-
-        $movimiento->save(); // Guardamos el movimiento en la base de datos
+        $movimiento->caja_id = $request->id;
+        $movimiento->save();
         return redirect()->route('admin.cajas.index')
             ->with('mensaje', 'Se elimino la compra correctamente')
             ->with('icono', 'success');
@@ -212,7 +211,7 @@ class CajaController extends Controller
     public function destroy($id)
     {
         //
-        Caja::destroy($id); // Buscar el usuario por ID
+        Caja::destroy($id); 
 
 
         // Redirigir al índice con un mensaje de éxito
@@ -231,9 +230,7 @@ class CajaController extends Controller
     // Tipos de reporte permitidos
     const TIPOS_REPORTE = ['pdf', 'excel', 'csv'];
 
-    /**
-     * Genera reportes de caja en diferentes formatos
-     */
+    
     public function reportecaja($tipo, Request $request)
     {
         // Validar tipo de reporte
@@ -267,7 +264,7 @@ class CajaController extends Controller
 
         $cajas = $query->get();
 
-        // Preparar datos para el reporte
+       
         $data = $this->prepareReportData($cajas, $fechaInicio, $fechaFin);
 
         // Generar el reporte según el tipo solicitado
@@ -283,9 +280,7 @@ class CajaController extends Controller
         }
     }
 
-    /**
-     * Prepara los datos para los reportes
-     */
+   
     protected function prepareReportData($cajas, $fechaInicio, $fechaFin): array
     {
         $totalGeneralIngresos = 0;
@@ -311,9 +306,7 @@ class CajaController extends Controller
         ];
     }
 
-    /**
-     * Genera el reporte en PDF
-     */
+    
     protected function generatePdf(array $data): BinaryFileResponse
     {
         $pdf = Pdf::loadView('admin.cajas.reporte', $data);
@@ -329,9 +322,6 @@ class CajaController extends Controller
     }
 
 
-    /**
-     * Genera el reporte en Excel
-     */
     protected function generateExcel(array $data): BinaryFileResponse
     {
         $exportData = $this->prepareExportData($data);
@@ -370,7 +360,7 @@ class CajaController extends Controller
             public function styles(Worksheet $sheet)
             {
                 return [
-                    // Estilo título principal NO OLVIDA
+                    
                     1 => [
                         'font' => [
                             'bold' => true,
@@ -383,12 +373,12 @@ class CajaController extends Controller
                         ],
                         'alignment' => ['horizontal' => 'center']
                     ],
-                    // Estilo subtítulo
+                
                     2 => [
                         'font' => ['italic' => true],
                         'alignment' => ['horizontal' => 'center']
                     ],
-                    // Estilo resumen financiero
+                 
                     3 => [
                         'font' => ['bold' => true],
                         'fill' => [
@@ -396,7 +386,7 @@ class CajaController extends Controller
                             'startColor' => ['rgb' => 'F2F2F2']
                         ]
                     ],
-                    // Estilo encabezados de tabla
+                  
                     4 => [
                         'font' => [
                             'bold' => true,
@@ -436,7 +426,7 @@ class CajaController extends Controller
                                 ->setAutoSize(true);
                         }
 
-                        // Congelar encabezados
+                       
                         $event->sheet->freezePane('A5');
                     }
                 ];
@@ -446,38 +436,9 @@ class CajaController extends Controller
         );
     }
 
-    /**
-     * Genera el reporte en CSV
-     */
-    protected function generateCsv(array $data): BinaryFileResponse
-    {
-        $exportData = $this->prepareExportData($data);
+   
 
-        return Excel::download(
-            new class ($exportData) implements FromArray, WithHeadings {
-            public function __construct(private array $data)
-            {
-            }
-
-            public function array(): array
-            {
-                return $this->data['rows'];
-            }
-
-            public function headings(): array
-            {
-                return $this->data['headers'];
-            }
-            },
-            self::NOMBRE_ARCHIVO_CSV,
-            \Maatwebsite\Excel\Excel::CSV,
-            ['Content-Type' => 'text/csv']
-        );
-    }
-
-    /**
-     * Prepara los datos para exportación (Excel/CSV)
-     */
+    
     protected function prepareExportData(array $data): array
     {
         $headers = [
@@ -532,7 +493,7 @@ class CajaController extends Controller
     public function pdf($id)
     {
         try {
-            // 1. Obtener la caja con sus relaciones
+            // obtener la caja con sus relaciones
             $caja = Caja::with(['movimientos', 'sucursal'])->findOrFail($id);
 
 
@@ -558,7 +519,7 @@ class CajaController extends Controller
 
             // 4. Generar PDF
             $pdf = PDF::loadView('admin.cajas.pdf', [
-                'sucursal' => $sucursal, // Asegúrate de pasar la variable
+                'sucursal' => $sucursal, 
                 'caja' => $caja,
                 'totalIngresos' => $totalIngresos,
                 'totalEgresos' => $totalEgresos,
@@ -576,7 +537,7 @@ class CajaController extends Controller
         }
     }
 
-    // Función separada (puede estar en un trait o helper)
+   
     private function numerosALetrasConDecimales($numero)
     {
         $formatter = new NumberFormatter("es", NumberFormatter::SPELLOUT);

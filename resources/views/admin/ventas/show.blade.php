@@ -24,97 +24,97 @@
             <div class="card-body">
                 <div class="row">
                     <!-- Sección de productos -->
-            <!-- Sección de productos -->
-<div class="col-md-8">
-    <div class="card mb-4"> 
-        <div class="card-body p-0"> 
-            <div class="table-responsive">
-                <div class="card-header bg-info text-white rounded-4">
-                     <div class="d-flex align-items-center w-100">
-                                        <i class="fas fa-boxes fs-5 me-2"></i>
-                                        <h6 class="modal-title text-white mb-0">Informacon de la venta</h6>
+            
+                    <div class="col-md-8">
+                        <div class="card mb-4"> 
+                            <div class="card-body p-0"> 
+                                <div class="table-responsive">
+                                    <div class="card-header bg-info text-white rounded-4">
+                                        <div class="d-flex align-items-center w-100">
+                                                            <i class="fas fa-boxes fs-5 me-2"></i>
+                                                            <h6 class="modal-title text-white mb-0">Informacon de la venta</h6>
+                                                        </div>
                                     </div>
-                </div>
 
 
 
-                <table class="table align-items-center mb-0">
-                    <thead>
-                        <tr>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">#</th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Código</th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Cantidad</th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Producto</th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-end">P. Unitario</th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-end">Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php 
-                            $total_cantidad = 0; 
-                            $total_venta = 0; 
-                        @endphp
-                        
-                        @foreach($venta->detallesVenta as $detalle)
-                            @php
-                                $precio_unitario = $detalle->lote->precio_venta ?? 0;
-                                $subtotal = $detalle->cantidad * $precio_unitario;
+                                    <table class="table align-items-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">#</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Código</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Cantidad</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Producto</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-end">P. Unitario</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-end">Subtotal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @php 
+                                                $total_cantidad = 0; 
+                                                $total_venta = 0; 
+                                            @endphp
+                                            
+                                            @foreach($venta->detallesVenta as $detalle)
+                                                @php
+                                                    $precio_unitario = $detalle->lote->precio_venta ?? 0;
+                                                    $subtotal = $detalle->cantidad * $precio_unitario;
 
-                                // ✅ Acumulamos los totales aquí
-                                $total_cantidad += $detalle->cantidad;
-                                $total_venta += $subtotal;
-                            @endphp
-                            
-                            <tr>
-                                <td class="text-center">{{ $loop->iteration }}</td>
-                                <td><span class="badge bg-secondary bg-opacity-10 text-dark border border-secondary border-opacity-25">{{ $detalle->producto->codigo ?? 'N/A' }}</span></td>
+                                                    //  Acumulamos los totales aquí
+                                                    $total_cantidad += $detalle->cantidad;
+                                                    $total_venta += $subtotal;
+                                                @endphp
+                                                
+                                                <tr>
+                                                    <td class="text-center">{{ $loop->iteration }}</td>
+                                                    <td><span class="badge bg-secondary bg-opacity-10 text-dark border border-secondary border-opacity-25">{{ $detalle->producto->codigo ?? 'N/A' }}</span></td>
 
 
-                                 
-                                <td class="text-center"> <span class="text-secondary text-xs font-weight-bold">{{ $detalle->cantidad }}</span></td>
-                                <td> <span class="text-secondary text-xs font-weight-bold">
-                                    {{ $detalle->producto->nombre ?? 'Producto no disponible' }}
-                                    @if($detalle->lote)</span>
-                                        <br>
-                                        <small class="text-muted"> <span class="text-secondary text-xs font-weight-bold">Lote: {{ $detalle->lote->numero_lote }}</span></small>
-                                    @endif
-                                </td>
-                                <td class="text-end"> <span class="text-secondary text-xs font-weight-bold">Bs {{ number_format($precio_unitario, 2) }}</span></td>
-                                <td class="text-end"> <span class="text-secondary text-xs font-weight-bold">Bs {{ number_format($subtotal, 2) }}</span></td>
-                            </tr>
-                        @endforeach
+                                                    
+                                                    <td class="text-center"> <span class="text-secondary text-xs font-weight-bold">{{ $detalle->cantidad }}</span></td>
+                                                    <td> <span class="text-secondary text-xs font-weight-bold">
+                                                        {{ $detalle->producto->nombre ?? 'Producto no disponible' }}
+                                                        @if($detalle->lote)</span>
+                                                            <br>
+                                                            <small class="text-muted"> <span class="text-secondary text-xs font-weight-bold">Lote: {{ $detalle->lote->numero_lote }}</span></small>
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-end"> <span class="text-secondary text-xs font-weight-bold">Bs {{ number_format($precio_unitario, 2) }}</span></td>
+                                                    <td class="text-end"> <span class="text-secondary text-xs font-weight-bold">Bs {{ number_format($subtotal, 2) }}</span></td>
+                                                </tr>
+                                            @endforeach
 
-                        @if($venta->detallesVenta->isEmpty())
-                            <tr>
-                                <td colspan="6" class="text-center py-3">
-                                    <span class="text-muted text-xs">No hay productos en esta venta</span>
-                                </td>
-                            </tr>
-                        @endif
-                    </tbody>
-                </table>
-            </div>
+                                            @if($venta->detallesVenta->isEmpty())
+                                                <tr>
+                                                    <td colspan="6" class="text-center py-3">
+                                                        <span class="text-muted text-xs">No hay productos en esta venta</span>
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                        </tbody>
+                                    </table>
+                                </div>
 
-            {{-- Mostrar total venta --}}
-            <div class="card-footer">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="d-flex justify-content-between">
-                            <span class="text-sm font-weight-bold">Total cantidad:</span>
-                            <strong class="text-info text-sm">{{ $total_cantidad }} unidades</strong>
+                                {{-- Mostrar total venta --}}
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-sm font-weight-bold">Total cantidad:</span>
+                                                <strong class="text-info text-sm">{{ $total_cantidad }} unidades</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-sm font-weight-bold">Total venta:</span>
+                                                <strong class="text-success text-sm">Bs {{ number_format($total_venta, 2) }}</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="d-flex justify-content-between">
-                            <span class="text-sm font-weight-bold">Total venta:</span>
-                            <strong class="text-success text-sm">Bs {{ number_format($total_venta, 2) }}</strong>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 
                     <!-- Sección de información del cliente y totales -->
@@ -195,7 +195,7 @@
 
 @push('css')
 <style>
-    /* Estilos personalizados adicionales */
+   
     .form-control-alternative {
         background-color: #f8f9fa;
         border: none;
@@ -247,7 +247,7 @@
 
 @push('js')
 <script>
-    // Inicialización de tooltips si es necesario
+    
     document.addEventListener('DOMContentLoaded', function() {
         if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

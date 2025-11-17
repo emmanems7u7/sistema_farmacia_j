@@ -11,8 +11,8 @@ use App\Models\Compra;
 use App\Models\Producto;
 use App\Models\Venta;
 use App\Models\Cliente;
-use App\Models\DetalleVenta; // Asegúrate de importar el modelo DetalleVenta
-use Illuminate\Support\Facades\DB; // Necesario para las consultas
+use App\Models\DetalleVenta; 
+use Illuminate\Support\Facades\DB; 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
@@ -87,7 +87,7 @@ class HomeController extends Controller
         $labels = $topProducts->pluck('nombre');
         $data = $topProducts->pluck('total_vendido');
 
-        // Productos con bajo stock (menos de 10 unidades)
+      
 
 
         $lowStockProducts = Producto::withSum('lotes as total_cantidad', 'cantidad')
@@ -99,7 +99,7 @@ class HomeController extends Controller
 /* Fecha de hoy */
     $hoy = Carbon::today();
 
-    /* Productos vencidos y próximos a vencer según lotes */
+ 
     $productos_vencidos = Producto::whereHas('lotes', function($q) use ($sucursal_id, $hoy) {
         $q->where('sucursal_id', $sucursal_id)
           ->where('fecha_vencimiento', '<', $hoy);

@@ -84,7 +84,7 @@
         </div>
 
         <style>
-            /* Estilos generales de la tarjeta */
+            
             .product-card {
                 border-radius: 12px !important;
                 transition: all 0.3s ease;
@@ -178,7 +178,7 @@
                 color:rgb(112, 169, 235);
             }
             
-            /* Estilos para los badges */
+            
             .stock-badge {
                 font-size: 0.7rem;
                 padding: 4px 8px;
@@ -238,7 +238,7 @@
                 cursor: not-allowed;
             }
             
-            /* Efecto de pulso para el botón de ver */
+    
             @keyframes pulse {
                 0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4); }
                 70% { box-shadow: 0 0 0 8px rgba(40, 167, 69, 0); }

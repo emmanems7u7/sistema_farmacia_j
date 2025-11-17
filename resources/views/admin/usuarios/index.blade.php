@@ -366,7 +366,6 @@ document.querySelectorAll('.btn-eliminar').forEach(button => {
 </div>
 
 <!-- Modales para Ver Usuario -->
-<!-- Modales para Ver Usuario -->
 @foreach($usuarios as $usuario)
 <div class="modal fade" id="verModal{{ $usuario->id }}" tabindex="-1" aria-labelledby="verModalLabel{{ $usuario->id }}" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">

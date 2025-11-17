@@ -70,7 +70,7 @@ public function getStockTotalAttribute()
 {
     return $this->lotes()->sum('cantidad');
 }
-// Fecha de vencimiento más cercana (opcional)
+// Fecha de vencimiento más cercana 
 public function getFechaVencimientoProximaAttribute()
 {
     return $this->lotes()->min('fecha_vencimiento');

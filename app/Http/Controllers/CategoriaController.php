@@ -96,7 +96,7 @@ class CategoriaController extends Controller
     {
         $categoria = Categoria::find($id); // buscar el categoria por ID
 
-        return view('admin.categorias.edit', compact('categoria')); // retornar vista de edición
+        return view('admin.categorias.edit', compact('categoria')); 
     }
 
     public function update(Request $request, $id)
@@ -105,7 +105,7 @@ class CategoriaController extends Controller
         //return response()->json($datos);
         // Validación de los datos de entrada
         $request->validate([
-            'nombre' => 'required|unique:categorias,nombre,' . $id, // El nombre debe ser único, excepto para la categoría actual
+            'nombre' => 'required|unique:categorias,nombre,' . $id, 
             'descripcion' => 'required',
         ]);
 
@@ -118,7 +118,7 @@ class CategoriaController extends Controller
         $categoria->descripcion = $request->descripcion;
 
         $categoria->save();
-        // Redirigir al índice con un mensaje de éxito
+       
         return redirect()->back()
             ->with('status', 'Se modifico la categoria');
 
@@ -129,10 +129,10 @@ class CategoriaController extends Controller
      */
     public function destroy($id)
     {
-        Categoria::destroy($id); // Buscar el usuario por ID
+        Categoria::destroy($id); 
 
 
-        // Redirigir al índice con un mensaje de éxito
+     
         return redirect()->back()
             ->with('status', 'categoria eliminada con éxito.');
     }
@@ -144,7 +144,7 @@ class CategoriaController extends Controller
             'tipo' => 'required|in:pdf,excel,csv,print'
         ]);
 
-        $categorias = Categoria::all(); // Obtener todas las categorías
+        $categorias = Categoria::all(); 
 
         if ($categorias->isEmpty()) {
             return back()->with('error', 'No hay categorías para generar el reporte');
@@ -181,7 +181,7 @@ class CategoriaController extends Controller
 
     private function generarPDF($categorias, $sucursalId = null)
     {
-        // Asegurarse de tener valores por defecto
+    
         $sucursalNombre = 'Todas las sucursales';
 
         if ($sucursalId) {
@@ -192,8 +192,8 @@ class CategoriaController extends Controller
         $pdf = PDF::loadView('admin.categorias.reporte', [
             'categorias' => $categorias,
             'fecha_generacion' => now()->format('d/m/Y H:i:s'),
-            'sucursalId' => $sucursalId, // Asegúrate de pasar este valor
-            'sucursalNombre' => $sucursalNombre // Y este también
+            'sucursalId' => $sucursalId, 
+            'sucursalNombre' => $sucursalNombre 
         ])->setPaper('a4', 'portrait');
 
         $nombreArchivo = 'reporte_categorias_';
@@ -281,7 +281,7 @@ class CategoriaController extends Controller
                             ]
                         ]
                     ],
-                    // Alineación izquierda para nombre y descripción
+                   
                     'B2:C' . $sheet->getHighestRow() => [
                         'alignment' => [
                             'horizontal' => 'left'
@@ -307,23 +307,5 @@ class CategoriaController extends Controller
         );
     }
 
-    private function generarCSV($categorias)
-    {
-        $filename = 'reporte_categorias_' . now()->format('YmdHis') . '.csv';
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-        ];
-
-        $callback = function () use ($categorias) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, ['Nombre', 'Descripción']); // Encabezados
-            foreach ($categorias as $categoria) {
-                fputcsv($file, [$categoria->nombre, $categoria->descripcion]);
-            }
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
-    }
+   
 }

@@ -24,8 +24,8 @@ class LaboratorioController extends Controller
             ['name' => 'Inicio', 'url' => route('home')],
             ['name' => 'Laboratorios', 'url' => route('admin.laboratorios.index')],
         ];
-        $laboratorios = Laboratorio::all();//LISTA DE USUARIOS
-        return view('admin.laboratorios.index', compact('breadcrumb', 'laboratorios'));//ENVIARLOS DATOS ALA VISTA
+        $laboratorios = Laboratorio::all();
+        return view('admin.laboratorios.index', compact('breadcrumb', 'laboratorios'));
     }
 
 
@@ -64,7 +64,7 @@ class LaboratorioController extends Controller
 
         $laboratorio->assignRole($request->role);//asignar un rol
 
-        // Redirigir al índice con un mensaje de éxito
+        
         return redirect()->route('admin.laboratorios.index')
             ->with('status', 'Laboratorio creada con éxito.');
 
@@ -73,9 +73,9 @@ class LaboratorioController extends Controller
 
     public function show($id)
     {
-        $laboratorio = Laboratorio::find($id); // buscar el laboratorio por ID
+        $laboratorio = Laboratorio::find($id); 
 
-        return view('admin.laboratorios.show', compact('laboratorio')); // retornar vista de edición
+        return view('admin.laboratorios.show', compact('laboratorio')); 
     }
 
     /**
@@ -83,9 +83,9 @@ class LaboratorioController extends Controller
      */
     public function edit($id)
     {
-        $laboratorio = Laboratorio::find($id); // buscar el laboratorio por ID
+        $laboratorio = Laboratorio::find($id); 
 
-        return view('admin.laboratorios.edit', compact('laboratorio')); // retornar vista de edición
+        return view('admin.laboratorios.edit', compact('laboratorio')); 
     }
 
     public function update(Request $request, $id)
@@ -120,7 +120,7 @@ class LaboratorioController extends Controller
     $laboratorio->celular = $request->celular;
 
         $laboratorio->save();
-        // Redirigir al índice con un mensaje de éxito
+        
         return redirect()->route('admin.laboratorios.index')
             ->with('status', 'Se modifico la laboratorio');
 
@@ -128,10 +128,10 @@ class LaboratorioController extends Controller
 
     public function destroy($id)
     {
-        Laboratorio::destroy($id); // Buscar el usuario por ID
+        Laboratorio::destroy($id); 
 
 
-        // Redirigir al índice con un mensaje de éxito
+        
         return redirect()->route('admin.laboratorios.index')
             ->with('status', 'laboratorio eliminada con éxito.');
     }
@@ -172,7 +172,7 @@ class LaboratorioController extends Controller
     private function generarPDF($laboratorios)
     {
         $pdf = Pdf::loadView('admin.laboratorios.reporte', [
-            'laboratorios' => $laboratorios,  // Cambiado para pasar la colección completa
+            'laboratorios' => $laboratorios,  
             'fecha_generacion' => now()->format('d/m/Y H:i:s')
         ]);
 
@@ -184,9 +184,9 @@ class LaboratorioController extends Controller
         $data = $laboratorios->map(function ($laboratorio) {
             return [
                 'Nombre' => $laboratorio->nombre,
-                'Teléfono' => $laboratorio->telefono ?? 'No registrado', // Manejo de valores nulos
+                'Teléfono' => $laboratorio->telefono ?? 'No registrado', 
                 'Dirección' => $laboratorio->direccion,
-                'Fecha Registro' => $laboratorio->created_at->format('d/m/Y H:i') // Agregado campo de fecha
+                'Fecha Registro' => $laboratorio->created_at->format('d/m/Y H:i') 
             ];
         });
 
@@ -221,7 +221,7 @@ class LaboratorioController extends Controller
             public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
             {
                 return [
-                    // Estilo para los encabezados
+                    
                     1 => [
                         'font' => [
                             'bold' => true,
@@ -229,17 +229,17 @@ class LaboratorioController extends Controller
                         ],
                         'fill' => [
                             'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                            'startColor' => ['rgb' => '3498db'] // Azul profesional
+                            'startColor' => ['rgb' => '3498db'] 
                         ]
                     ],
-                    // Centrar contenido en todas las celdas
+                  
                     'A:D' => [
                         'alignment' => [
                             'horizontal' => 'center',
                             'vertical' => 'center'
                         ]
                     ],
-                    // Ajustar altura de filas
+              
                     'A:D' => [
                         'rowHeight' => 25
                     ]

@@ -5,7 +5,7 @@
     <style>
         @page { 
             margin: 1.5cm; 
-            size: A4 portrait; /* Cambiado a vertical */
+            size: A4 portrait; 
         }
         body { 
             font-family: Arial, sans-serif; 
@@ -68,7 +68,7 @@
     }
 
     .compact-logo {
-        margin: 0 auto 10px; /* Centrado con margen inferior reducido */
+        margin: 0 auto 10px; 
     }
 
     .compact-logo img {

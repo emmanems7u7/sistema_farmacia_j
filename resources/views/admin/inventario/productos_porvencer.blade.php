@@ -23,13 +23,13 @@
                 </div>
             </div>
 
-            <!-- Card Body - Botones fijos -->
+            <!-- Card  -->
             <div class="card-body p-4">
                 <div class="row g-3 align-items-center">
                     <div class="col-md-12">
                         <label class="form-label small text-muted mb-2">Filtrar por:</label>
                         <div class="d-flex flex-wrap gap-2">
-                            <!-- Botón Productos Vencidos -->
+                           
                             <a href="{{ route('admin.inventario.productos_porvencer', ['vencidos' => 1, 'sucursal' => $sucursalId]) }}" 
                                class="btn {{ $mostrarVencidos ? 'btn-danger' : 'btn-outline-danger' }}">
                                 <i class="fas fa-exclamation-triangle me-1"></i> Productos Vencidos
@@ -47,7 +47,6 @@
                                 <i class="fas fa-calendar me-1"></i> Próximos 30 Días
                             </a>
 
-                            <!-- Botón Mostrar Todos -->
                             
                         </div>
                     </div>

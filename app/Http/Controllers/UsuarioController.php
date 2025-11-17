@@ -33,7 +33,7 @@ class UsuarioController extends Controller
 
     public function index()
     {
-        // Cargar todos los usuarios con relaciones (sin filtro por sucursal)
+        // Cargar todos los usuarios con relaciones 
         $usuarios = User::with(['roles', 'sucursal'])
             ->get()
             ->map(function ($usuario) {
@@ -52,15 +52,15 @@ class UsuarioController extends Controller
     public function create()
     {
 
-        $roles = Role::all(); // Cargamos todos los roles
-        return view('admin.usuarios.create', compact('roles')); // Pasamos la variable roles a la vista
+        $roles = Role::all(); 
+        return view('admin.usuarios.create', compact('roles')); 
     }
 
 
     public function show(string $id)
     {
-        $usuario = User::findOrFail($id); // Buscar el usuario por id
-        return view('admin.usuarios.show', compact('usuario')); // retornar la vista para mostrar detalles del usuario
+        $usuario = User::findOrFail($id); 
+        return view('admin.usuarios.show', compact('usuario')); 
     }
 
     /**
@@ -76,10 +76,10 @@ class UsuarioController extends Controller
 
     public function destroy(string $id)
     {
-        User::destroy($id); // Buscar el usuario por ID
+        User::destroy($id); 
 
 
-        // Redirigir al índice con un mensaje de éxito
+        
         return redirect()->route('admin.usuarios.index')
             ->with('mensaje', 'Usuario eliminado con éxito.')
             ->with('icono', 'success');
@@ -89,7 +89,7 @@ class UsuarioController extends Controller
     {
 
 
-        // Validación mejorada
+        // Validación 
         $validated = $request->validate([
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
@@ -119,13 +119,13 @@ class UsuarioController extends Controller
                 );
             }
 
-            // Crear usuario con contraseña igual al username
+            // Crear usuario 
             $usuario = User::create([
                 'firstname' => $validated['firstname'],
                 'lastname' => $validated['lastname'],
                 'email' => $validated['email'],
                 'username' => $validated['username'],
-                'password' => Hash::make($validated['username']), // Contraseña = usernamenoolvidar
+                'password' => Hash::make($validated['username']), 
                 'address' => $validated['address'],
                 'celular' => $validated['celular'],
                 'imagen' => $imagenPath,
@@ -207,25 +207,24 @@ class UsuarioController extends Controller
                     Storage::delete($oldImage);
                 }
 
-                // Guardar nueva imagen
+                
                 $path = $request->file('imagen')->store('public/usuarios');
                 $validated['imagen'] = str_replace('public/', 'storage/', $path);
             } else {
-                // Mantener la imagen existente si no se sube una nueva
+               
                 unset($validated['imagen']);
             }
 
-            // Actualizar datos básicos
+        
             $usuario->update($validated);
 
-            // Actualizar contraseña si se proporcionó
             if ($request->filled('password')) {
                 $usuario->update([
                     'password' => Hash::make($request->password)
                 ]);
             }
 
-            // Sincronizar roles
+      
             $usuario->syncRoles($request->role);
 
             return redirect()->route('admin.usuarios.index')
@@ -310,38 +309,5 @@ class UsuarioController extends Controller
         );
     }
 
-    private function generarCSV($usuarios): BinaryFileResponse
-    {
-        $data = $usuarios->map(function ($usuario) {
-            return [
-                'Nombres' => $usuario->firstname,
-                'Apellidos' => $usuario->lastname,
-                'Email' => $usuario->email,
-                'Usuario' => $usuario->username,
-                'Rol' => $usuario->role,
-                'Sucursal' => $usuario->sucursal->nombre ?? 'N/A',
-                'Dirección' => $usuario->address,
-                'Teléfono' => $usuario->celular,
-                'Estado' => $usuario->activo ? 'Activo' : 'Inactivo',
-                'Registro' => $usuario->created_at->format('d/m/Y')
-            ];
-        });
-
-        return Excel::download(
-            new class ($data) implements FromCollection {
-            private $data;
-            public function __construct($data)
-            {
-                $this->data = $data;
-            }
-            public function collection()
-            {
-                return $this->data;
-            }
-            },
-            'reporte_usuarios_' . now()->format('YmdHis') . '.csv',
-            \Maatwebsite\Excel\Excel::CSV
-        );
-    }
-
+   
 }

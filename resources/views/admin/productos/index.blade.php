@@ -11,24 +11,24 @@
 
     </script>
     <div class="container-fluid mt--7">
-        <!-- Header Section -->
-        <!-- Sección de Encabezado Mejorado -->
+   
+        
         <div class="row mb-6">
             <div class="col-xl-12">
-                <!-- Tarjeta Contenedora -->
+           
                 <div class="card border-0 shadow-sm hover-lift">
                     <div class="card-body p-4">
                         <div class="row align-items-center">
-                            <!-- Información de Gestión -->
+                           
                             <div class="col-lg-8 mb-4 mb-lg-0">
                                 <div class="d-flex align-items-start">
                                     <!-- Icono con efecto -->
                                     <div class="icon-container mr-4">
-    <div class="icon bg-gradient-orange text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-        style="width: 3.5rem; height: 3.5rem;">
-        <i class="fas fa-boxes fs-3"></i>
-    </div>
-</div>
+                                        <div class="icon bg-gradient-orange text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                                            style="width: 3.5rem; height: 3.5rem;">
+                                            <i class="fas fa-boxes fs-3"></i>
+                                        </div>
+                                    </div>
 
 
                                     <!-- PRODUCTOS-->
@@ -55,6 +55,7 @@
                             </div>
 
                             <!-- Botón de Acción mejorado -->
+                        @can('productos.crear')
                             <div class="col-lg-4">
                                 <a href="{{ url('/admin/productos/create') }}"
                                     class="btn btn-block btn-primary btn-hover-scale py-2 px-3" style="border-radius: 8px;">
@@ -64,12 +65,13 @@
                                     </div>
                                 </a>
                             </div>
+                        @endcan
                         </div>
                     </div>
                 </div>
 
                 <style>
-                    /* Efectos y estilos personalizados */
+                    
                     .hover-lift {
                         transition: all 0.3s ease;
                     }
@@ -158,90 +160,316 @@
                     </div>
                 </div>
             </div>
-
-
-                    <!-- Search and Filter -->
-                    <div class="card-body pt-0">
-                        <div class="row mb-4">
-                            <!-- Búsqueda por nombre -->
-                            <div class="col-md-6">
-                                <div class="input-group input-group-merged shadow-sm">
-                                    <span class="input-group-text bg-white border-end-0">
-                                        <i class="fas fa-search text-muted"></i>
-                                    </span>
-                                    <input class="form-control border-start-0 ps-0" id="searchInput"
-                                        placeholder="Buscar por nombre, código o descripción..." type="search"
-                                        onkeyup="filtrarProductosCards()">
-                                </div>
+                
+                <div class="card-body pt-0">
+                    <div class="row mb-4">
+                        <!-- Filtro por categoría  -->
+                        <div class="col-md-6">
+                            <div class="input-group input-group-merged shadow-sm">
+                                <span class="input-group-text bg-white border-end-0">
+                                    <i class="fas fa-filter text-muted"></i>
+                                </span>
+                                <select class="form-select border-start-0 ps-0" id="filterCategory" onchange="cambiarCategoria()">
+                                    <option value="">Seleccione una categoría primero</option>
+                                    @foreach($categorias as $categoria)
+                                        <option value="{{ $categoria->id }}" {{ request('categoria') == $categoria->id ? 'selected' : '' }}>
+                                            {{ $categoria->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
+                        </div>
 
-                            <script>
-                                function filtrarProductosCards() {
-                                    const input = document.getElementById('searchInput');
-                                    const filter = input.value.toUpperCase();
-                                    const container = document.getElementById('productosContainer');
-                                    const cards = container.getElementsByClassName('card'); // Asumiendo que cada card tiene class="card"
-
-                                    for (let i = 0; i < cards.length; i++) {
-                                        const card = cards[i];
-                                        const title = card.querySelector('.card-title')?.textContent || ''; // Nombre del producto
-                                        const code = card.querySelector('.codigo-producto')?.textContent || ''; // Si tienes código
-                                        const desc = card.querySelector('.card-text')?.textContent || ''; // Descripción
-
-                                        const textToSearch = title + ' ' + code + ' ' + desc;
-
-                                        if (textToSearch.toUpperCase().includes(filter)) {
-                                            card.style.display = '';
-                                        } else {
-                                            card.style.display = 'none';
-                                        }
-                                    }
-                                }
-                            </script>
-                            <!-- Filtro por categoría -->
-                            <div class="col-md-6">
-                                <div class="input-group input-group-merged shadow-sm">
-                                    <span class="input-group-text bg-white border-end-0">
-                                        <i class="fas fa-filter text-muted"></i>
-                                    </span>
-                                    <select class="form-select border-start-0 ps-0" id="filterCategory">
-                                        <option value="">Todas las categorías</option>
-                                        @foreach($categorias as $categoria)
-                                            <option value="{{ $categoria->id }}" {{ request('categoria') == $categoria->id ? 'selected' : '' }}>
-                                                {{ $categoria->nombre }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                        <!-- Búsqueda por nombre  -->
+                        <div class="col-md-6">
+                            <div class="input-group input-group-merged shadow-sm">
+                                <span class="input-group-text bg-white border-end-0">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input class="form-control border-start-0 ps-0" id="searchInput"
+                                    placeholder="Primero seleccione una categoría..." type="search"
+                                    disabled>
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Mensajes de estado -->
+                    <div id="messageContainer" class="mt-3"></div>
                 </div>
+
+                
+<script>
+
+let productosEnOtrasCategorias = [];
+
+// Función para obtener los productos
+function obtenerProductos() {
+    const container = document.getElementById('productosContainer');
+   
+    const cards = container.querySelectorAll('.col-xl-3.col-lg-4.col-md-6.col-6.mb-4.producto-card');
+    console.log(' Buscando productos con selector:', '.col-xl-3.col-lg-4.col-md-6.col-6.mb-4.producto-card');
+    console.log(' Productos encontrados:', cards.length);
+    return cards;
+}
+
+function cambiarCategoria() {
+    console.log(' Cambiando categoría...');
+    const categorySelect = document.getElementById('filterCategory');
+    const searchInput = document.getElementById('searchInput');
+    const selectedCategory = categorySelect.value;
+    const selectedCategoryText = categorySelect.options[categorySelect.selectedIndex].text;
+
+    if (selectedCategory !== '') {
+        searchInput.disabled = false;
+        searchInput.placeholder = `Buscar productos en ${selectedCategoryText}...`;
+        searchInput.value = '';
+        mostrarProductosPorCategoria();
+    } else {
+        searchInput.disabled = true;
+        searchInput.placeholder = 'Primero seleccione una categoría...';
+        searchInput.value = '';
+        mostrarTodosLosProductos();
+    }
+}
+
+function mostrarProductosPorCategoria() {
+    console.log(' Mostrando productos por categoría...');
+    const categorySelect = document.getElementById('filterCategory');
+    const selectedCategory = categorySelect.value;
+    const cards = obtenerProductos();
+    const messageContainer = document.getElementById('messageContainer');
+
+    let visibleCount = 0;
+
+    for (let i = 0; i < cards.length; i++) {
+        const card = cards[i];
+        const cardCategory = card.getAttribute('data-category') || '';
+
+        if (selectedCategory === '' || cardCategory === selectedCategory) {
+            card.style.display = '';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    }
+
+    messageContainer.innerHTML = '';
+    if (selectedCategory !== '') {
+        const selectedCategoryText = categorySelect.options[categorySelect.selectedIndex].text;
+        messageContainer.innerHTML = `
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                Mostrando <strong>${visibleCount}</strong> productos de la categoría: <strong>${selectedCategoryText}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+    }
+}
+
+function buscarEnCategoria() {
+    console.log(' EJECUTANDO BÚSQUEDA...');
+    
+    const searchInput = document.getElementById('searchInput');
+    const searchTerm = searchInput.value.toUpperCase().trim();
+    const categorySelect = document.getElementById('filterCategory');
+    const selectedCategory = categorySelect.value;
+    const selectedCategoryText = categorySelect.options[categorySelect.selectedIndex].text;
+    const cards = obtenerProductos();
+    const messageContainer = document.getElementById('messageContainer');
+
+    console.log(' Parámetros de búsqueda:', {
+        término: searchTerm,
+        categoría: selectedCategory, 
+        textoCategoría: selectedCategoryText
+    });
+
+  
+    if (searchTerm === '') {
+        console.log(' Búsqueda vacía, mostrando categoría');
+        mostrarProductosPorCategoria();
+        return;
+    }
+
+    productosEnOtrasCategorias = [];
+    let visibleCount = 0;
+    let productFoundInSystem = false;
+
+    // PRIMERO: OCULTAR TODOS LOS PRODUCTOS
+    console.log('👁️ Ocultando todos los productos');
+    for (let i = 0; i < cards.length; i++) {
+        cards[i].style.display = 'none';
+    }
+
+    // SEGUNDO: BUSCAR COINCIDENCIAS
+    for (let i = 0; i < cards.length; i++) {
+        const card = cards[i];
+        const title = card.querySelector('.card-title')?.textContent || '';
+        const code = card.querySelector('.codigo-producto')?.textContent || '';
+        const desc = card.querySelector('.card-text')?.textContent || '';
+        const cardCategory = card.getAttribute('data-category') || '';
+        const cardCategoryName = card.getAttribute('data-category-name') || 'Categoría ' + cardCategory;
+
+        const textToSearch = (title + ' ' + code + ' ' + desc).toUpperCase();
+        const matchesSearch = textToSearch.includes(searchTerm);
+        const matchesCategory = cardCategory === selectedCategory;
+
+        console.log(`📦 Producto ${i}: "${title}"`, {
+            coincideBúsqueda: matchesSearch,
+            coincideCategoría: matchesCategory,
+            categoríaProducto: cardCategory
+        });
+
+        if (matchesSearch) {
+            productFoundInSystem = true;
+            
+            if (!matchesCategory) {
+                productosEnOtrasCategorias.push({
+                    nombre: title,
+                    categoria: cardCategoryName,
+                    termino: searchTerm
+                });
+                console.log(' Producto encontrado en otra categoría:', title, '->', cardCategoryName);
+            }
+        }
+
+        
+        if (matchesSearch && matchesCategory) {
+            card.style.display = '';
+            visibleCount++;
+            console.log(' Mostrando producto:', title);
+        }
+    }
+
+    console.log(' Resultados finales:', {
+        productosVisibles: visibleCount,
+        productosEnOtrasCategorias: productosEnOtrasCategorias.length
+    });
+
+   
+    messageContainer.innerHTML = '';
+
+    if (visibleCount > 0) {
+        messageContainer.innerHTML = `
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                Se encontraron <strong>${visibleCount}</strong> producto(s) con "<strong>${searchTerm}</strong>" en <strong>${selectedCategoryText}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+    } else {
+        if (productosEnOtrasCategorias.length > 0) {
+            const producto = productosEnOtrasCategorias[0];
+            messageContainer.innerHTML = `
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    El producto "<strong>${searchTerm}</strong>" no está en <strong>${selectedCategoryText}</strong>. 
+                    Pertenece a la categoría: <strong>${producto.categoria}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+        } else if (searchTerm.length > 0) {
+            messageContainer.innerHTML = `
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>
+                    El producto "<strong>${searchTerm}</strong>" no se encuentra en el sistema.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+        }
+    }
+}
+
+function mostrarTodosLosProductos() {
+    console.log('👁️ Mostrando todos los productos');
+    const cards = obtenerProductos();
+    const messageContainer = document.getElementById('messageContainer');
+
+    for (let i = 0; i < cards.length; i++) {
+        cards[i].style.display = '';
+    }
+
+    messageContainer.innerHTML = '';
+}
+
+// Inicializar al cargar la página 
+document.addEventListener('DOMContentLoaded', function() {
+    console.log(' Inicializando sistema de búsqueda...');
+   +
+    setTimeout(function() {
+        cambiarCategoria();
+    }, 500);
+});
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log(' Inicializando sistema de búsqueda...');
+    
+   
+    setTimeout(function() {
+        const searchInput = document.getElementById('searchInput');
+        const categorySelect = document.getElementById('filterCategory');
+        
+        console.log(' Configurando event listeners...');
+        console.log('Search input encontrado:', !!searchInput);
+        console.log('Category select encontrado:', !!categorySelect);
+        
+   
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                console.log(' Tecla presionada en búsqueda');
+                buscarEnCategoria();
+            });
+            
+            searchInput.addEventListener('keyup', function() {
+                console.log(' Tecla liberada en búsqueda');
+                buscarEnCategoria();
+            });
+        }
+        
+       +
+        if (categorySelect) {
+            categorySelect.addEventListener('change', function() {
+                console.log(' Categoría cambiada');
+                cambiarCategoria();
+            });
+        }
+        
+        cambiarCategoria();
+    }, 1000);
+});
+
+
+
+// Ejecutar prueba después de 3 segundos
+setTimeout(probarBusqueda, 3000);
+</script>
+              
                 <hr>
                 <!-- Products card-->
                 <div class="row" id="productosContainer">
                     @foreach($productos as $producto)
-                        
                         <div class="col-xl-3 col-lg-4 col-md-6 col-6 mb-4 producto-card"
-                            data-category="{{ $producto->categoria_id }}">
+                            data-category="{{ $producto->categoria_id }}"
+                            data-category-name="{{ $producto->categoria->nombre }}">  
                             <div class="card card-lift--hover shadow-sm h-100">
                                 <!-- Producto Image -->
                                 <div class="card-header p-0 position-relative">
                                     @if($producto->imagen)
-    {{-- Si la imagen es de storage (imagen subida) --}}
-    @if(Str::startsWith($producto->imagen, 'productos/'))
-        <img src="{{ asset('storage/' . $producto->imagen) }}" class="card-img-top"
-            style="height: 150px; object-fit: cover; width: 100%;" alt="{{ $producto->nombre }}">
-    @else
-        {{-- Si es la imagen por defecto en /assets/img --}}
-        <img src="{{ asset($producto->imagen) }}" class="card-img-top"
-            style="height: 150px; object-fit: cover; width: 100%;" alt="{{ $producto->nombre }}">
-    @endif
-@else
-    {{-- Si no hay imagen registrada, mostrar también la imagen por defecto --}}
-    <img src="{{ asset('assets/img/sinimagen.jpeg') }}" class="card-img-top"
-        style="height: 150px; object-fit: cover; width: 100%;" alt="Sin imagen">
-@endif
+                                        {{-- Si la imagen es de storage (imagen subida) --}}
+                                        @if(Str::startsWith($producto->imagen, 'productos/'))
+                                            <img src="{{ asset('storage/' . $producto->imagen) }}" class="card-img-top"
+                                                style="height: 150px; object-fit: cover; width: 100%;" alt="{{ $producto->nombre }}">
+                                        @else
+                                            {{-- Si es la imagen por defecto en /assets/img --}}
+                                            <img src="{{ asset($producto->imagen) }}" class="card-img-top"
+                                                style="height: 150px; object-fit: cover; width: 100%;" alt="{{ $producto->nombre }}">
+                                        @endif
+                                    @else
+                                        {{-- Si no hay imagen registrada, mostrar también la imagen por defecto --}}
+                                        <img src="{{ asset('assets/img/sinimagen.jpeg') }}" class="card-img-top"
+                                            style="height: 150px; object-fit: cover; width: 100%;" alt="Sin imagen">
+                                    @endif
                                     <span class="badge bg-primary rounded-pill position-absolute"
                                         style="top: 5px; left: 5px; font-size: 0.7rem;">
                                         
@@ -254,7 +482,13 @@
                                 <div class="card-body pt-3 pb-2">
                                     <h5 class="card-title mb-1 fs-6 text-xs text-dark card-text">{{ $producto->nombre }}</h5>
 
-
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-xs text-muted">Laboratorio</span>
+                                        <span class="font-weight-bold text-info small">
+                                           {{ $producto->laboratorio->nombre }} 
+                                        </span>
+                                        
+                                    </div>
                                     <!-- Producto -->
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <span class="text-xs text-muted">Stock:</span>
@@ -322,20 +556,21 @@
                                 <!-- Card Footer -->
                                 <div class="card-footer bg-transparent pt-0 pb-3 border-0">
                                     <div class="d-flex justify-content-between">
+                                        @can('productos.ver')
                                         <button type="button" class="btn btn-sm btn-outline-info rounded- me-2"
                                             style="width: 30px; height: 30px; min-width: 60px; padding: 0;"
                                             onclick="openModal('verModal{{ $producto->id }}')" title="Ver detalles"
                                             data-toggle="tooltip">
                                             <i class="fas fa-eye"></i>
                                         </button>
+                                        @endcan
 
 
 
 
 
 
-
-
+                                        @can('productos.eliminar')
                                         <form action="{{ route('admin.productos.destroy', $producto->id) }}" method="POST"
                                             class="d-inline" data-producto='{"nombre":"{{ $producto->nombre }}"}'>
                                             @csrf
@@ -349,12 +584,9 @@
                                                         style="-webkit-text-stroke: 1px #dc3545; color: transparent;"></i>
                                                 </span>
                                                 <span class="btn-inner--text"></span>
-
-                                            </button>
-
-
+                                            </button>                                        
                                         </form>
-
+                                        @endcan
                                         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                                         <script>
                                             function confirmarEliminacionSucursal(event) {
@@ -814,10 +1046,12 @@
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                     <i class="fas fa-times me-1"></i> Cerrar
                 </button>
+                 @can('productos.editar')
                 <button type="button" class="btn bg-gradient-success text-white" onclick="openModal('editarModal{{ $producto->id }}')"
                     data-bs-dismiss="modal">
                     Editar Producto
                 </button>
+                @endcan
             </div>
         </div>
     </div>
@@ -1184,10 +1418,11 @@
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times me-1"></i> Cancelar
                     </button>
-
+                    @can('productos.actualizar')
                     <button type="submit" class="btn bg-gradient-success text-white ">
                         <i class="fas fa-save me-1"></i>Guardar Cambios
                     </button>
+                    @endcan
                 </div>
                 
             </form>
@@ -1222,7 +1457,7 @@
             </style>
 
             <script>
-                // Script para previsualizar la imagen seleccionada
+             
                 document.getElementById('imagen{{ $producto->id }}').addEventListener('change', function (e) {
                     const preview = document.getElementById('preview{{ $producto->id }}');
                     const file = e.target.files[0];
@@ -1245,46 +1480,8 @@
 
 
 
-
-    <script>
-        // buscar
-        document.getElementById('searchInput').addEventListener('input', function () {
-            const searchValue = this.value.toLowerCase();
-            const productCards = document.querySelectorAll('.producto-card');
-
-            productCards.forEach(card => {
-                const productName = card.querySelector('.card-title').textContent.toLowerCase();
-                const productDesc = card.querySelector('.card-text').textContent.toLowerCase();
-
-                if (productName.includes(searchValue) || productDesc.includes(searchValue)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-
-        document.getElementById('filterCategory').addEventListener('change', function () {
-            const categoryId = this.value;
-            const productCards = document.querySelectorAll('.producto-card');
-
-            productCards.forEach(card => {
-                if (categoryId === '' || card.getAttribute('data-category') === categoryId) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-
-        // Initialize tooltips
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
-    </script>
-
     <style>
-        /* Tus estilos personalizados aquí */
+        
         .icon-xl {
             width: 60px;
             height: 60px;
@@ -1321,10 +1518,10 @@
 @endsection
 
 @section('js')
-
-    <!-- Y estos scripts al final de tu body -->
+    <!-- Scripts necesarios -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <script>
         function confirmarEliminacion(id) {
             Swal.fire({
@@ -1332,12 +1529,12 @@
                 text: "¡Esta acción no se puede deshacer!",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#f5365c',  // Rojo similar a tu bg-gradient-danger
-                cancelButtonColor: '#5e72e4',  // Azul de contraste
+                confirmButtonColor: '#f5365c',
+                cancelButtonColor: '#5e72e4',
                 confirmButtonText: 'Sí, eliminar',
                 cancelButtonText: 'Cancelar',
                 customClass: {
-                    container: 'animated pulse'  // Efecto de animación sutil
+                    container: 'animated pulse'
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -1345,38 +1542,9 @@
                 }
             });
         }
-    </script>
 
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
+        // Solo funcionalidades básicas
         $(document).ready(function () {
-            // Inicializar List.js para búsqueda
-            var options = {
-                valueNames: ['card-title', 'card-text'],
-                page: 12,
-                pagination: true
-            };
-
-            var productosList = new List('productosContainer', options);
-
-            // Búsqueda por input
-            $('#searchInput').on('keyup', function () {
-                productosList.search($(this).val());
-            });
-
-            // Filtro por categoría
-            $('#filterCategory').on('change', function () {
-                var category = $(this).val();
-                if (category) {
-                    $('.producto-card').hide();
-                    $('.producto-card[data-category="' + category + '"]').show();
-                } else {
-                    $('.producto-card').show();
-                }
-            });
-
             // Vista previa de imagen al editar
             $('input[type="file"]').change(function (e) {
                 var previewId = $(this).attr('id').replace('imagen', 'preview');
@@ -1385,16 +1553,8 @@
                     $('#' + previewId).attr('src', src);
                 }
             });
-
-            // Actualizar nombre del archivo seleccionado
-            $('.custom-file-input').on('change', function () {
-                let fileName = $(this).val().split('\\').pop();
-                $(this).next('.custom-file-label').addClass("selected").html(fileName);
-            });
         });
 
-
-        // Función para confirmar eliminación
         function confirmDelete(id, nombre) {
             Swal.fire({
                 title: '¿Estás seguro?',
@@ -1407,7 +1567,6 @@
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Enviar formulario de eliminación
                     $('#deleteForm').attr('action', '/admin/productos/' + id);
                     $('#deleteForm').submit();
                 }
@@ -1419,7 +1578,7 @@
 
 @section('styles')
     <style>
-        /* Tus estilos personalizados aquí */
+      
         .icon-xl {
             width: 60px;
             height: 60px;

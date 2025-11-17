@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 use App\Models\TmpVenta;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB; // ¡Este es el import que faltaba!
+use Illuminate\Support\Facades\DB; 
 use Illuminate\Support\Facades\Log;
 
 
@@ -28,10 +28,9 @@ use Maatwebsite\Excel\Facades\Excel;
 
 use Carbon\Carbon;
 
-use DatePeriod; // Importación añadida
-use DateInterval; // Importación añadida
-use DateTime; // Importación añadida
-// Asegúrate de tener este modelo para acceder a los datos de ingresos
+use DatePeriod; 
+use DateInterval; 
+use DateTime; 
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 class VentaController extends Controller
@@ -47,7 +46,7 @@ class VentaController extends Controller
         ];
         $cajaAbierto = Caja::whereNull('fecha_cierre')->first();
         $ventas = Venta::with('detallesventa', 'cliente')
-            ->orderBy('fecha', 'desc')  // Ordenar por fecha descendente
+            ->orderBy('fecha', 'desc')  
             ->get();
         return view('admin.ventas.index', compact('breadcrumb', 'ventas', 'cajaAbierto'));
 
@@ -152,7 +151,7 @@ class VentaController extends Controller
                 $detalle_venta->cantidad = $cantidad_a_descontar;
                 $detalle_venta->venta_id = $ventas->id;
                 $detalle_venta->producto_id = $tmp_venta->producto_id;
-                $detalle_venta->lote_id = $lote->id; // ← NUEVO: Guardar el lote_id
+                $detalle_venta->lote_id = $lote->id; 
                 $detalle_venta->save();
 
                 // Descontar del lote
@@ -172,6 +171,10 @@ class VentaController extends Controller
         TmpVenta::where('session_id', $session_id)->delete();
 
         DB::commit();
+
+      //  session()->flash('metodo_pago', $request->metodo_pago);
+       // session()->flash('monto_recibido', $request->monto_recibido);
+       // session()->flash('cambio', $request->cambio);
 
         return redirect()->route('admin.ventas.index')
             ->with('status', 'Se registró la venta correctamente');
@@ -258,10 +261,10 @@ public function reporteDia(Request $request)
         logger('Sucursal ID: ' . Auth::user()->sucursal_id);
         logger('Usuario: ' . Auth::user()->name);
 
-        // Obtener fecha de hoy
+   
         $fecha = $request->input('fecha', now()->format('Y-m-d'));
         
-        // DEBUG: Verificar consulta de ventas
+        
         $ventasQuery = Venta::with(['detallesVenta.producto', 'detallesVenta.lote', 'cliente'])
             ->where('sucursal_id', Auth::user()->sucursal_id)
             ->whereDate('fecha', $fecha)
@@ -274,7 +277,7 @@ public function reporteDia(Request $request)
         
         logger('Ventas encontradas: ' . $ventas->count());
 
-        // DEBUG: Verificar si hay ventas
+    
         if ($ventas->count() === 0) {
             logger('NO HAY VENTAS para esta fecha: ' . $fecha);
             // Forzar error para ver qué pasa
@@ -316,10 +319,9 @@ public function reporteDia(Request $request)
         
         logger('Vista encontrada: admin.ventas.reporte_dia');
 
-        // DEBUG: Antes de generar PDF
         logger('Generando PDF...');
 
-        // Generar PDF
+       
         $pdf = PDF::loadView('admin.ventas.reporte_dia', $data)
                  ->setPaper('a4', 'portrait');
 
@@ -328,7 +330,7 @@ public function reporteDia(Request $request)
         return $pdf->download('reporte_ventas_dia_' . $fecha . '.pdf');
 
     } catch (\Exception $e) {
-        // DEBUG: Mostrar error COMPLETO
+    
         logger('=== ERROR EN REPORTE ===');
         logger('Mensaje: ' . $e->getMessage());
         logger('Archivo: ' . $e->getFile());
@@ -366,8 +368,8 @@ public function reporteDia(Request $request)
     return PDF::loadView('admin.ventas.pdf', [
         'sucursal' => $sucursal,
         'venta' => $venta,
-        'literal' => $literal, // monto en letras
-        'total' => $total      // monto en números
+        'literal' => $literal, 
+        'total' => $total      
     ])->setPaper([0, 0, 250.77, 600], 'portrait')->stream();
 }
 
@@ -420,11 +422,6 @@ private function numerosALetrasConDecimales($numero)
 
     return ucfirst(trim(($numero < 0 ? 'menos ' : '') . "$textoEntero con $textoDecimal"));
 }
-
-
-
-
-
 
 
     public function show($id)
@@ -500,7 +497,7 @@ private function numerosALetrasConDecimales($numero)
         try {
             $venta = Venta::with(['detallesVenta.producto.lotes'])->findOrFail($id);
 
-            // 1. Restaurar stock en lotes
+       
             foreach ($venta->detallesVenta as $detalle) {
                 $lote = $detalle->producto->lotes->first();
                 if ($lote) {
@@ -508,7 +505,7 @@ private function numerosALetrasConDecimales($numero)
                 }
             }
 
-            // 2. Eliminar en cascada
+           
             $venta->delete();
 
             DB::commit();
@@ -538,11 +535,9 @@ private function numerosALetrasConDecimales($numero)
         $fecha_fin = $request->input('fecha_fin');
         $cliente_id = $request->input('cliente_id');
 
-        // Consulta base
         $query = Venta::with(['detallesVenta', 'cliente'])
             ->where('sucursal_id', Auth::user()->sucursal_id);
 
-        // Aplicar filtros
         if ($fecha_inicio && $fecha_fin) {
             $query->whereBetween('fecha', [$fecha_inicio, $fecha_fin]);
         }
@@ -661,11 +656,11 @@ private function numerosALetrasConDecimales($numero)
                             ]
                         ]
                     ],
-                    // Alineación izquierda para cliente
+                    
                     'C2:C' . $sheet->getHighestRow() => [
                         'alignment' => ['horizontal' => 'left']
                     ],
-                    // Formato numérico para total
+                   
                     'E2:E' . $sheet->getHighestRow() => [
                         'numberFormat' => [
                             'formatCode' => '#,##0.00'
@@ -691,38 +686,6 @@ private function numerosALetrasConDecimales($numero)
             'reporte_ventas_' . now()->format('YmdHis') . '.xlsx'
         );
     }
-
-    private function generarCSV($ventas): BinaryFileResponse
-    {
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="reporte_ventas_' . now()->format('YmdHis') . '.csv"',
-        ];
-
-        $callback = function () use ($ventas) {
-            $file = fopen('php://output', 'w');
-
-            // Encabezados
-            fputcsv($file, ['Fecha', 'Cliente', 'Total', 'Productos', 'Cantidad Total']);
-
-            // Datos
-            foreach ($ventas as $venta) {
-                fputcsv($file, [
-                    $venta->fecha,
-                    $venta->cliente->nombre_cliente ?? 'Sin cliente',
-                    $venta->precio_total,
-                    $venta->detallesVenta->count(),
-                    $venta->detallesVenta->sum('cantidad')
-                ]);
-            }
-
-            fclose($file);
-        };
-
-        return Response::stream($callback, 200, $headers);
-    }
-
-
 
 
 

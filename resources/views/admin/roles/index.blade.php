@@ -150,9 +150,7 @@
                                         <div class="d-flex justify-content-between align-items-center border-top pt-3">
 
 
-                                            <!-- Contenedor de botones con espaciado -->
-                                            <!-- Contenedor de botones compactos -->
-                                            <!-- Contenedor de botones con espaciado controlado -->
+                                           
                                             <div class="d-flex align-items-center">
                                                 <!-- Botón Permisos -->
                                                 <button type="button"
@@ -263,143 +261,7 @@
                                                     });
                                                 </script>
 
-                                                <style>
-                                                    /* Estilos Premium */
-                                                    .swal2-container-premium {
-                                                        border-radius: 18px !important;
-                                                        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18) !important;
-                                                        border: 1px solid rgba(0, 0, 0, 0.08) !important;
-                                                        max-width: 480px !important;
-                                                        padding: 2.5rem !important;
-                                                    }
-
-                                                    .swal2-icon-wrapper {
-                                                        text-align: center;
-                                                        margin: 1.5rem 0;
-                                                    }
-
-                                                    .swal2-icon-svg {
-                                                        width: 72px;
-                                                        height: 72px;
-                                                        opacity: 0.9;
-                                                    }
-
-                                                    .swal2-content-container {
-                                                        text-align: center;
-                                                        padding: 0 1.5rem;
-                                                    }
-
-                                                    .swal2-title {
-                                                        font-size: 1.8rem !important;
-                                                        font-weight: 600 !important;
-                                                        color: #2f3542 !important;
-                                                        letter-spacing: -0.5px;
-                                                        margin-bottom: 0 !important;
-                                                    }
-
-                                                    .swal2-subtitle {
-                                                        font-size: 1.25rem;
-                                                        color: #57606f;
-                                                        font-weight: 500;
-                                                        margin: 1rem 0;
-                                                    }
-
-                                                    .swal2-user-info {
-                                                        background: #f8f9fa;
-                                                        padding: 0.75rem;
-                                                        border-radius: 10px;
-                                                        font-size: 1.1rem;
-                                                        color: #2f3542;
-                                                        border-left: 4px solid #ff4757;
-                                                    }
-
-                                                    .swal2-warning-text {
-                                                        font-size: 0.95rem;
-                                                        color: #ff6b81;
-                                                        margin-top: 1.5rem;
-                                                        padding-top: 1rem;
-                                                        border-top: 1px dashed #dfe4ea;
-                                                    }
-
-                                                    .swal2-confirm-btn-premium {
-                                                        background: linear-gradient(135deg, #ff4757, #ff6b81) !important;
-                                                        border: none !important;
-                                                        padding: 12px 28px !important;
-                                                        font-weight: 600 !important;
-                                                        font-size: 1rem !important;
-                                                        border-radius: 10px !important;
-                                                        color: white !important;
-                                                        box-shadow: 0 4px 12px rgba(255, 71, 87, 0.25) !important;
-                                                        transition: all 0.3s ease !important;
-                                                    }
-
-                                                    .swal2-confirm-btn-premium:hover {
-                                                        transform: translateY(-2px) !important;
-                                                        box-shadow: 0 6px 16px rgba(255, 71, 87, 0.3) !important;
-                                                    }
-
-                                                    .swal2-cancel-btn-premium {
-                                                        background: white !important;
-                                                        border: 1px solid #dfe4ea !important;
-                                                        padding: 12px 28px !important;
-                                                        font-weight: 500 !important;
-                                                        font-size: 1rem !important;
-                                                        border-radius: 10px !important;
-                                                        color: #57606f !important;
-                                                        transition: all 0.3s ease !important;
-                                                    }
-
-                                                    .swal2-cancel-btn-premium:hover {
-                                                        background: #f8f9fa !important;
-                                                        border-color: #ced6e0 !important;
-                                                    }
-
-                                                    .swal2-actions-premium {
-                                                        margin: 2rem 0 0 0 !important;
-                                                        gap: 1rem !important;
-                                                    }
-
-                                                    /* Loader premium */
-                                                    .swal2-loader-container {
-                                                        width: 100%;
-                                                        padding: 1.5rem 0;
-                                                    }
-
-                                                    .swal2-loader-circle {
-                                                        width: 60px;
-                                                        height: 60px;
-                                                        border: 4px solid rgba(255, 71, 87, 0.2);
-                                                        border-top-color: #ff4757;
-                                                        border-radius: 50%;
-                                                        margin: 0 auto 1.5rem;
-                                                        animation: swal2-spin 1s linear infinite;
-                                                    }
-
-                                                    .swal2-loader-bar-container {
-                                                        width: 100%;
-                                                        height: 6px;
-                                                        background: rgba(255, 71, 87, 0.1);
-                                                        border-radius: 3px;
-                                                        overflow: hidden;
-                                                    }
-
-                                                    .swal2-loader-bar {
-                                                        height: 100%;
-                                                        width: 0;
-                                                        background: linear-gradient(90deg, #ff4757, #ff6b81);
-                                                        border-radius: 3px;
-                                                    }
-
-                                                    @keyframes swal2-spin {
-                                                        0% {
-                                                            transform: rotate(0deg);
-                                                        }
-
-                                                        100% {
-                                                            transform: rotate(360deg);
-                                                        }
-                                                    }
-                                                </style>
+                                                
 
 
 

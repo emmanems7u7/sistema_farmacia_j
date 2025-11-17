@@ -23,16 +23,15 @@ use Maatwebsite\Excel\Facades\Excel;
 
 use Carbon\Carbon;
 
-use DatePeriod; // Importación añadida
-use DateInterval; // Importación añadida
-use DateTime; // Importación añadida
-// Asegúrate de tener este modelo para acceder a los datos de ingresos
+use DatePeriod; 
+use DateInterval; 
+use DateTime; 
 use PDF;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 
-use Illuminate\Support\Facades\Auth; // Importar Auth
-use Illuminate\Support\Facades\DB; // ¡Este es el import que faltaba!
+use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\DB; 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -45,11 +44,11 @@ class InventarioController extends Controller
             ['name' => 'Inicio', 'url' => route('home')],
             ['name' => 'Inventario', 'url' => route('admin.inventario.index')],
         ];
-        // Obtener sucursal seleccionada con nombre
+        
         $sucursalId = $request->get('sucursal', 0);
         $sucursalNombre = '';
 
-        // Obtener todas las sucursales para el dropdown
+       
         $sucursales = Sucursal::all();
 
         // Obtener nombre de sucursal si está seleccionada
@@ -58,13 +57,13 @@ class InventarioController extends Controller
             $sucursalNombre = $sucursal ? $sucursal->nombre : '';
         }
 
-        // Consultas básicas
+        
         $queryCompras = Compra::query();
         $queryVentas = Venta::query();
         $queryProductos = Producto::query();
         $queryLotes = Lote::query();
 
-        // Filtro por sucursal
+
         if ($sucursalId > 0) {
             $queryCompras->where('sucursal_id', $sucursalId);
             $queryVentas->where('sucursal_id', $sucursalId);
@@ -72,13 +71,12 @@ class InventarioController extends Controller
             $queryLotes->where('sucursal_id', $sucursalId);
         }
 
-        // ===== DATOS PARA EL CARD DE COMPRAS MENSUALES =====
-        // Manejo del mes seleccionado (viene del request o usa el actual)
+       
         $mesSeleccionado = $request->has('month')
             ? Carbon::parse($request->month)
             : now();
 
-        // Inicializar valores por defecto para compras
+        
         $totalComprasMes = 0;
         $cantidadCompras = 0;
         $mesTieneCompras = false;
@@ -111,10 +109,7 @@ class InventarioController extends Controller
                 ->whereMonth('fecha', $mesSeleccionado->month)
                 ->count();
         }
-        // ===== FIN DE SECCIÓN DE COMPRAS =====
-
-        // ===== DATOS PARA EL CARD DE VENTAS MENSUALES =====
-        // Inicializar valores por defecto para ventas
+        
         $totalVentasMes = 0;
         $cantidadVentas = 0;
         $mesTieneVentas = false;
@@ -130,12 +125,12 @@ class InventarioController extends Controller
                 return Carbon::create($item->year, $item->month, 1);
             });
 
-        // Verificar si el mes seleccionado tiene ventas
+        
         $mesTieneVentas = $mesesDisponiblesVentas->contains(function ($mes) use ($mesSeleccionado) {
             return $mes->format('Y-m') == $mesSeleccionado->format('Y-m');
         });
 
-        // Solo calcular si hay ventas en el mes seleccionado
+    
         if ($mesTieneVentas) {
             $totalVentasMes = $queryVentas->clone()
                 ->whereYear('created_at', $mesSeleccionado->year)
@@ -147,9 +142,7 @@ class InventarioController extends Controller
                 ->whereMonth('created_at', $mesSeleccionado->month)
                 ->count();
         }
-        // ===== FIN DE SECCIÓN DE VENTAS =====
-
-        // Métricas (solo conteos)
+       
         $totalProductos = $queryProductos->count();
         $ventasTotales = $queryVentas->whereMonth('created_at', now()->month)->count();
 
@@ -161,10 +154,7 @@ class InventarioController extends Controller
             ->where('cantidad', '>', 0)
             ->count();
 
-        // Combinar meses disponibles de compras y ventas para el filtro
     
-
-// Convertir a strings 'Y-m'
 $mesesCompras = collect($mesesDisponiblesCompras)->map(function($fecha) {
     return $fecha instanceof Carbon ? $fecha->format('Y-m') : $fecha;
 });
@@ -173,29 +163,29 @@ $mesesVentas = collect($mesesDisponiblesVentas)->map(function($fecha) {
     return $fecha instanceof Carbon ? $fecha->format('Y-m') : $fecha;
 });
 
-// Merge, unique y ordenar
+
 $mesesDisponibles = $mesesCompras
     ->merge($mesesVentas)
     ->unique()
     ->sortDesc()
-    ->values(); // reindexa
+    ->values(); 
 
 
         return view('admin.inventario.index', compact(
             'sucursales',
             'sucursalId',
-            'sucursalNombre', // Añadido para el card de productos
+            'sucursalNombre', 
             'totalProductos',
             'ventasTotales',
             'productosBajoStock',
             'productosPorVencer',
-            // Variables para el card de compras
+            
             'mesSeleccionado',
             'mesesDisponibles',
             'totalComprasMes',
             'cantidadCompras',
             'mesTieneCompras',
-            // Variables para el card de ventas
+            
             'totalVentasMes',
             'cantidadVentas',
             'mesTieneVentas',
@@ -219,15 +209,15 @@ $mesesDisponibles = $mesesCompras
         // Consulta base con eager loading y suma de lotes
         $query = Producto::with(['lotes', 'sucursal', 'categoria'])
             ->withSum('lotes', 'cantidad')
-            ->having('lotes_sum_cantidad', '<=', 15) // Solo productos con ≤15 unidades
-            ->orderBy('lotes_sum_cantidad'); // Ordenar de menor a mayor stock
+            ->having('lotes_sum_cantidad', '<=', 15) 
+            ->orderBy('lotes_sum_cantidad'); 
 
-        // Filtro por sucursal
+       
         if ($sucursalId > 0) {
             $query->where('sucursal_id', $sucursalId);
         }
 
-        // Filtro por nivel de alerta
+       
         if ($alerta) {
             switch ($alerta) {
                 case 'critico':
@@ -244,10 +234,10 @@ $mesesDisponibles = $mesesCompras
             }
         }
 
-        // Paginación y transformación de resultados
+      
         $productos = $query->paginate(15)->withQueryString();
 
-        // Clasificar cada producto según su nivel de stock
+      
         $productos->getCollection()->transform(function ($producto) {
             $stockActual = $producto->lotes_sum_cantidad;
             $producto->diferencia = $stockActual - $producto->stock_minimo;
@@ -289,7 +279,7 @@ $mesesDisponibles = $mesesCompras
 
 public function reportebajoStock(Request $request)
 {
-    $stockMinimo = $request->query('stock_minimo', 15); // valor por defecto
+    $stockMinimo = $request->query('stock_minimo', 15); 
     $sucursalId = $request->query('sucursal', 0);
 
     $query = Producto::with('lotes')
@@ -298,12 +288,12 @@ public function reportebajoStock(Request $request)
         ->orderBy('lotes_sum_cantidad');
 
     if ($sucursalId > 0) {
-        $query->where('sucursal_id', $sucursalId); // si aún tienes sucursal_id
+        $query->where('sucursal_id', $sucursalId); 
     }
 
     $productos = $query->get();
 
-    // Definir niveles de alerta para cada producto
+ 
     foreach ($productos as $producto) {
         $stockActual = $producto->lotes_sum_cantidad;
         if ($stockActual <= 0) {
@@ -325,7 +315,7 @@ public function reportebajoStock(Request $request)
         'sucursalId' => $sucursalId
     ]);
 
-    // Forzar descarga
+    //  descarga
     return $pdf->download('reporte_bajo_stock_'.now()->format('Ymd_His').'.pdf');
 }
 
@@ -358,9 +348,9 @@ public function reportebajoStock(Request $request)
         $mostrarVencidos = null;
     }
 
-    // LÓGICA CORREGIDA: Determinar qué mostrar
+    
     $mostrandoVencidos = false;
-    $diasSeleccionados = 30; // Valor por defecto para días
+    $diasSeleccionados = 30; 
 
     if ($mostrarVencidos === '1' || $mostrarVencidos === 'true') {
         $mostrandoVencidos = true;
@@ -368,16 +358,16 @@ public function reportebajoStock(Request $request)
         $mostrandoVencidos = false;
         $diasSeleccionados = (int)$dias;
     } else {
-        // Por defecto mostrar vencidos si no hay parámetros
+        
         $mostrandoVencidos = true;
     }
 
-    // Redirección automática si no hay parámetros
+  
     if (!$request->hasAny(['sucursal', 'dias', 'vencidos'])) {
         return redirect()->route('admin.inventario.productos_porvencer', ['vencidos' => 1]);
     }
 
-    // Consulta optimizada
+    
     $query = Producto::select([
         'productos.id',
         'productos.codigo',
@@ -388,26 +378,26 @@ public function reportebajoStock(Request $request)
         DB::raw('(CASE WHEN lotes.fecha_vencimiento < NOW() THEN 1 ELSE 0 END) as vencido')
     ])
         ->join('lotes', 'productos.id', '=', 'lotes.producto_id')
-        ->where('lotes.cantidad', '>', 0); // Solo lotes con stock
+        ->where('lotes.cantidad', '>', 0); 
 
-    // Filtro por sucursal
+   
     if ($sucursalId) {
         $query->where('lotes.sucursal_id', $sucursalId);
     }
 
-    // Filtro por fecha - LÓGICA CORREGIDA
+    // Filtro por fecha 
     if ($mostrandoVencidos) {
         // Mostrar solo productos vencidos
         $query->whereDate('lotes.fecha_vencimiento', '<', now());
     } else {
-        // Mostrar productos por vencer (dentro del rango de días)
+       
         $query->whereBetween('lotes.fecha_vencimiento', [
             now(),
             now()->addDays($diasSeleccionados)
         ]);
     }
 
-    $productos = $query->orderBy('vencido', 'desc') // Primero los vencidos
+    $productos = $query->orderBy('vencido', 'desc') 
         ->orderBy('lotes.fecha_vencimiento', 'asc')
         ->paginate(15)
         ->withQueryString();
@@ -417,7 +407,7 @@ public function reportebajoStock(Request $request)
         'sucursales' => Sucursal::all(),
         'sucursalId' => $sucursalId,
         'diasSeleccionados' => $diasSeleccionados,
-        'mostrarVencidos' => $mostrandoVencidos, // Variable corregida
+        'mostrarVencidos' => $mostrandoVencidos, 
         'breadcrumb' => $breadcrumb
     ]);
 }
@@ -427,7 +417,7 @@ public function reportebajoStock(Request $request)
         // Obtener mes seleccionado o actual
         $mesSeleccionado = $request->month ? Carbon::parse($request->month) : Carbon::now();
 
-        // Obtener meses disponibles con compras (simplificado)
+        // Obtener meses disponibles con compras 
         $mesesDisponibles = Compra::selectRaw('YEAR(fecha_compra) as year, MONTH(fecha_compra) as month')
             ->groupBy('year', 'month')
             ->orderBy('year', 'desc')
@@ -437,10 +427,10 @@ public function reportebajoStock(Request $request)
                 return Carbon::create($item->year, $item->month, 1);
             });
 
-        // Calcular totales usando precio_total
+        // Calcular totales 
         $totalComprasMes = Compra::whereYear('fecha_compra', $mesSeleccionado->year)
             ->whereMonth('fecha_compra', $mesSeleccionado->month)
-            ->sum('precio_total');  // Cambiado de 'total' a 'precio_total'
+            ->sum('precio_total');  
 
         $cantidadCompras = Compra::whereYear('fecha_compra', $mesSeleccionado->year)
             ->whereMonth('fecha_compra', $mesSeleccionado->month)
@@ -457,7 +447,7 @@ public function reportebajoStock(Request $request)
 
     public function imprimirCompras(Request $request)
     {
-        // Validar y parsear fecha
+       
         $request->validate([
             'month' => 'required|date_format:Y-m'
         ]);
@@ -465,30 +455,29 @@ public function reportebajoStock(Request $request)
         $mes = Carbon::parse($request->month);
         $sucursalId = $request->get('sucursal', 0);
 
-        // Consulta principal con relaciones anidadas
+     
         $query = Compra::with([
             'laboratorio',
             'detalles.producto.lotes' => function ($query) {
                 $query->select('id', 'producto_id', 'precio_compra', 'numero_lote')
-                    ->orderBy('created_at', 'desc'); // Obtener el lote más reciente
+                    ->orderBy('created_at', 'desc'); 
             },
             'detalles.producto' => function ($query) {
-                $query->select('id', 'nombre'); // Solo los campos necesarios del producto
+                $query->select('id', 'nombre'); 
             }
         ])
             ->whereYear('fecha', $mes->year)
             ->whereMonth('fecha', $mes->month)
             ->orderBy('fecha', 'desc');
 
-        // Filtro por sucursal si aplica
         if ($sucursalId > 0) {
             $query->where('sucursal_id', $sucursalId);
         }
 
-        // Obtener compras y asignar lotes a cada detalle
+       
         $compras = $query->get()->map(function ($compra) {
             $compra->detalles->each(function ($detalle) {
-                // Asignar el primer lote del producto al detalle
+                
                 if ($detalle->producto && $detalle->producto->relationLoaded('lotes')) {
                     $detalle->lote = $detalle->producto->lotes->first();
                 } else {
@@ -501,7 +490,7 @@ public function reportebajoStock(Request $request)
         // Calcular total general
         $total = $compras->sum('precio_total');
 
-        // Obtener información de sucursal
+      
         $sucursalInfo = $sucursalId > 0
             ? Sucursal::findOrFail($sucursalId)
             : null;
@@ -509,7 +498,7 @@ public function reportebajoStock(Request $request)
         $sucursalNombre = $sucursalInfo ? $sucursalInfo->nombre : 'Todas las sucursales';
         $sucursalDireccion = $sucursalInfo ? $sucursalInfo->direccion : '';
 
-        // Generar PDF
+      
         $pdf = Pdf::loadView('admin.inventario.reporte_compras', compact(
             'compras',
             'total',
@@ -518,7 +507,6 @@ public function reportebajoStock(Request $request)
             'sucursalDireccion'
         ));
 
-        // Configuración del PDF
         $pdf->setPaper([0, 0, 612, 792], 'portrait');
         $pdf->setOption([
             'isHtml5ParserEnabled' => true,
@@ -532,7 +520,7 @@ public function reportebajoStock(Request $request)
 
     public function imprimirVentas(Request $request)
     {
-        // Validar y parsear fecha
+       
         $request->validate([
             'month' => 'required|date_format:Y-m'
         ]);
@@ -540,13 +528,13 @@ public function reportebajoStock(Request $request)
         $mes = Carbon::parse($request->month);
         $sucursalId = $request->get('sucursal', 0);
 
-        // Consulta principal con relaciones anidadas
+       
         $query = Venta::with([
             'cliente',
             'usuario',
             'detallesVenta.producto.lotes' => function ($query) {
                 $query->select('id', 'producto_id', 'precio_venta')
-                    ->orderBy('created_at', 'desc'); // Obtener el lote más reciente
+                    ->orderBy('created_at', 'desc'); 
             },
             'detallesVenta.producto' => function ($query) {
                 $query->select('id', 'nombre', 'codigo');
@@ -564,10 +552,9 @@ public function reportebajoStock(Request $request)
         // Obtener y procesar ventas
         $ventas = $query->orderBy('created_at', 'desc')->get()->map(function ($venta) {
             $venta->detallesVenta->each(function ($detalle) {
-                // Asignar precio_venta del lote o usar precio_unitario como fallback
+                
                 $detalle->precio_final = $detalle->producto->lotes->first()->precio_venta ?? $detalle->precio_unitario;
 
-                // Calcular subtotal considerando descuento
                 $detalle->subtotal_calculado = ($detalle->precio_final * $detalle->cantidad) - ($detalle->descuento ?? 0);
             });
             return $venta;
@@ -579,7 +566,7 @@ public function reportebajoStock(Request $request)
             return $venta->detallesVenta->sum('cantidad');
         });
 
-        // Obtener información de sucursal
+   
         $sucursalInfo = $sucursalId > 0
             ? Sucursal::find($sucursalId)
             : null;
@@ -587,7 +574,7 @@ public function reportebajoStock(Request $request)
         $sucursalNombre = $sucursalInfo ? $sucursalInfo->nombre : 'Todas las sucursales';
         $sucursalDireccion = $sucursalInfo ? $sucursalInfo->direccion : '';
 
-        // Datos para la vista
+      
         $data = [
             'ventas' => $ventas,
             'totalVentas' => $totalVentas,
@@ -598,10 +585,10 @@ public function reportebajoStock(Request $request)
             'fechaGeneracion' => now()->format('d/m/Y H:i:s')
         ];
 
-        // Generar PDF
+      
         $pdf = Pdf::loadView('admin.inventario.reporte_ventas', $data);
 
-        // Configuración del PDF
+
         $pdf->setPaper([0, 0, 612, 792], 'portrait');
         $pdf->setOption([
             'isHtml5ParserEnabled' => true,

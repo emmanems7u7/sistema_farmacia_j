@@ -2,24 +2,18 @@
 
 @section('content')
 
-
-
-
   <script src="{{ asset('argon/js/argon-dashboard.js') }}"></script>
    
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Inicializar DataTable
-            
 
-            // Manejar el clic en los botones de detalles
             document.querySelectorAll('.toggle-details').forEach(button => {
                 button.addEventListener('click', function () {
                     const targetId = this.getAttribute('data-target');
                     const detailsContent = document.querySelector(targetId);
                     const isCollapsed = this.classList.contains('collapsed');
 
-                    // Cerrar todos los demás detalles abiertos
+                  
                     document.querySelectorAll('.details-content').forEach(content => {
                         if (content.id !== targetId.replace('#', '')) {
                             content.style.display = 'none';
@@ -28,7 +22,7 @@
                         }
                     });
 
-                    // Alternar el contenido actual
+                  
                     if (isCollapsed) {
                         detailsContent.style.display = 'none';
                         this.classList.remove('collapsed');
@@ -50,13 +44,13 @@
 
     <div class="container-fluid mt--6">
         <!-- Card de Encabezado y Botones -->
-        <div class="row mb-3"> <!-- Reducido mb-4 a mb-3 -->
+        <div class="row mb-3"> 
             <div class="col">
                 <div class="card border-0">
-                    <div class="card-header bg-white border-0 py-2"> <!-- Reducido padding vertical -->
+                    <div class="card-header bg-white border-0 py-2"> 
                         <div class="row align-items-center">
                             <div class="col-md-6">
-                                <h3 class="mb-0 h5"> <!-- Cambiado a h5 para menos altura -->
+                                <h3 class="mb-0 h5"> 
                                     <i class="fas fa-history me-2"></i> Historial de Compras
                                 </h3>
                             </div>
@@ -75,23 +69,22 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body py-2"> <!-- Reducido padding vertical -->
+                    <div class="card-body py-2"> 
                         <div class="d-flex justify-content-between align-items-center">
                             <p class="mb-0 small">Total: <span class="badge bg-primary">{{ count($compras) }}</span></p>
-                            <!-- Texto más pequeño -->
+                            
                             
                                 <div class="d-flex gap-2 align-items-center ms-auto position-relative">
-                    <div class="d-flex justify-content-end mb-3">
-                        <a href="{{ route('admin.compras.reporteDiario') }}" class="btn btn-sm btn-info text-white" target="_blank">
-                            <i class="fas fa-file-pdf me-2"></i> Reporte del Día
-                        </a>
+                                <div class="d-flex justify-content-end mb-3">
+                                    <a href="{{ route('admin.compras.reporteDiario') }}" class="btn btn-sm btn-info text-white" target="_blank">
+                                        <i class="fas fa-file-pdf me-2"></i> Reporte del Día
+                                    </a>
 
-                        
-                    </div>
+                                    
+                                </div>
 
 
                                 
-
                                 <button class="btn btn-sm btn-outline-secondary" id="refreshTable">
                                 <i class="fas fa-sync-alt me-1"></i> Actualizar
                             </button>
@@ -219,14 +212,12 @@
                                                     <a href="{{ url('/admin/compras/pdf/' . $compra->id) }}" target="_blank"
                                                     class="btn btn-sm btn-outline-primary mx-1 d-flex align-items-center justify-content-center"
                                                     style="width: 30px; height: 30px; min-width: 30px; padding: 0;"
-                                                    title="Imprimir comprobante">
+                                                    title="Imprimir recibo ">
                                                         <i class="fas fa-print"></i>
                                                     </a>
 
 
-                                                    
-
-
+                                                    @can('compras.eliminar')
                                                     <form action="{{ route('admin.compras.destroy', $compra->id) }}"
                                                         method="POST" class="d-inline eliminar-compra-form"
                                                         data-id="{{ $compra->id }}" data-nombre="{{ $compra->nombre }}">
@@ -242,11 +233,8 @@
                                                             <span class="btn-inner--text"></span>
                                                         </button>
 
-
-
-
                                                     </form>
-
+                                                    @endcan
                                                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                                                     <script>
                                                         function confirmarEliminacionSucursal(event) {
@@ -462,20 +450,6 @@
                                                         }
                                                     </style>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                                                 </div>
                                             </td>
                                         </tr>
@@ -600,7 +574,3 @@
     </style>
 @endsection
 
-@section('js')
-
-  
-@endsection

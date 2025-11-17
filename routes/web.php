@@ -281,12 +281,12 @@ Route::get('/admin/categorias/reporte', [App\Http\Controllers\CategoriaControlle
     ->name('admin.categorias.reporte');
 Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias.index')->middleware('can:categoria.ver');
 
-Route::get('/admin/categorias/create', [App\Http\Controllers\CategoriaController::class, 'create'])->name('admin.categorias.create')->middleware('auth');
-Route::post('/admin/categorias/create', [App\Http\Controllers\CategoriaController::class, 'store'])->name('admin.categorias.store')->middleware('auth');
+Route::get('/admin/categorias/create', [App\Http\Controllers\CategoriaController::class, 'create'])->name('admin.categorias.create')->middleware('can:categorias.crear');
+Route::post('/admin/categorias/create', [App\Http\Controllers\CategoriaController::class, 'store'])->name('admin.categorias.store')->middleware('can:categorias.guardar');
 Route::get('/admin/categorias/{id}', [App\Http\Controllers\CategoriaController::class, 'show'])->name('admin.categorias.show')->middleware('auth');
-Route::get('/admin/categorias/{id}/edit', [App\Http\Controllers\CategoriaController::class, 'edit'])->name('admin.categorias.edit')->middleware('auth');
-Route::put('/admin/categorias/{id}', [App\Http\Controllers\CategoriaController::class, 'update'])->name('admin.categorias.update')->middleware('auth');
-Route::delete('/admin/categorias/{id}', [App\Http\Controllers\CategoriaController::class, 'destroy'])->name('admin.categorias.destroy')->middleware('auth');
+Route::get('/admin/categorias/{id}/edit', [App\Http\Controllers\CategoriaController::class, 'edit'])->name('admin.categorias.edit')->middleware('can:categorias.editar');
+Route::put('/admin/categorias/{id}', [App\Http\Controllers\CategoriaController::class, 'update'])->name('admin.categorias.update')->middleware('can:categorias.actualizar');
+Route::delete('/admin/categorias/{id}', [App\Http\Controllers\CategoriaController::class, 'destroy'])->name('admin.categorias.destroy')->middleware('can:categorias.eliminar');
 
 //icono
 // routes/web.php
@@ -299,23 +299,23 @@ Route::post('/admin/categorias/{id}/generar-icono', [App\Http\Controllers\Catego
 Route::get('/admin/laboratorios/reporte', [App\Http\Controllers\LaboratorioController::class, 'generarReporte'])
     ->name('admin.laboratorios.reporte');
 Route::get('/admin/laboratorios', [App\Http\Controllers\LaboratorioController::class, 'index'])->name('admin.laboratorios.index')->middleware('auth');
-Route::get('/admin/laboratorios/create', [App\Http\Controllers\LaboratorioController::class, 'create'])->name('admin.laboratorios.create')->middleware('auth');
-Route::post('/admin/laboratorios/create', [App\Http\Controllers\LaboratorioController::class, 'store'])->name('admin.laboratorios.store')->middleware('auth');
-Route::get('/admin/laboratorios/{id}', [App\Http\Controllers\LaboratorioController::class, 'show'])->name('admin.laboratorios.show')->middleware('auth');
-Route::get('/admin/laboratorios/{id}/edit', [App\Http\Controllers\LaboratorioController::class, 'edit'])->name('admin.laboratorios.edit')->middleware('auth');
-Route::put('/admin/laboratorios/{id}', [App\Http\Controllers\LaboratorioController::class, 'update'])->name('admin.laboratorios.update')->middleware('auth');
-Route::delete('/admin/laboratorios/{id}', [App\Http\Controllers\LaboratorioController::class, 'destroy'])->name('admin.laboratorios.destroy')->middleware('auth');
+Route::get('/admin/laboratorios/create', [App\Http\Controllers\LaboratorioController::class, 'create'])->name('admin.laboratorios.create')->middleware('can:laboratorio.crear');
+Route::post('/admin/laboratorios/create', [App\Http\Controllers\LaboratorioController::class, 'store'])->name('admin.laboratorios.store')->middleware('can:laboratorio.guardar');
+Route::get('/admin/laboratorios/{id}', [App\Http\Controllers\LaboratorioController::class, 'show'])->name('admin.laboratorios.show')->middleware('can:laboratorio.ver');
+Route::get('/admin/laboratorios/{id}/edit', [App\Http\Controllers\LaboratorioController::class, 'edit'])->name('admin.laboratorios.edit')->middleware('can:laboratorio.editar');
+Route::put('/admin/laboratorios/{id}', [App\Http\Controllers\LaboratorioController::class, 'update'])->name('admin.laboratorios.update')->middleware('can:laboratorio.actualizar');
+Route::delete('/admin/laboratorios/{id}', [App\Http\Controllers\LaboratorioController::class, 'destroy'])->name('admin.laboratorios.destroy')->middleware('can:laboratorio.eliminar');
 
 
 //RUTAS PARA PRODUCTOS
 
 Route::get('/admin/productos', [App\Http\Controllers\ProductoController::class, 'index'])->name('admin.productos.index')->middleware('auth');
-Route::get('/admin/productos/create', [App\Http\Controllers\ProductoController::class, 'create'])->name('admin.productos.create')->middleware('auth');
-Route::post('/admin/productos/create', [App\Http\Controllers\ProductoController::class, 'store'])->name('admin.productos.store')->middleware('auth');
-Route::get('/admin/productos/{id}', [App\Http\Controllers\ProductoController::class, 'show'])->name('admin.productos.show')->middleware('auth');
-Route::get('/admin/productos/{id}/edit', [App\Http\Controllers\ProductoController::class, 'edit'])->name('admin.productos.edit')->middleware('auth');
-Route::put('/admin/productos/{id}', [App\Http\Controllers\ProductoController::class, 'update'])->name('admin.productos.update')->middleware('auth');
-Route::delete('/admin/productos/{id}', [App\Http\Controllers\ProductoController::class, 'destroy'])->name('admin.productos.destroy')->middleware('auth');
+Route::get('/admin/productos/create', [App\Http\Controllers\ProductoController::class, 'create'])->name('admin.productos.create')->middleware('can:productos.crear');
+Route::post('/admin/productos/create', [App\Http\Controllers\ProductoController::class, 'store'])->name('admin.productos.store')->middleware('can:productos.guardar');
+Route::get('/admin/productos/{id}', [App\Http\Controllers\ProductoController::class, 'show'])->name('admin.productos.show')->middleware('can:productos.ver');
+Route::get('/admin/productos/{id}/edit', [App\Http\Controllers\ProductoController::class, 'edit'])->name('admin.productos.edit')->middleware('can:productos.editar');
+Route::put('/admin/productos/{id}', [App\Http\Controllers\ProductoController::class, 'update'])->name('admin.productos.update')->middleware('can:productos.actualizar');
+Route::delete('/admin/productos/{id}', [App\Http\Controllers\ProductoController::class, 'destroy'])->name('admin.productos.destroy')->middleware('can:productos.eliminar');
 
 Route::get('/admin/productos/buscar', [App\Http\Controllers\ProductoController::class, 'buscar'])->name('admin.productos.buscar');
 Route::get('/admin/productos/get/{id}', [App\Http\Controllers\ProductoController::class, 'get'])->name('admin.productos.get');
@@ -348,7 +348,7 @@ Route::post('/admin/compras/create', [App\Http\Controllers\CompraController::cla
 Route::get('/admin/compras/{id}', [App\Http\Controllers\CompraController::class, 'show'])->name('admin.compras.show')->middleware('auth');
 Route::get('/admin/compras/{id}/edit', [App\Http\Controllers\CompraController::class, 'edit'])->name('admin.compras.edit')->middleware('auth');
 Route::put('/admin/compras/{id}', [App\Http\Controllers\CompraController::class, 'update'])->name('admin.compras.update')->middleware('auth');
-Route::delete('/admin/compras/{id}', [App\Http\Controllers\CompraController::class, 'destroy'])->name('admin.compras.destroy')->middleware('auth');
+Route::delete('/admin/compras/{id}', [App\Http\Controllers\CompraController::class, 'destroy'])->name('admin.compras.destroy')->middleware('can:compras.eliminar');
 
 Route::get('/admin/compras/reporte/{tipo}', [App\Http\Controllers\CompraController::class, 'reporte'])
     ->where('tipo', 'pdf|excel|csv')
@@ -383,12 +383,12 @@ Route::get('/admin/compras/reporte/diario', [App\Http\Controllers\CompraControll
 Route::get('/admin/clientes/reporte', [App\Http\Controllers\ClienteController::class, 'generarReporte'])
     ->name('admin.clientes.reporte');
 Route::get('/admin/clientes', [App\Http\Controllers\ClienteController::class, 'index'])->name('admin.clientes.index')->middleware('auth');
-Route::get('/admin/clientes/create', [App\Http\Controllers\ClienteController::class, 'create'])->name('admin.clientes.create')->middleware('auth');
-Route::post('/admin/clientes/create', [App\Http\Controllers\ClienteController::class, 'store'])->name('admin.clientes.store')->middleware('auth');
-Route::get('/admin/clientes/{id}', [App\Http\Controllers\ClienteController::class, 'show'])->name('admin.clientes.show')->middleware('auth');
-Route::get('/admin/clientes/{id}/edit', [App\Http\Controllers\ClienteController::class, 'edit'])->name('admin.clientes.edit')->middleware('auth');
-Route::put('/admin/clientes/{id}', [App\Http\Controllers\ClienteController::class, 'update'])->name('admin.clientes.update')->middleware('auth');
-Route::delete('/admin/clientes/{id}', [App\Http\Controllers\ClienteController::class, 'destroy'])->name('admin.clientes.destroy')->middleware('auth');
+Route::get('/admin/clientes/create', [App\Http\Controllers\ClienteController::class, 'create'])->name('admin.clientes.create')->middleware('can:clientes.crear');
+Route::post('/admin/clientes/create', [App\Http\Controllers\ClienteController::class, 'store'])->name('admin.clientes.store')->middleware('can:clientes.guardar');
+Route::get('/admin/clientes/{id}', [App\Http\Controllers\ClienteController::class, 'show'])->name('admin.clientes.show')->middleware('can:clientes.ver');
+Route::get('/admin/clientes/{id}/edit', [App\Http\Controllers\ClienteController::class, 'edit'])->name('admin.clientes.edit')->middleware('can:clientes.editar');
+Route::put('/admin/clientes/{id}', [App\Http\Controllers\ClienteController::class, 'update'])->name('admin.clientes.update')->middleware('can:clientes.actualizar');
+Route::delete('/admin/clientes/{id}', [App\Http\Controllers\ClienteController::class, 'destroy'])->name('admin.clientes.destroy')->middleware('can:clientes.eliminar');
 
 //RUTAS PARA VENTAS
 Route::get('/admin/ventas/reporte_dia', [App\Http\Controllers\VentaController::class, 'reporteDia'])->name('admin.ventas.reporte_dia')->middleware('auth');
@@ -403,7 +403,7 @@ Route::get('/admin/ventas/pdf/{id}', [App\Http\Controllers\VentaController::clas
 
 Route::get('/admin/ventas/{id}/edit', [App\Http\Controllers\VentaController::class, 'edit'])->name('admin.ventas.edit')->middleware('auth');
 Route::put('/admin/ventas/{id}', [App\Http\Controllers\VentaController::class, 'update'])->name('admin.ventas.update')->middleware('auth');
-Route::delete('/admin/ventas/{id}', [App\Http\Controllers\VentaController::class, 'destroy'])->name('admin.ventas.destroy')->middleware('auth');
+Route::delete('/admin/ventas/{id}', [App\Http\Controllers\VentaController::class, 'destroy'])->name('admin.ventas.destroy')->middleware('can:ventas.eliminar');
 //ruta para crear al cliente
 Route::post('/admin/ventas/cliente/create', [App\Http\Controllers\VentaController::class, 'cliente_store'])->name('admin.ventas.cliente.store')->middleware('auth');
 
@@ -435,7 +435,7 @@ Route::post('/admin/cajas/create', [App\Http\Controllers\CajaController::class, 
 Route::get('/admin/cajas/{id}', [App\Http\Controllers\CajaController::class, 'show'])->name('admin.cajas.show')->middleware('auth');
 Route::get('/admin/cajas/{id}/edit', [App\Http\Controllers\CajaController::class, 'edit'])->name('admin.cajas.edit')->middleware('auth');
 Route::put('/admin/cajas/{id}', [App\Http\Controllers\CajaController::class, 'update'])->name('admin.cajas.update')->middleware('auth');
-Route::delete('/admin/cajas/{id}', [App\Http\Controllers\CajaController::class, 'destroy'])->name('admin.cajas.destroy')->middleware('auth');
+Route::delete('/admin/cajas/{id}', [App\Http\Controllers\CajaController::class, 'destroy'])->name('admin.cajas.destroy')->middleware('can:coja.eliminar');
 
 Route::get('/admin/cajas/reporte/{tipo}', [App\Http\Controllers\CajaController::class, 'reportecaja'])
     ->where('tipo', 'pdf|excel|csv')
@@ -454,15 +454,15 @@ Route::get('/admin/cajas/{id}/cierre', [App\Http\Controllers\CajaController::cla
 Route::post('/admin/cajas/create_cierre', [App\Http\Controllers\CajaController::class, 'store_cierre'])->name('admin.cajas.storecierre')->middleware('auth');
 
 // Mostrar la reporte de inresos 
-Route::get('admin/reporte/ingresos', [App\Http\Controllers\reporteController::class, 'reporteIngresosView'])->name('admin.reporte.ingresos.index');
-Route::get('admin/reporte/ingresos-por-fecha', [App\Http\Controllers\reporteController::class, 'ingresosPorFecha'])->name('admin.reporte.ingresos_por_fecha');
-Route::get('admin/reporte/ingresos_por_fecha/pdf', [App\Http\Controllers\reporteController::class, 'ingresosPorFechaPDF'])->name('admin.reporte.ingresos_por_fecha_pdf');
+Route::get('admin/reporte/ingresos', [App\Http\Controllers\ReporteController::class, 'reporteIngresosView'])->name('admin.reporte.ingresos.index');
+Route::get('admin/reporte/ingresos-por-fecha', [App\Http\Controllers\ReporteController::class, 'ingresosPorFecha'])->name('admin.reporte.ingresos_por_fecha');
+Route::get('admin/reporte/ingresos_por_fecha/pdf', [App\Http\Controllers\ReporteController::class, 'ingresosPorFechaPDF'])->name('admin.reporte.ingresos_por_fecha_pdf');
 
 
 // Mostrar la reporte de inresos 
-Route::get('admin/reporte/egresos', [App\Http\Controllers\reporteController::class, 'reporteEgresosView'])->name('admin.reporte.egresos.index');
-Route::get('admin/reporte/egresos-por-fecha', [App\Http\Controllers\reporteController::class, 'EgresosPorFecha'])->name('admin.reporte.egresos_por_fecha');
-Route::get('admin/reporte/egresos_por_fecha/pdf', [App\Http\Controllers\reporteController::class, 'EgresosPorFechaPDF'])->name('admin.reporte.egresos_por_fecha_pdf');
+Route::get('admin/reporte/egresos', [App\Http\Controllers\ReporteController::class, 'reporteEgresosView'])->name('admin.reporte.egresos.index');
+Route::get('admin/reporte/egresos-por-fecha', [App\Http\Controllers\ReporteController::class, 'EgresosPorFecha'])->name('admin.reporte.egresos_por_fecha');
+Route::get('admin/reporte/egresos_por_fecha/pdf', [App\Http\Controllers\ReporteController::class, 'EgresosPorFechaPDF'])->name('admin.reporte.egresos_por_fecha_pdf');
 
 
 
@@ -497,12 +497,13 @@ Route::get('/admin/lotes/reporte', [App\Http\Controllers\LoteController::class, 
 Route::get('/admin/lotes', [App\Http\Controllers\LoteController::class, 'index'])->name('admin.lotes.index')->middleware('auth');
 Route::get('/admin/lotes/create', [App\Http\Controllers\LoteController::class, 'create'])->name('admin.lotes.create')->middleware('auth');
 Route::post('/admin/lotes/create', [App\Http\Controllers\LoteController::class, 'store'])->name('admin.lotes.store')->middleware('auth');
-Route::get('/admin/lotes/{id}', [App\Http\Controllers\LoteController::class, 'show'])->name('admin.lotes.show')->middleware('auth');
+
 Route::get('/admin/lotes/{id}/edit', [App\Http\Controllers\LoteController::class, 'edit'])->name('admin.lotes.edit')->middleware('auth');
-Route::put('/admin/lotes/{id}', [App\Http\Controllers\LoteController::class, 'update'])->name('admin.lotes.update')->middleware('auth');
+
 Route::delete('/admin/lotes/{id}', [App\Http\Controllers\LoteController::class, 'destroy'])->name('admin.lotes.destroy')->middleware('auth');
 
-
+Route::get('admin/lotes/{lote}', [App\Http\Controllers\LoteController::class, 'show'])->name('admin.lotes.show');
+Route::put('admin/lotes/{lote}', [App\Http\Controllers\LoteController::class, 'update'])->name('admin.lotes.update');
 //cchat
 //Route::post('/chat-ia', [App\Http\Controllers\ChatIAController::class, 'preguntar']);
 

@@ -9,8 +9,8 @@ use App\Models\Compra;
 use App\Models\Producto;
 use App\Models\Venta;
 use App\Models\Cliente;
-use App\Models\DetalleVenta; //
-use Illuminate\Support\Facades\DB; // Necesario para las consultas
+use App\Models\DetalleVenta; 
+use Illuminate\Support\Facades\DB; 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
@@ -63,9 +63,7 @@ class AdminController extends Controller
     ));
 }
 
-    /**
-     * Crea un nuevo usuario.
-     */
+   
     public function crearUsuario(Request $request)
     {
         // Obtén la sucursal correspondiente 

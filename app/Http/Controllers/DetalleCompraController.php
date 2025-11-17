@@ -34,7 +34,7 @@ class DetalleCompraController extends Controller
         'codigo'   => 'required|string',
         'cantidad' => 'required|numeric|min:1',
         'id_compra'=> 'required|exists:compras,id',
-        'lote_id'  => 'required|exists:lotes,id', // ahora es obligatorio
+        'lote_id'  => 'required|exists:lotes,id', 
     ]);
 
     // Buscar el producto según el código
@@ -53,23 +53,23 @@ class DetalleCompraController extends Controller
         return response()->json(['success' => false, 'message' => 'Lote no encontrado']);
     }
 
-    // Calcular la cantidad real (si compras en cajas, convertir a unidades)
+    // Calcular la cantidad real
     $unidades = $lote->cantidad_inicial > 0 ? $lote->cantidad_inicial : 1;
     $cantidadReal = $request->cantidad * $unidades;
 
-    // Verificar si ya existe el detalle de compra
+   
     $detalle_compra = DetalleCompra::where('producto_id', $producto->id)
         ->where('compra_id', $compra_id)
         ->where('lote_id', $lote->id)
         ->first();
 
     if ($detalle_compra) {
-        // Actualizar cantidad y subtotal
+       
         $detalle_compra->cantidad += $cantidadReal;
         $detalle_compra->subtotal = $detalle_compra->cantidad * $lote->precio_compra_unitario;
         $detalle_compra->save();
 
-        // Actualizar cantidad del lote (sumar porque es compra)
+       
         $lote->cantidad += $cantidadReal;
         $lote->save();
 
@@ -127,7 +127,7 @@ class DetalleCompraController extends Controller
         $producto->save();
 
 
-        DetalleCompra::destroy($id); // Buscar el usuario por ID
+        DetalleCompra::destroy($id); 
 
 
         return response()->json(['success' => true]);

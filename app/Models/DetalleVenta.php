@@ -8,13 +8,13 @@ class DetalleVenta extends Model
 {
     protected $table = 'detalle_ventas';
 
-    // Columnas que se pueden llenar masivamente - AGREGAR LAS NUEVAS COLUMNAS
+    // Columnas que se pueden llenar masivamente 
     protected $fillable = [
         'cantidad',
-        'subtotal',       // ← AGREGAR ESTA
+        'subtotal',      
         'venta_id',
         'producto_id',
-        'lotes_info',     // ← AGREGAR ESTA
+        'lotes_info',     
     ];
 
     // Relaciones
@@ -32,7 +32,7 @@ class DetalleVenta extends Model
 
     // Casts para formato automático
     protected $casts = [
-        'lotes_info' => 'array', // Cast automático de JSON a array
+        'lotes_info' => 'array', 
     ];
 
     // Accesor para lotes_info

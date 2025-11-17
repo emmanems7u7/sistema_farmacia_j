@@ -4,15 +4,13 @@ namespace App\Http\Controllers;
 use App\Models\MovimientoCaja;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use DatePeriod; // Importación añadida
-use DateInterval; // Importación añadida
-use DateTime; // Importación añadida
-// Asegúrate de tener este modelo para acceder a los datos de ingresos
-use PDF; // Si estás usando domPDF o cualquier paquete para generar PDF
-
+use DatePeriod; 
+use DateInterval; 
+use DateTime; 
+use PDF; 
 class ReporteController extends Controller
 {
-    // Método para mostrar la vista con el formulario de fechas
+    
     public function reporteIngresosView()
     {
 
@@ -20,7 +18,7 @@ class ReporteController extends Controller
             ['name' => 'Inicio', 'url' => route('home')],
             ['name' => 'reportes', 'url' => route('admin.reporte.ingresos.index')],
         ];
-        return view('admin.reporte.ingresos', compact('breadcrumb')); // Esto buscará la vista en resources/views/reporte/ingresos.blade.php
+        return view('admin.reporte.ingresos', compact('breadcrumb')); 
     }
 
     public function ingresosPorFecha(Request $request)
@@ -66,7 +64,7 @@ class ReporteController extends Controller
 
             foreach ($periodo as $fecha) {
                 $fecha_formato = $fecha->format('Y-m-d');
-                $labels[] = $fecha->format('d M'); // Formato más legible (05 Jun)
+                $labels[] = $fecha->format('d M'); 
                 $monto = isset($resultados[$fecha_formato]) ?
                     $resultados[$fecha_formato]->sum('monto') : 0;
                 $datos[] = $monto;
@@ -89,7 +87,7 @@ class ReporteController extends Controller
 
             while ($fechaIni <= $fechaFin) {
                 $mes = $fechaIni->format('Y-m');
-                $labels[] = $fechaIni->format('M Y'); // Formato más legible (Jun 2023)
+                $labels[] = $fechaIni->format('M Y'); 
                 $monto = isset($resultados[$mes]) ?
                     $resultados[$mes]->sum('monto') : 0;
                 $datos[] = $monto;
@@ -112,9 +110,9 @@ class ReporteController extends Controller
         $fechaInicio = Carbon::parse($validated['fecha_inicio'])->startOfDay();
         $fechaFin = Carbon::parse($validated['fecha_fin'])->endOfDay();
 
-        // FILTRAR SOLO INGRESOS
+      
         $ingresos = MovimientoCaja::whereBetween('created_at', [$fechaInicio, $fechaFin])
-            ->where('tipo', 'INGRESO') // Este filtro es crucial
+            ->where('tipo', 'INGRESO') 
             ->orderBy('created_at')
             ->get();
 
@@ -139,7 +137,7 @@ class ReporteController extends Controller
             ['name' => 'Inicio', 'url' => route('home')],
             ['name' => 'Reporte Egresos', 'url' => route('admin.reporte.ingresos.index')],
         ];
-        return view('admin.reporte.egresos', compact('breadcrumb')); // Esto buscará la vista en resources/views/reporte/ingresos.blade.php
+        return view('admin.reporte.egresos', compact('breadcrumb')); 
     }
 
     public function egresosPorFecha(Request $request)
@@ -154,11 +152,11 @@ class ReporteController extends Controller
         $fecha_inicio = $request->input('fecha_inicio');
         $fecha_fin = $request->input('fecha_fin');
 
-        // Convertir a Carbon y ajustar horas
+      
         $startDate = Carbon::parse($fecha_inicio)->startOfDay();
         $endDate = Carbon::parse($fecha_fin)->endOfDay();
 
-        // Obtener egresos en el rango (más eficiente)
+        
         $egresos = MovimientoCaja::where('tipo', 'EGRESO')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->get();
@@ -176,20 +174,19 @@ class ReporteController extends Controller
                 $fecha_formato = $currentDate->format('Y-m-d');
                 $dia_semana = $currentDate->isoFormat('dddd');
 
-                // Filtrar usando Carbon para precisión
+                
                 $monto = $egresos->filter(function ($egreso) use ($currentDate) {
                     return $egreso->created_at->isSameDay($currentDate);
                 })->sum('monto');
 
-                // Formato más amigable para las etiquetas
-                $labels[] = $currentDate->format('d M'); // Ej: "05 Jun"
+                
+                $labels[] = $currentDate->format('d M'); 
                 $datos[] = $monto;
 
                 $currentDate->addDay();
             }
         } else {
-            // Agrupar por mes (código existente)
-            // ... (mantener tu lógica actual para meses)
+            
         }
 
         $total = array_sum($datos);
@@ -210,7 +207,7 @@ class ReporteController extends Controller
 
         // FILTRAR SOLO INGRESOS
         $egresos = MovimientoCaja::whereBetween('created_at', [$fechaInicio, $fechaFin])
-            ->where('tipo', 'EGRESO') // Este filtro es crucial
+            ->where('tipo', 'EGRESO') 
             ->orderBy('created_at')
             ->get();
 

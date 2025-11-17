@@ -77,9 +77,9 @@ class ClienteController extends Controller
     public function show(Cliente $cliente)
     {
         //
-        $cliente = Cliente::find($id); // buscar el cliente por ID
+        $cliente = Cliente::find($id); 
 
-        return view('admin.clientes.show', compact('cliente')); // retornar vista de edició
+        return view('admin.clientes.show', compact('cliente')); 
     }
 
     /**
@@ -87,9 +87,9 @@ class ClienteController extends Controller
      */
     public function edit($id)
     {
-        $cliente = Cliente::find($id); // buscar el cliente por ID
+        $cliente = Cliente::find($id);
 
-        return view('admin.clientes.edit', compact('cliente')); // retornar vista de edición
+        return view('admin.clientes.edit', compact('cliente')); 
     }
 
     /**
@@ -108,10 +108,10 @@ class ClienteController extends Controller
             'email' => 'nullable',
         ]);
 
-        // Buscar el cliente por ID
+        
         $cliente = Cliente::find($id);
 
-        // Actualizar los datos básicos
+        
         $cliente->nombre_cliente = $request->nombre_cliente;
         $cliente->nit_ci = $request->nit_ci;
         $cliente->celular = $request->celular;
@@ -120,7 +120,7 @@ class ClienteController extends Controller
 
 
         $cliente->save();
-        // Redirigir al índice con un mensaje de éxito
+      
         return redirect()->route('admin.clientes.index')
             ->with('status', 'Se modifico la cliente');
     }
@@ -130,10 +130,7 @@ class ClienteController extends Controller
      */
     public function destroy($id)
     {
-        Cliente::destroy($id); // Buscar el usuario por ID
-
-
-        // Redirigir al índice con un mensaje de éxito
+        Cliente::destroy($id); 
         return redirect()->route('admin.clientes.index')
             ->with('status', 'Cliente eliminada con éxito.');
     }
@@ -286,31 +283,5 @@ class ClienteController extends Controller
             'reporte_clientes_' . now()->format('YmdHis') . '.xlsx'
         );
     }
-    private function generarCSV($clientes)
-    {
-        $data = $clientes->map(function ($cliente) {
-            return [
-                'Nombre_cliente' => $cliente->nombre_cliente,
-                'Nit_ci' => $cliente->nit_ci,
-                'Celular' => $cliente->celular,
-                'Email' => $cliente->email
-            ];
-        });
-
-        return Excel::download(
-            new class ($data) implements FromCollection {
-            private $data;
-            public function __construct($data)
-            {
-                $this->data = $data;
-            }
-            public function collection()
-            {
-                return $this->data;
-            }
-            },
-            'reporte_clientes_' . now()->format('YmdHis') . '.csv',
-            \Maatwebsite\Excel\Excel::CSV
-        );
-    }
+    
 }

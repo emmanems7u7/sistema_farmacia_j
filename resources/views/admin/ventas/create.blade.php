@@ -89,8 +89,7 @@ function guardar_cliente(){
     });
 }
 
-// FUNCIÓN PARA AÑADIR PRODUCTO - REUTILIZABLE
-// FUNCIÓN PARA AÑADIR PRODUCTO - REUTILIZABLE CON VALIDACIÓN DE STOCK
+// FUNCIÓN PARA AÑADIR PRODUCTO 
 function agregarProducto() {
     const codigo = $('#codigo').val().trim();
     const cantidad = $('#cantidad').val();
@@ -107,7 +106,7 @@ function agregarProducto() {
 
     // PRIMERO VERIFICAR STOCK DISPONIBLE
     $.ajax({
-        url: "{{ route('admin.ventas.verificar_stock') }}", // Necesitarás crear esta ruta
+        url: "{{ route('admin.ventas.verificar_stock') }}", 
         method: 'POST',
         data: {
             _token: '{{ csrf_token() }}',
@@ -144,7 +143,7 @@ function agregarProducto() {
     });
 }
 
-// FUNCIÓN PARA AGREGAR PRODUCTO A TEMPORAL (una vez verificado el stock)
+// FUNCIÓN PARA AGREGAR PRODUCTO A TEMPORAL
 function agregarProductoTmp(codigo, cantidad) {
     $.ajax({
         url: "{{ route('admin.ventas.tmp_ventas') }}",
@@ -182,7 +181,7 @@ function agregarProductoTmp(codigo, cantidad) {
     });
 }
 
-// Seleccionar cliente - VERSIÓN CORREGIDA
+// Seleccionar cliente 
 $(document).on('click', '.seleccionar-btn-cliente', function(){
     const id_cliente = $(this).data('id');
     const nombre_cliente = $(this).data('nombre_cliente');
@@ -192,7 +191,7 @@ $(document).on('click', '.seleccionar-btn-cliente', function(){
     $('#nit_cliente_select').val(nit_ci);
     $('#id_cliente').val(id_cliente);
     
-    // Cerrar modal - FORMA COMPATIBLE CON BOOTSTRAP 5
+    // Cerrar modal 
     const clienteModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('clienteModal'));
     clienteModal.hide();
     
@@ -201,23 +200,23 @@ $(document).on('click', '.seleccionar-btn-cliente', function(){
     $('body').removeClass('modal-open');
 });
 
-// Seleccionar producto - VERSIÓN CORREGIDA
+// Seleccionar producto
 $(document).on('click', '.seleccionar-btn', function(){
     const id_producto = $(this).data('id');
     $('#codigo').val(id_producto);
     
-    // Cerrar modal - FORMA COMPATIBLE CON BOOTSTRAP 5
+    // Cerrar modal 
     const verModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('verModal'));
     verModal.hide();
     
-    // Limpiar posibles overlays
+ 
     $('.modal-backdrop').remove();
     $('body').removeClass('modal-open');
     
     $('#codigo').focus();
 });
 
-// Eliminar producto de la venta temporal - VERSIÓN MEJORADA
+
 $(document).on('click', '.delete-btn', function() {
     const id = $(this).data('id');
     if (id) {
@@ -267,7 +266,7 @@ $(document).on('click', '.delete-btn', function() {
     }
 });
 
-// Buscar producto por código (Enter) - VERSIÓN MEJORADA
+// Buscar producto por código enter
 $(document).ready(function() {
     $('#codigo').focus();
     
@@ -346,10 +345,10 @@ $(document).on('click', '.edit-btn', function() {
             
             $.ajax({
                 url: "{{url('/admin/ventas/create/tmp')}}/"+id,
-                type: 'POST', // Mantenemos POST pero con _method
+                type: 'POST', 
                 data: {
                     _token: '{{ csrf_token() }}',
-                    _method: 'PUT', // Especificamos que es PUT
+                    _method: 'PUT', 
                     cantidad: nuevaCantidad
                 },
                 beforeSend: function() {
@@ -381,11 +380,131 @@ $(document).on('click', '.edit-btn', function() {
         }
     });
 });
+
+
+// CONFIRMACIÓN DE VENTA 
+document.addEventListener('DOMContentLoaded', function() {
+    const formVenta = document.getElementById('form_venta');
+    
+    formVenta.addEventListener('submit', function(e) {
+        e.preventDefault(); 
+        const totalVentaInput = document.querySelector('input[name="precio_total"]');
+        const totalVenta = totalVentaInput ? parseFloat(totalVentaInput.value) : 0;
+     
+        const clienteNombre = document.getElementById('nombre_cliente_select').value;
+        const metodoPago = document.getElementById('metodo_pago').value;
+        
+       
+        let productosResumen = '';
+        let totalItems = 0;
+        
+       
+        const tablaVenta = document.querySelector('.table-responsive table tbody');
+        const filasProductosVenta = tablaVenta ? tablaVenta.querySelectorAll('tr') : [];
+        
+        filasProductosVenta.forEach((fila, index) => {
+            const codigo = fila.cells[1]?.textContent?.trim() || '';
+            const nombreElement = fila.cells[3];
+            let nombre = '';
+            
+            // Extraer solo el nombre del producto (sin info de lote)
+            if (nombreElement) {
+                const textoCompleto = nombreElement.textContent || '';
+                // Eliminar la parte del lote si existe
+                nombre = textoCompleto.split('(Lote:')[0].trim();
+            }
+            
+            const cantidad = fila.cells[2]?.textContent?.trim() || '0';
+            const precioUnitario = fila.cells[4]?.textContent?.trim() || '';
+            const subtotal = fila.cells[5]?.textContent?.trim() || '';
+            
+            if (nombre && cantidad !== '0') {
+                productosResumen += `<div class="d-flex justify-content-between border-bottom pb-1 mb-1">
+                    <div>
+                        <small><strong>${nombre}</strong></small>
+                        <br>
+                        <small class="text-muted">Código: ${codigo} | Cant: ${cantidad}</small>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-success">${subtotal}</small>
+                        <br>
+                        <small class="text-muted">${precioUnitario} c/u</small>
+                    </div>
+                </div>`;
+                totalItems += parseInt(cantidad) || 0;
+            }
+        });
+        
+        // Si no hay productos, mostrar mensaje
+        if (productosResumen === '') {
+            productosResumen = '<div class="alert alert-warning py-2 text-center">No hay productos en la venta</div>';
+        }
+        
+        Swal.fire({
+            title: 'Confirmar Venta',
+            html: `
+                <div class="text-start">
+                    <div class="mb-3">
+                        <strong><i class="fas fa-user me-2"></i>Cliente:</strong><br>
+                        <span class="text-dark">${clienteNombre}</span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong><i class="fas fa-shopping-cart me-2"></i>Productos en la Venta:</strong>
+                        <div style="max-height: 200px; overflow-y: auto; background: #f8f9fa; padding: 10px; border-radius: 5px; font-size: 0.85rem;">
+                            ${productosResumen}
+                        </div>
+                        <div class="mt-2 text-center">
+                            <small class="text-muted"><strong>Total:</strong> ${totalItems} productos</small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong><i class="fas fa-credit-card me-2"></i>Método de Pago:</strong><br>
+                        <span class="badge bg-primary">${metodoPago.toUpperCase()}</span>
+                    </div>
+                    
+                    <div class="mb-2 text-center">
+                        <strong><i class="fas fa-money-bill-wave me-2"></i>Total a Pagar:</strong><br>
+                        <span class="h4 text-success">Bs ${totalVenta.toFixed(2)}</span>
+                    </div>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonColor: '#2dce89',
+            cancelButtonColor: '#f5365c',
+            confirmButtonText: '<i class="fas fa-check me-2"></i>Confirmar Venta',
+            cancelButtonText: '<i class="fas fa-times me-2"></i>Cancelar',
+            width: '650px',
+            customClass: {
+                popup: 'border-radius-1'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Mostrar loading mientras se procesa
+                Swal.fire({
+                    title: 'Procesando Venta...',
+                    text: 'Por favor espere',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                // Si confirma, enviar el formulario
+                formVenta.removeEventListener('submit', arguments.callee);
+                formVenta.submit();
+            }
+        });
+    });
+});
+
+
 </script>
 
 <div class="container-fluid mt--6">
     <div class="row">
-        <!-- Card Principal - Diseño Mejorado -->
+        <!-- Card Principal  -->
         <div class="card shadow-lg border-0 rounded-lg" style="height: auto; min-height: 0;">
             <div class="card-header bg-white border-bottom py-3">
                 <div class="d-flex justify-content-between align-items-center">
@@ -440,7 +559,7 @@ $(document).on('click', '.edit-btn', function() {
                         </div>
                     </div>
 
-                    <!-- Tabla de productos -->
+              
                     <!-- Tabla de productos -->
 <div class="table-responsive">
     <table class="table table-sm table-hover align-middle" style="font-size: 0.85rem;">
@@ -452,7 +571,7 @@ $(document).on('click', '.edit-btn', function() {
                 <th class="px-1" style="width: 35%;">Nombre</th>
                 <th class="text-end px-1" style="width: 10%;">Unit.</th>
                 <th class="text-end px-1" style="width: 12%;">Subtotal</th>
-                <th class="text-center px-1" style="width: 8%;">Acciones</th> <!-- Aumenté el ancho para dos botones -->
+                <th class="text-center px-1" style="width: 8%;">Acciones</th> 
             </tr>
         </thead>
         <tbody>
@@ -535,80 +654,246 @@ $(document).on('click', '.edit-btn', function() {
 
         <!-- Card 2: Datos del Cliente y Venta -->
         <div class="col-lg-4">
-            <div class="card shadow">
+    <div class="card shadow">
+        <div class="card-header bg-white border-bottom">
+            <h6 class="mb-0 text-primary font-weight-bold">
+                <i class="fas fa-user-tag me-2"></i>Datos del Cliente
+            </h6>
+        </div>
+
+        <div class="card-body">
+            <form action="{{ route('admin.ventas.create') }}" id="form_venta" method="POST">
+                @csrf
+                
+                <!-- Buscador de Cliente -->
+                <div class="mb-4">
+                    <label class="form-label">Seleccionar Cliente</label>
+                    <div class="d-flex gap-2 mb-3">
+                         @can('clientes.ver')
+                        <button type="button" class="btn btn-primary flex-grow-1" data-bs-toggle="modal" data-bs-target="#clienteModal">
+                            <i class="fas fa-search me-2"></i>Buscar Cliente
+                        </button>
+                        @endcan
+                         @can('clientes.crear')
+                        <button type="button" class="btn btn-success flex-grow-1" data-bs-toggle="modal" data-bs-target="#clientecrearModal">
+                            <i class="fas fa-plus me-2"></i>Nuevo
+                        </button>
+                        @endcan
+                    </div>
+                    
+                    
+                    <!-- Nombre y NIT en una sola línea -->
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label class="form-label">Nombre del Cliente</label>
+                            <input type="text" class="form-control" id="nombre_cliente_select" value="S/N" disabled>
+                            <input type="hidden" id="id_cliente" name="cliente_id">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">NIT/CI</label>
+                            <input type="text" class="form-control" id="nit_cliente_select" value="0" disabled>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fecha -->
+                <div class="mb-4">
+                    <label for="fecha" class="form-label">Fecha de Venta</label>
+                    <input 
+                        type="date" 
+                        class="form-control" 
+                        name="fecha" 
+                        value="{{ old('fecha', date('Y-m-d')) }}" 
+                        min="{{ date('Y-m-d') }}" 
+                        required
+                    >
+                    @error('fecha')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
+
                 
 
-                <div class="card-header bg-white border-bottom">
-                                        <h6 class="mb-0 text-white font-weight-bold">
-                                            <i class="fas fa-user-tag me-2"></i>Datos del Cliente
-                                        </h6>
-                                    </div>
-
-
-
-                <div class="card-body">
-                    <form action="{{ route('admin.ventas.create') }}" id="form_venta" method="POST">
-                        @csrf
-                        
-                        <!-- Buscador de Cliente -->
-                        <div class="mb-4">
-                            <label class="form-label">Seleccionar Cliente</label>
-                            <div class="d-flex gap-2 mb-3">
-                                <button type="button" class="btn btn-primary flex-grow-1" data-bs-toggle="modal" data-bs-target="#clienteModal">
-                                    <i class="fas fa-search me-2"></i>Buscar Cliente
-                                </button>
-                                <button type="button" class="btn btn-success flex-grow-1" data-bs-toggle="modal" data-bs-target="#clientecrearModal">
-                                    <i class="fas fa-plus me-2"></i>Nuevo
-                                </button>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label">Nombre del Cliente</label>
-                                <input type="text" class="form-control" id="nombre_cliente_select" value="S/N" disabled>
-                                <input type="hidden" id="id_cliente" name="cliente_id">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label">NIT/CI</label>
-                                <input type="text" class="form-control" id="nit_cliente_select" value="0" disabled>
+                <!-- Método de Pago  -->
+                <div class="mb-4 payment-section">
+                    <h6 class="mb-3 text-primary font-weight-bold">
+                        <i class="fas fa-money-bill-wave me-2"></i>Método de Pago
+                    </h6>
+                    
+                    <!-- Métodos de pago  -->
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <div class="card payment-method active p-2" data-method="efectivo" style="min-height: auto;">
+                                <div class="card-body text-center p-2">
+                                    <i class="fas fa-money-bill-wave text-success mb-1"></i>
+                                    <h6 class="card-title mb-0" style="font-size: 0.9rem;">Efectivo</h6>
+                                </div>
                             </div>
                         </div>
-
-                        <!-- Fecha -->
-                        <div class="mb-4">
-                            <label for="fecha" class="form-label">Fecha de Venta</label>
-                            <input 
-                                type="date" 
-                                class="form-control" 
-                                name="fecha" 
-                                value="{{ old('fecha', date('Y-m-d')) }}" 
-                                min="{{ date('Y-m-d') }}" 
-                                required
-                            >
-                            @error('fecha')
-                                <small class="text-danger">{{ $message }}</small>
-                            @enderror
+                        <div class="col-6">
+                            <div class="card payment-method p-2" data-method="qr" style="min-height: auto;">
+                                <div class="card-body text-center p-2">
+                                    <i class="fas fa-qrcode text-primary mb-1"></i>
+                                    <h6 class="card-title mb-0" style="font-size: 0.9rem;">QR</h6>
+                                </div>
+                            </div>
                         </div>
-
-
-                        <!-- Total -->
-                        <div class="mb-4">
-                            <label class="form-label">Total a Pagar</label>
-                            <input type="text" class="form-control form-control-lg text-center fw-bold text-white bg-success" 
-                                   value="Bs {{number_format($total_venta, 2)}}" readonly>
-                            <input type="hidden" name="precio_total" value="{{$total_venta}}">
+                    </div>
+                    
+                    <input type="hidden" id="metodo_pago" name="metodo_pago" value="efectivo">
+                    
+                    <!-- Campos para Efectivo -->
+                    <div id="efectivo-fields">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="monto_recibido" class="form-label">Monto Recibido (Bs)</label>
+                                <input type="number" class="form-control" id="monto_recibido" name="monto_recibido" min="0" step="0.01" placeholder="0.00">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Cambio</label>
+                                <div class="change-display" id="cambio_display">Bs 0.00</div>
+                                <input type="hidden" id="cambio" name="cambio" value="0">
+                            </div>
                         </div>
-
-                        <!-- Botón Registrar -->
-                        <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg py-3">
-                                <i class="fas fa-save me-2"></i>REGISTRAR VENTA
-                            </button>
+                    </div>
+                    
+                    <!-- Campos para QR -->
+                    <div id="qr-fields" style="display: none;">
+                        <div class="alert alert-info py-2">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <small>Confirme el pago QR antes de continuar</small>
                         </div>
-                    </form>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="pago_confirmado" name="pago_confirmado">
+                            <label class="form-check-label" for="pago_confirmado" style="font-size: 0.9rem;">
+                                Pago confirmado
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Total y Botón Registrar en una línea -->
+                <div class="row align-items-end mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label">Total a Pagar</label>
+                        <input type="text" class="form-control text-center fw-bold text-white bg-success" 
+                               value="Bs {{number_format($total_venta, 2)}}" readonly>
+                        <input type="hidden" name="precio_total" value="{{$total_venta}}">
+                    </div>
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-primary w-100 py-2">
+                            REGISTRAR VENTA
+                        </button>
+                    </div>
                 </div>
-            </div>
+                </div>
+            </form>
         </div>
+    </div>
+</div>
+
+<style>
+.payment-section {
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+}
+.change-display {
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 0.4rem;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+}
+.positive-change {
+    color: #28a745;
+}
+.negative-change {
+    color: #dc3545;
+}
+.payment-method {
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 2px solid #dee2e6;
+}
+.payment-method:hover {
+    transform: translateY(-1px);
+    border-color: #adb5bd;
+}
+.payment-method.active {
+    border-color: #0d6efd !important;
+    background-color: #f8f9fa;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const totalVenta = {{$total_venta}};
+    const metodoPagoInput = document.getElementById('metodo_pago');
+    const efectivoFields = document.getElementById('efectivo-fields');
+    const qrFields = document.getElementById('qr-fields');
+    const montoRecibidoInput = document.getElementById('monto_recibido');
+    const cambioDisplay = document.getElementById('cambio_display');
+    const cambioInput = document.getElementById('cambio');
+    const paymentMethods = document.querySelectorAll('.payment-method');
+    
+
+    paymentMethods.forEach(method => {
+        method.addEventListener('click', function() {
+            
+            paymentMethods.forEach(m => m.classList.remove('active'));
+     
+            this.classList.add('active');
+            
+            const selectedMethod = this.getAttribute('data-method');
+            metodoPagoInput.value = selectedMethod;
+            
+           
+            if (selectedMethod === 'efectivo') {
+                efectivoFields.style.display = 'block';
+                qrFields.style.display = 'none';
+            } else {
+                efectivoFields.style.display = 'none';
+                qrFields.style.display = 'block';
+            }
+        });
+    });
+    
+    // Calcular cambio cuando se ingresa el monto recibido
+    montoRecibidoInput.addEventListener('input', function() {
+        const montoRecibido = parseFloat(this.value) || 0;
+        const cambio = montoRecibido - totalVenta;
+        
+        cambioInput.value = cambio.toFixed(2);
+        
+        if (cambio >= 0) {
+            cambioDisplay.textContent = `Bs ${cambio.toFixed(2)}`;
+            cambioDisplay.className = 'change-display positive-change';
+        } else {
+            cambioDisplay.textContent = `Bs ${Math.abs(cambio).toFixed(2)} (Falta)`;
+            cambioDisplay.className = 'change-display negative-change';
+        }
+    });
+    
+    // Validación del formulario antes de enviar
+    document.getElementById('form_venta').addEventListener('submit', function(e) {
+        const metodoPago = metodoPagoInput.value;
+        
+        if (metodoPago === 'efectivo') {
+            const montoRecibido = parseFloat(montoRecibidoInput.value) || 0;
+            if (montoRecibido < totalVenta) {
+                e.preventDefault();
+                alert('El monto recibido es menor al total a pagar. Por favor, ingrese un monto suficiente.');
+                montoRecibidoInput.focus();
+            }
+        } else if (metodoPago === 'qr') {
+            const pagoConfirmado = document.getElementById('pago_confirmado').checked;
+            if (!pagoConfirmado) {
+                e.preventDefault();
+                alert('Debe confirmar que el pago se ha realizado correctamente antes de registrar la venta.');
+            }
+        }
+    });
+});
+</script>
     </div>
 </div>
 
@@ -662,23 +947,23 @@ $(document).on('click', '.edit-btn', function() {
                             <tr>
                                 <td class="text-xs font-weight-normal ps-4">{{ $loop->iteration }}</td>
                                <td class="text-center">
-    <button type="button"
-            class="btn btn-xs 
-            @if($producto->stock <= 0) btn-outline-secondary disabled @else btn-outline-primary @endif seleccionar-btn"
-            style="
-                width: 25px; 
-                height: 25px; 
-                display: flex; 
-                align-items: center; 
-                justify-content: center; 
-                padding: 0;  /* elimina espacio interno */
-            "
-            data-id="{{$producto->codigo}}"
-            data-nombre="{{$producto->nombre}}"
-            @if($producto->stock <= 0) disabled @endif>
-        <i class="fas fa-check-circle"></i>
-    </button>
-</td>
+                                    <button type="button"
+                                            class="btn btn-xs 
+                                            @if($producto->stock <= 0) btn-outline-secondary disabled @else btn-outline-primary @endif seleccionar-btn"
+                                            style="
+                                                width: 25px; 
+                                                height: 25px; 
+                                                display: flex; 
+                                                align-items: center; 
+                                                justify-content: center; 
+                                                padding: 0;  /* elimina espacio interno */
+                                            "
+                                            data-id="{{$producto->codigo}}"
+                                            data-nombre="{{$producto->nombre}}"
+                                            @if($producto->stock <= 0) disabled @endif>
+                                        <i class="fas fa-check-circle"></i>
+                                    </button>
+                                </td>
 
 
 
@@ -702,24 +987,24 @@ $(document).on('click', '.edit-btn', function() {
                                 </td>
 
 
-@php
-    // ANTES: Tomaba el último lote
-    // $lote = $producto->lotes->sortByDesc('id')->first();
-    
-    // AHORA: Toma el primer lote disponible (más antiguo primero - PEPS)
-    $lote = $producto->lotes()
-                     ->where('cantidad', '>', 0)
-                     ->orderBy('fecha_ingreso', 'asc')
-                     ->orderBy('id', 'asc')
-                     ->first();
-@endphp
-<td class="text-end text-xs font-weight-bold text-primary">
-    @if($lote)
-        Bs {{ number_format($lote->precio_venta, 2) }}
-    @else
-        <span class="text-muted">N/A</span>
-    @endif
-</td>
+                                    @php
+                                        
+                                        // $lote = $producto->lotes->sortByDesc('id')->first();
+                                        
+                                        // Toma el primer lote disponible (más antiguo primero - PEPS)
+                                        $lote = $producto->lotes()
+                                                        ->where('cantidad', '>', 0)
+                                                        ->orderBy('fecha_ingreso', 'asc')
+                                                        ->orderBy('id', 'asc')
+                                                        ->first();
+                                    @endphp
+                                    <td class="text-end text-xs font-weight-bold text-primary">
+                                        @if($lote)
+                                            Bs {{ number_format($lote->precio_venta, 2) }}
+                                        @else
+                                            <span class="text-muted">N/A</span>
+                                        @endif
+                                    </td>
 
 
 
@@ -759,7 +1044,6 @@ $(document).on('click', '.edit-btn', function() {
 </style>
 
 <!-- Modal Clientes -->
-
 <div class="modal fade" id="clienteModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog ">
         <div class="modal-content border-0 shadow-lg">
@@ -820,8 +1104,7 @@ $(document).on('click', '.edit-btn', function() {
         </div>
     </div>
 </div>
-
-<!-- Modal Crear Cliente -->
+<!--modal crear clientes-->
 <div class="modal fade" id="clientecrearModal" tabindex="-1" aria-labelledby="clientecrearModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -833,8 +1116,16 @@ $(document).on('click', '.edit-btn', function() {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="nombre_cliente">Nombre</label>
-                            <input type="text" class="form-control" id="nombre_cliente" value="{{ old('nombre_cliente') }}">
+                            <label for="nombre_cliente" class="form-label">Nombre completo *</label>
+                            <input type="text" class="form-control" id="nombre_cliente" 
+                                   name="nombre_cliente"
+                                   placeholder="Ej: Juan Pérez García" 
+                                   minlength="3" 
+                                   maxlength="100"
+                                   onkeypress="return soloLetras(event)"
+                                   required
+                                   value="{{ old('nombre_cliente') }}">
+                            
                             @error('nombre_cliente')
                                 <small class="text-danger">{{$message}}</small>
                             @enderror
@@ -843,8 +1134,16 @@ $(document).on('click', '.edit-btn', function() {
 
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="nit_ci">NIT/CI</label>
-                            <input type="text" class="form-control" id="nit_ci" value="{{ old('nit_ci') }}">
+                            <label for="nit_ci" class="form-label">NIT/CI *</label>
+                            <input type="text" class="form-control" id="nit_ci" 
+                                   name="nit_ci"
+                                   placeholder="Ej: 123456789" 
+                                   minlength="5" 
+                                   maxlength="15"
+                                   onkeypress="return soloNumeros(event)"
+                                   required
+                                   value="{{ old('nit_ci') }}">
+                            
                             @error('nit_ci')
                                 <small class="text-danger">{{$message}}</small>
                             @enderror
@@ -853,8 +1152,16 @@ $(document).on('click', '.edit-btn', function() {
 
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="celular">Celular</label>
-                            <input type="text" class="form-control" id="celular" value="{{ old('celular') }}">
+                            <label for="celular" class="form-label">Celular *</label>
+                            <input type="tel" class="form-control" id="celular" 
+                                   name="celular"
+                                   placeholder="Ej: 69123456" 
+                                   minlength="8" 
+                                   maxlength="10"
+                                   onkeypress="return soloNumeros(event)"
+                                   required
+                                   value="{{ old('celular') }}">
+                            
                             @error('celular')
                                 <small class="text-danger">{{$message}}</small>
                             @enderror
@@ -863,8 +1170,15 @@ $(document).on('click', '.edit-btn', function() {
 
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="email">Correo</label>
-                            <input type="email" class="form-control" id="email" value="{{ old('email') }}">
+                            <label for="email" class="form-label">Correo electrónico</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="email-prefix" 
+                                       placeholder="usuario"
+                                       maxlength="50">
+                                <span class="input-group-text">@gmail.com</span>
+                                <input type="hidden" id="email" name="email" value="{{ old('email') }}">
+                            </div>
+                            <div class="form-text">Escribe solo la primera parte del correo</div>
                             @error('email')
                                 <small class="text-danger">{{ $message }}</small>
                             @enderror
@@ -873,13 +1187,98 @@ $(document).on('click', '.edit-btn', function() {
                 </div>
             </div>
             <div class="modal-footer">
+                 @can('clientes.guardar')
                 <button type="button" onclick="guardar_cliente()" class="btn btn-primary">
                     <i class="fas fa-save"></i> Registrar
                 </button>
+                @endcan
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+// Función para solo letras y espacios
+function soloLetras(event) {
+    const charCode = event.which ? event.which : event.keyCode;
+    const charStr = String.fromCharCode(charCode);
+    
+    // Permitir letras, espacios, ñ, Ñ y caracteres acentuados
+    if (/[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/.test(charStr)) {
+        return true;
+    }
+    
+    event.preventDefault();
+    return false;
+}
+
+// Función para solo números
+function soloNumeros(event) {
+    const charCode = event.which ? event.which : event.keyCode;
+    const charStr = String.fromCharCode(charCode);
+    
+    // Solo permitir números
+    if (/[0-9]/.test(charStr)) {
+        return true;
+    }
+    
+    event.preventDefault();
+    return false;
+}
+
+// Función para actualizar el email completo
+function actualizarEmailCompleto() {
+    const prefix = document.getElementById('email-prefix').value.trim();
+    const emailCompleto = prefix ? prefix + '@gmail.com' : '';
+    document.getElementById('email').value = emailCompleto;
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const emailPrefix = document.getElementById('email-prefix');
+    
+    emailPrefix.addEventListener('input', function() {
+        
+        this.value = this.value.replace(/[^a-zA-Z0-9.-]/g, '');
+        actualizarEmailCompleto();
+    });
+    
+    emailPrefix.addEventListener('blur', function() {
+        actualizarEmailCompleto();
+    });
+});
+</script>
+
+<style>
+.form-text {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+
+.form-control:valid,
+.form-control:invalid {
+    border-color: #ced4da; 
+}
+
+.form-control:focus:valid,
+.form-control:focus:invalid {
+    border-color: #b8bcc2ff; 
+    box-shadow: 0 0 0 0.2rem rgba(241, 243, 248, 1); 
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+
+</style>
+
+
+
 @endsection
 

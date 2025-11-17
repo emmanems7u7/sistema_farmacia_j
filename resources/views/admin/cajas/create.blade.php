@@ -4,7 +4,7 @@
     <div class="container-fluid mt--6">
         <div class="row">
             <div class="col">
-                <!-- Card Superior - Versión Blanca con Texto Negro -->
+                <!-- Card Superior  -->
                 <div class="card shadow-sm border-0 bg-white">
                     <div class="card-header border-0 bg-white">
                         <div class="d-flex align-items-center">
@@ -150,9 +150,9 @@
 
 @section('js')
     <script>
-        // Puedes agregar scripts adicionales aquí si necesitas
+     
         document.addEventListener('DOMContentLoaded', function () {
-            // Inicializar tooltips
+           
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);

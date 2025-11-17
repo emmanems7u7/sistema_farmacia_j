@@ -3,7 +3,7 @@
 @section('content')
 
  <!-- Carrusel de productos destacados -->
-    <!-- Carrusel de productos destacados -->
+ 
 <div id="productCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel">
     <div class="carousel-indicators">
         <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0" class="active"></button>
@@ -65,7 +65,7 @@
 }
 
 .carousel-item {
-    height: 400px; /* Altura para desktop */
+    height: 400px; 
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -140,14 +140,14 @@
     }
 }
 
-/* Ajustes para tablets */
+
 @media (min-width: 769px) and (max-width: 991px) {
     .carousel-item {
         height: 300px !important;
     }
 }
 
-/* Estilos para desktop (mantenemos los originales) */
+
 @media (min-width: 992px) {
     .carousel-item {
         height: 400px !important;
@@ -164,7 +164,7 @@
 <div style="margin: 0 30px;"> 
     <!-- Filtro de categoría -->
    <div style="margin: 0 30px;"> 
-    <!-- FILTRO DE CATEGORÍA -->
+    
     @if(request()->has('categoria'))
     <div class="row mb-2">
         <div class="col-12">
@@ -182,7 +182,7 @@
     </div>
     @endif
 
-    <!-- 🖥️ VERSIÓN ESCRITORIO (visible en pantallas grandes) -->
+    <!-- VERSIÓN ESCRITORIO -->
     <div class="d-none d-md-flex flex-wrap justify-content-center gap-3 mb-4 px-3 py-4 rounded-4"
          style="background: rgba(245,245,245,0.8);">
         @foreach($categorias as $cat)
@@ -254,7 +254,7 @@
         @endforeach
     </div>
 
-    <!-- 📱 VERSIÓN MÓVIL (carrusel automático) -->
+    <!--  VERSIÓN MÓVIL -->
     <div id="categoriasCarousel" class="carousel slide d-md-none" data-bs-ride="carousel" data-bs-interval="2500">
       <div class="carousel-inner">
         @foreach($categorias->chunk(3) as $index => $grupo)
@@ -386,7 +386,7 @@
             border-left: 6px solid #189ab4;
         ">
             <div class="card-body p-4 text-center position-relative">
-                <!-- Efecto de burbujas decorativas -->
+                <!-- Efecto de burbujas  -->
                 <div class="position-absolute top-0 start-0 w-100 h-100 opacity-20">
                     <div style="
                         position: absolute;
@@ -486,11 +486,7 @@
                         <strong>Bs {{ number_format($producto->precio_minimo, 2) }}</strong>
                     </div>
                     
-                    <div class="product-meta d-flex justify-content-between align-items-center">
-                        <span class="stock-badge {{ $producto->stock > 10 ? 'in-stock' : ($producto->stock > 0 ? 'low-stock' : 'no-stock') }}">
-                            {{ $producto->stock }}u disponible{{ $producto->stock != 1 ? 's' : '' }}
-                        </span>
-                    </div>
+                   
                 </div>
 
                 <!-- Botón de acción -->
@@ -531,7 +527,7 @@
 
 <!-- Encabezado de categoría -->
 <div class="d-flex justify-content-between align-items-center mb-3" style="border-bottom: 2px solid #eee; padding-bottom: 8px;">
-    <!-- Nombre de categoría y badge (izquierda) -->
+    
     <div class="d-flex align-items-center">
         <h3 class="mb-0" style="font-size: 1.25rem;">
             {{ $categoria->nombre ?? 'Sin categoría' }}
@@ -541,7 +537,7 @@
         </span>
     </div>
     
-    <!-- Botón Ver Más (derecha) -->
+
     @if($cantidadProductos > 6)
     <a href="{{ route('admin.catalogo.categoria', $categoria->id) }}" 
        class="btn-ver-mas position-relative overflow-hidden">
@@ -631,7 +627,7 @@
          @foreach($productosMostrar as $producto)
     <div class="col p-2">
         <div class="card h-100 border-0 product-card @if($producto->stock == 0) out-of-stock @endif">
-            <!-- Contenedor de imagen con efecto hover -->
+         
             <div class="product-image-container position-relative overflow-hidden">
               
                 
@@ -678,7 +674,7 @@
     </div>
 
 <style>
-    /* Estilos generales de la tarjeta */
+ 
     .product-card {
         border-radius: 12px !important;
         transition: all 0.3s ease;
@@ -832,7 +828,6 @@
         cursor: not-allowed;
     }
     
-    /* Efecto de pulso para el botón de ver */
     @keyframes pulse {
         0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4); }
         70% { box-shadow: 0 0 0 8px rgba(40, 167, 69, 0); }
@@ -843,28 +838,28 @@
         animation: pulse 1.5s infinite;
     }
 
-/* SOLO para pantallas móviles */
+
 @media (max-width: 768px) {
-  /* Contenedor principal de productos */
+ 
   .row.row-cols-2.row-cols-sm-3.row-cols-md-4.row-cols-lg-6.g-2 {
     display: flex !important;
     flex-wrap: nowrap !important;
-    overflow-x: auto !important; /* ✅ permite scroll horizontal */
+    overflow-x: auto !important; 
     overflow-y: hidden;
     gap: 0.8rem;
     padding: 10px;
-    scroll-snap-type: x mandatory; /* para un scroll suave */
-    -webkit-overflow-scrolling: touch; /* hace más fluido el scroll en iOS */
+    scroll-snap-type: x mandatory; 
+    -webkit-overflow-scrolling: touch; 
   }
 
-  /* Cada producto */
+ 
   .row.row-cols-2.row-cols-sm-3.row-cols-md-4.row-cols-lg-6.g-2 > .col {
-    flex: 0 0 auto !important; /* evita que se estiren */
-    width: 50% !important; /* ancho de cada producto */
-    scroll-snap-align: center; /* hace que “salten” suavemente */
+    flex: 0 0 auto !important; 
+    width: 50% !important; 
+    scroll-snap-align: center; 
   }
 
-  /* Estilo del scrollbar */
+  
   .row.row-cols-2.row-cols-sm-3.row-cols-md-4.row-cols-lg-6.g-2::-webkit-scrollbar {
     height: 8px;
   }
@@ -933,7 +928,7 @@ $(document).ready(function() {
 @endsection
 
 <style>
-    /* Estilos para las cards */
+ 
     .card {
         transition: all 0.2s ease;
     }
@@ -942,7 +937,6 @@ $(document).ready(function() {
         box-shadow: 0 5px 10px rgba(0,0,0,0.1) !important;
     }
     
-    /* Responsive para 6 columnas */
     @media (min-width: 1200px) {
         .row-cols-lg-6 > * {
             flex: 0 0 16.666667%;

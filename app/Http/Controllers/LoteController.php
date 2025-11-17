@@ -212,7 +212,7 @@ class LoteController extends Controller
                         ],
                         'fill' => [
                             'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                            'startColor' => ['rgb' => '3498DB'] // Azul
+                            'startColor' => ['rgb' => '3498DB'] 
                         ],
                         'alignment' => [
                             'horizontal' => 'center',
@@ -306,19 +306,76 @@ class LoteController extends Controller
         return Response::stream($callback, 200, $headers);
     }
 
-    // Métodos básicos (puedes implementarlos según necesites)
+
     public function create()
     { /* ... */
     }
     public function show($id)
-    { /* ... */
+{
+    try {
+        // Cargar el lote con las relaciones necesarias
+        $lote = Lote::with(['producto' => function($query) {
+            $query->select('id', 'nombre', 'codigo');
+        }])->findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $lote->id,
+                'numero_lote' => $lote->numero_lote,
+                'cantidad' => $lote->cantidad,
+                'fecha_ingreso' => $lote->fecha_ingreso,
+                'fecha_vencimiento' => $lote->fecha_vencimiento,
+                'precio_compra' => $lote->precio_compra,
+                'precio_compra_unitario' => $lote->precio_compra_unitario,
+                'precio_venta' => $lote->precio_venta,
+                'descripcion' => $lote->descripcion,
+                'producto' => [
+                    'id' => $lote->producto->id,
+                    'nombre' => $lote->producto->nombre,
+                    'codigo' => $lote->producto->codigo
+                ]
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Lote no encontrado'
+        ], 404);
     }
+}
     public function edit($id)
     { /* ... */
     }
     public function update(Request $request, $id)
-    { /* ... */
+{
+    try {
+        $lote = Lote::findOrFail($id);
+        
+        $request->validate([
+            'numero_lote' => 'required|string|max:50',
+            'cantidad' => 'required|integer|min:1',
+            'fecha_ingreso' => 'required|date',
+            'fecha_vencimiento' => 'nullable|date',
+            'precio_compra' => 'required|numeric|min:0',
+            'precio_compra_unitario' => 'required|numeric|min:0',
+            'precio_venta' => 'required|numeric|min:0',
+        ]);
+
+        $lote->update($request->all());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Lote actualizado correctamente'
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al actualizar el lote: ' . $e->getMessage()
+        ], 500);
     }
+}
     public function destroy($id)
     { /* ... */
     }

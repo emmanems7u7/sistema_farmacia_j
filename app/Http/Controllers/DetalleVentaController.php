@@ -29,22 +29,22 @@ class DetalleVentaController extends Controller
      */
     public function store(Request $request)
     {
-        // Buscar el producto según el código
+        
         $producto = Producto::where('codigo', $request->codigo)->first();
         $venta_id = $request->id_venta;
     
         if ($producto) {
-            // Verificar si hay suficiente stock
+            
             if ($producto->stock < $request->cantidad) {
                 return response()->json(['success' => false, 'message' => 'No hay suficiente stock']);
             }
     
-            // Verificar si el producto ya está en la venta
+           
             $detalle_venta_existe = DetalleVenta::where('producto_id', $producto->id)
                                                   ->where('venta_id', $venta_id)
                                                   ->first();
     
-            // Si ya existe, actualizar la cantidad
+           
             if ($detalle_venta_existe) {
                 $detalle_venta_existe->cantidad += $request->cantidad;
                 $detalle_venta_existe->save();
@@ -54,7 +54,7 @@ class DetalleVentaController extends Controller
     
                 return response()->json(['success' => true, 'message' => 'Cantidad del producto actualizada']);
             } else {
-                // Si no existe, crear un nuevo detalle de venta
+                
                 $detalle_venta = new DetalleVenta();
                 $detalle_venta->cantidad = $request->cantidad;
                 $detalle_venta->venta_id = $venta_id;
@@ -108,7 +108,7 @@ class DetalleVentaController extends Controller
             $producto->save();
         
        
-        DetalleVenta::destroy($id); // Buscar el usuario por ID
+        DetalleVenta::destroy($id); 
       
 
         return response()->json(['success'=>true]);

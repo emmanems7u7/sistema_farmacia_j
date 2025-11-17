@@ -9,7 +9,7 @@
         .header h1 { margin: 0; color: #2c3e50; }
         .header p { margin: 5px 0; color: #7f8c8d; }
         .summary { background: #f8f9fa; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
-        .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; } /* Cambié a 2 columnas */
+        .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; } 
         .summary-item { text-align: center; padding: 10px; }
         .summary-value { font-size: 24px; font-weight: bold; color: #2c3e50; }
         .summary-label { font-size: 14px; color: #7f8c8d; }
@@ -42,7 +42,7 @@
                 <div class="summary-value">Bs {{ number_format($totalEgresos, 2) }}</div>
                 <div class="summary-label">TOTAL GASTADO</div>
             </div>
-            <!-- Eliminé la columna de productos -->
+          
         </div>
     </div>
 

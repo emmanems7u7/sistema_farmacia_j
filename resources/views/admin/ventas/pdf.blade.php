@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>reporte de venta - {{$sucursal->nombre}}</title>
     <style>
-        /* Reset completo para impresión térmica */
+      
         body, html {
             width: 80mm;
             margin: 0;
@@ -23,7 +23,7 @@
         .text-uppercase { text-transform: uppercase; }
         .text-small { font-size: 8pt; }
         
-        /* Encabezado con logo */
+       
         .header {
             display: flex;
             align-items: center;
@@ -60,13 +60,13 @@
             border-bottom: 1px dashed #000;
         }
         
-        /* Datos cliente */
+     
         .client-info {
             margin-bottom: 2mm;
             line-height: 1.3;
         }
         
-        /* Tabla de productos */
+       
         table {
             width: 100%;
             border-collapse: collapse;
@@ -111,20 +111,21 @@
             border-top: 1px dashed #000;
             margin: 2mm 0;
         }
+
+        /* Información de pago */
+        .payment-details {
+            margin-top: 2mm;
+            line-height: 1.3;
+        }
     </style>
 </head>
 <body>
 
 <!-- Encabezado con logo -->
 <div class="header">
-
-
-
-    <h2 class=" text-center">Farmacia Mariel</h2>
+    <h2 class="text-center">Farmacia Mariel</h2>
     <div class="header-text">
-        
         <div class="company-info">
-            
             Tel: {{$sucursal->telefono}}<br>
             {{$sucursal->direccion}}
         </div>
@@ -156,7 +157,6 @@ $meses = [
 $fecha_formateada = str_replace(array_keys($meses), array_values($meses), $fecha_formateada);
 ?>
 
-<!-- Datos del cliente (con validación) -->
 <div class="client-info">
     @if(isset($venta->cliente))
     <div class="text-bold">Cliente: {{$venta->cliente->nombre_cliente ?? 'SIN NOMBRE'}}</div>
@@ -170,8 +170,6 @@ $fecha_formateada = str_replace(array_keys($meses), array_values($meses), $fecha
 
 <div class="divider"></div>
 
-<!-- Detalle de la venta -->
-<!-- Detalle de la venta -->
 <!-- Detalle de la venta -->
 <table>
     <thead>
@@ -219,20 +217,48 @@ $fecha_formateada = str_replace(array_keys($meses), array_values($meses), $fecha
 </table>
 
 <!-- Información de pago -->
-
-
 <div class="payment-info">
     <div class="text-bold">Total a pagar: Bs {{ number_format($total, 2, '.', ',') }}</div>
     <div>Son: {{ $literal }}</div>
 </div>
 
+<!-- Método de pago y monto recibido 
 
+<div class="payment-details">
+    <div class="divider"></div>
+    <div class="text-bold">Información de Pago:</div>
+    
+    @if(session('metodo_pago'))
+        <div>Método de pago: 
+            @if(session('metodo_pago') == 'efectivo')
+                EFECTIVO
+            @elseif(session('metodo_pago') == 'qr')
+                PAGO QR
+            @else
+                {{ strtoupper(session('metodo_pago')) }}
+            @endif
+        </div>
+    @endif
+    
+    @if(session('monto_recibido') && session('monto_recibido') > 0)
+        <div>Monto recibido: Bs {{ number_format(session('monto_recibido'), 2, '.', ',') }}</div>
+    @endif
+    
+    @if(session('cambio') && session('cambio') >= 0)
+        <div>Cambio: Bs {{ number_format(session('cambio'), 2, '.', ',') }}</div>
+    @elseif(session('cambio') && session('cambio') < 0)
+        <div>Falta: Bs {{ number_format(abs(session('cambio')), 2, '.', ',') }}</div>
+    @endif
+    
+    @if(session('metodo_pago') == 'qr')
+        <div>Estado: PAGO CONFIRMADO</div>
+    @endif
+</div>--->
 
 <!-- Pie de página -->
 <div class="footer">
     {{date('d/m/Y H:i:s')}}<br>
     ¡Gracias por su compra!<br>
-   
 </div>
 
 </body>

@@ -26,10 +26,10 @@ class SucursalController extends Controller
     {
 
 
-        // Obtén todas las sucursales
+        
         $sucursals = Sucursal::all();
 
-        // Retorna la vista y envía la variable
+      
         return view('admin.sucursals.index', compact('sucursals'));
     }
 
@@ -133,7 +133,7 @@ class SucursalController extends Controller
 
     public function destroy($id)
     {
-        sucursal::destroy($id); // Buscar el usuario por ID
+        sucursal::destroy($id); 
       
 
         // Redirigir al índice con un mensaje de éxito
@@ -144,7 +144,7 @@ class SucursalController extends Controller
 
 
 
-  public function generarReporte(Request $request) // Elimina el parámetro $tipo
+  public function generarReporte(Request $request) 
 {
     $request->validate([
         'tipo' => 'required|in:pdf,excel,csv,print'
