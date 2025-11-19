@@ -14,77 +14,80 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        /*
+                    $Sucursal=Sucursal::create([
 
-            $Sucursal=Sucursal::create([
-                
-                'nombre'    => 'FARMACIA MARIEL',
-                'direccion' => 'ZONA VINO TINTO AV BALTAZAR',
-                'telefono'  => '75260345',
-                'email'     => 'mariel@gmail.com',
-                'imagen'    => 'assets/img/logofarmacia.jpeg',
-            ]);
-        
-                User::factory()->create([
-                    'name' => 'admin',
-                    'email' => 'mariel@gmail.com',
-                    'password' => Hash::make('1'),
-                    'sucursal_id'=>$Sucursal->id,
-                ]);
+                        'nombre'    => 'FARMACIA MARIEL',
+                        'direccion' => 'ZONA VINO TINTO AV BALTAZAR',
+                        'telefono'  => '75260345',
+                        'email'     => 'mariel@gmail.com',
+                        'imagen'    => 'assets/img/logofarmacia.jpeg',
+                    ]);
 
-                //Contenido minimo para levantar sistema
+                        User::factory()->create([
+                            'name' => 'admin',
+                            'email' => 'mariel@gmail.com',
+                            'password' => Hash::make('1'),
+                            'sucursal_id'=>$Sucursal->id,
+                        ]);
 
-                $this->call(class: RolesPermissionsSeeder::class);
-                $this->call(UserSeeder::class);
-                //$this->call(class: CategoriaSeeeder::class);
-                //$this->call(CatalogoSeeder::class);
-                $this->call(PermissionSeeder::class);
-                $this->call(ConfiguracionSeeder::class);
-                $this->call(ConfCorreoSeeder::class);
-                $this->call(SeccionesSeeder::class);
-                $this->call(MenusSeeder::class);
-                $this->call(ConfiguracionCredencialesSeeder::class);
+                        //Contenido minimo para levantar sistema
 
-                // Contenido minimo para levantar sistema
+                        $this->call(class: RolesPermissionsSeeder::class);
+                        $this->call(UserSeeder::class);
+                        //$this->call(class: CategoriaSeeeder::class);
+                        //$this->call(CatalogoSeeder::class);
+                        $this->call(PermissionSeeder::class);
+                        $this->call(ConfiguracionSeeder::class);
+                        $this->call(ConfCorreoSeeder::class);
+                        $this->call(SeccionesSeeder::class);
+                        $this->call(MenusSeeder::class);
+                        $this->call(ConfiguracionCredencialesSeeder::class);
+
+                        // Contenido minimo para levantar sistema
 
 
 
-                // Seeders creados automaticamente 20-08-2025
+                        // Seeders creados automaticamente 20-08-2025
 
-                // SECCION
-                $this->call(Generado_SeederSeccion_20250820::class);
+                        // SECCION
+                        $this->call(Generado_SeederSeccion_20250820::class);
 
-                // FIN SECCION
+                        // FIN SECCION
 
+
+                        // MENU
+                        $this->call(Generado_SeederMenu_20250820::class);
+
+                        // FIN MENU
+
+                        // PERMISOS
+                        $this->call(Generado_SeederPermisos_20250820::class);
+
+                        // FIN PERMISOS
+
+
+                        // Fin Seeders creados automaticamente 20-08-2025
+
+
+
+
+                // Seeders creados automaticamente 24-08-2025
 
                 // MENU
-                $this->call(Generado_SeederMenu_20250820::class);
+                $this->call(Generado_SeederMenu_20250824::class);
 
                 // FIN MENU
 
                 // PERMISOS
-                $this->call(Generado_SeederPermisos_20250820::class);
+                $this->call(Generado_SeederPermisos_20250824::class);
 
                 // FIN PERMISOS
 
-
-                // Fin Seeders creados automaticamente 20-08-2025
-
+                // Fin Seeders creados automaticamente 24-08-2025
 
 
-        
-        // Seeders creados automaticamente 24-08-2025
-
-        // MENU
-        $this->call(Generado_SeederMenu_20250824::class);
-
-        // FIN MENU
-
-        // PERMISOS
-        $this->call(Generado_SeederPermisos_20250824::class);
-
-        // FIN PERMISOS
-
-        // Fin Seeders creados automaticamente 24-08-2025
+                */
 
         // Seeders creados automaticamente 12-11-2025
         // PERMISOS
