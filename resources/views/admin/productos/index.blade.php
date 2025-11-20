@@ -38,7 +38,7 @@
                                             <div class="stat-item mr-4 mb-2 mb-md-0">
                                                 <span class="badge badge-light text-orange">
                                                     
-                                                    <span class="font-weight-bold">{{ count($productos) }}</span> productos
+                                                    <span class="font-weight-bold">{{ $productos->total() }}</span> productos
                                                     registrados
                                                 </span>
                                             </div>
@@ -115,6 +115,36 @@
                     .text-orange {
                         color: #fd7e14;
                     }
+
+
+                    /* Estilos para la paginación */
+.pagination {
+    margin-bottom: 0;
+}
+
+.page-link {
+    color: #5e72e4;
+    border: 1px solid #dee2e6;
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+}
+
+.page-item.active .page-link {
+    background-color: #5e72e4;
+    border-color: #5e72e4;
+    color: white;
+}
+
+.page-link:hover {
+    color: #324cdd;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    background-color: #f8f9fa;
+}
                 </style>
             </div>
 
@@ -202,13 +232,13 @@
 
 let productosEnOtrasCategorias = [];
 
-// Función para obtener los productos
+
+
+// Función para obtener los productos (actualizada para paginación)
 function obtenerProductos() {
     const container = document.getElementById('productosContainer');
-   
     const cards = container.querySelectorAll('.col-xl-3.col-lg-4.col-md-6.col-6.mb-4.producto-card');
-    console.log(' Buscando productos con selector:', '.col-xl-3.col-lg-4.col-md-6.col-6.mb-4.producto-card');
-    console.log(' Productos encontrados:', cards.length);
+    console.log(' Productos encontrados en página actual:', cards.length);
     return cards;
 }
 
@@ -380,7 +410,7 @@ function buscarEnCategoria() {
 }
 
 function mostrarTodosLosProductos() {
-    console.log('👁️ Mostrando todos los productos');
+    console.log('Mostrando todos los productos');
     const cards = obtenerProductos();
     const messageContainer = document.getElementById('messageContainer');
 
@@ -405,7 +435,6 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log(' Inicializando sistema de búsqueda...');
     
-   
     setTimeout(function() {
         const searchInput = document.getElementById('searchInput');
         const categorySelect = document.getElementById('filterCategory');
@@ -414,20 +443,15 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Search input encontrado:', !!searchInput);
         console.log('Category select encontrado:', !!categorySelect);
         
-   
+        // EVENT LISTENER CRÍTICO PARA LA BÚSQUEDA
         if (searchInput) {
             searchInput.addEventListener('input', function() {
                 console.log(' Tecla presionada en búsqueda');
                 buscarEnCategoria();
             });
-            
-            searchInput.addEventListener('keyup', function() {
-                console.log(' Tecla liberada en búsqueda');
-                buscarEnCategoria();
-            });
         }
         
-       +
+        // Event listener para cambio de categoría
         if (categorySelect) {
             categorySelect.addEventListener('change', function() {
                 console.log(' Categoría cambiada');
@@ -435,9 +459,13 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
+        // Inicializar estado
         cambiarCategoria();
     }, 1000);
 });
+
+
+// document.addEventListener('DOMContentLoaded', function() { ... });
 
 
 
@@ -818,6 +846,110 @@ setTimeout(probarBusqueda, 3000);
 
     </div>
     </div>
+
+
+           <!-- PAGINACIÓN -->
+    <div class="card mt-4">
+        <div class="card-body py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Información de resultados -->
+                <div class="text-muted small">
+                    Mostrando <strong>{{ $productos->firstItem() ?? 0 }}</strong> a 
+                    <strong>{{ $productos->lastItem() ?? 0 }}</strong> de 
+                    <strong>{{ $productos->total() }}</strong> productos
+                </div>
+                
+                <!-- Navegación de páginas -->
+                <nav>
+                    <ul class="pagination mb-0">
+                        <!-- Página Anterior -->
+                        @if ($productos->onFirstPage())
+                            <li class="page-item disabled">
+                                <span class="page-link" aria-label="Previous">
+                                    <i class="fas fa-angle-left"></i>
+                                    <span class="sr-only">Anterior</span>
+                                </span>
+                            </li>
+                        @else
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $productos->previousPageUrl() }}" aria-label="Previous">
+                                    <i class="fas fa-angle-left"></i>
+                                    <span class="sr-only">Anterior</span>
+                                </a>
+                            </li>
+                        @endif
+
+                        <!-- Páginas Numeradas -->
+                        @php
+                            // Mostrar máximo 5 páginas alrededor de la actual
+                            $start = max(1, $productos->currentPage() - 2);
+                            $end = min($productos->lastPage(), $productos->currentPage() + 2);
+                            
+                            // Ajustar si estamos cerca del inicio
+                            if ($start == 1) {
+                                $end = min(5, $productos->lastPage());
+                            }
+                            
+                            // Ajustar si estamos cerca del final
+                            if ($end == $productos->lastPage()) {
+                                $start = max(1, $end - 4);
+                            }
+                        @endphp
+
+                        <!-- Mostrar primera página si no está en el rango -->
+                        @if ($start > 1)
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $productos->url(1) }}">1</a>
+                            </li>
+                            @if ($start > 2)
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                            @endif
+                        @endif
+
+                        <!-- Páginas del rango -->
+                        @for ($page = $start; $page <= $end; $page++)
+                            <li class="page-item {{ $page == $productos->currentPage() ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $productos->url($page) }}">{{ $page }}</a>
+                            </li>
+                        @endfor
+
+                        <!-- Mostrar última página si no está en el rango -->
+                        @if ($end < $productos->lastPage())
+                            @if ($end < $productos->lastPage() - 1)
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                            @endif
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $productos->url($productos->lastPage()) }}">{{ $productos->lastPage() }}</a>
+                            </li>
+                        @endif
+
+                        <!-- Página Siguiente -->
+                        @if ($productos->hasMorePages())
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $productos->nextPageUrl() }}" aria-label="Next">
+                                    <i class="fas fa-angle-right"></i>
+                                    <span class="sr-only">Siguiente</span>
+                                </a>
+                            </li>
+                        @else
+                            <li class="page-item disabled">
+                                <span class="page-link" aria-label="Next">
+                                    <i class="fas fa-angle-right"></i>
+                                    <span class="sr-only">Siguiente</span>
+                                </span>
+                            </li>
+                        @endif
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+    
+
 
     @foreach($productos as $producto)
 
@@ -1473,6 +1605,8 @@ setTimeout(probarBusqueda, 3000);
                     }
                 });
             </script>
+
+            
         </div>
     </div>
 </div>
@@ -1513,7 +1647,39 @@ setTimeout(probarBusqueda, 3000);
             background-color: rgba(40, 167, 69, 0.1);
             color: #28a745;
         }
+
+
+
+/* Estilos para la paginación */
+.pagination {
+    margin-bottom: 0;
+}
+
+.page-link {
+    color: #5e72e4;
+    border: 1px solid #dee2e6;
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+}
+
+.page-item.active .page-link {
+    background-color: #5e72e4;
+    border-color: #5e72e4;
+    color: white;
+}
+
+.page-link:hover {
+    color: #324cdd;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    background-color: #f8f9fa;
+}
     </style>
+
 
 @endsection
 

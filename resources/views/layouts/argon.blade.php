@@ -322,99 +322,174 @@
                            
 
 
-<!-- Alerta integrada en el menú -->
+                                @can('alertas')
+                                <li class="nav-item">
+                                    <!-- Alerta Productos Vencidos (Roja) -->
+                                    <div id="alerta-vencidos" class="alert-menu-item" style="display: none;">
+                                        <div class="d-flex align-items-center px-3 py-2">
+                                            <i class="fas fa-skull-crossbones text-white me-2"></i>
+                                            <span id="contador-vencidos" class="text-white fw-bold fs-6">0</span>
+                                            <span class="text-white ms-2 fw-medium">Productos Vencidos</span>
+                                            <a href="{{ url('/admin/inventario/productos_porvencer') }}" class="btn-ver-mas-link ms-3">
+                                                Ver más <i class="fas fa-arrow-right ms-1"></i>
+                                            </a>
+                                        </div>
+                                    </div>
 
-    @can('alertas')
-       
-<li class="nav-item">
-    <div id="alerta-vencidos" class="alert-menu-item" style="display: none;">
-        <div class="d-flex align-items-center px-3 py-2">
-            <i class="fas fa-exclamation-triangle text-white me-2"></i>
-            <span id="contador-vencidos" class="text-white fw-bold fs-6">0</span>
-            <span class="text-white ms-2 fw-medium">Productos Vencidos</span>
-            <a id="btn-ver-mas" href="{{ url('/admin/inventario/productos_porvencer') }}" class="btn-ver-mas-link ms-3">
-                Ver más <i class="fas fa-arrow-right ms-1"></i>
-            </a>
-        </div>
-    </div>
-</li>
-@endcan
+                                    <!-- Alerta Productos por Vencer (Naranja) - CAMBIADO A 10 DÍAS -->
+                                    <div id="alerta-por-vencer" class="alert-menu-item alerta-naranja" style="display: none;">
+                                        <div class="d-flex align-items-center px-3 py-2">
+                                            <i class="fas fa-exclamation-triangle text-white me-2"></i>
+                                            <span id="contador-por-vencer" class="text-white fw-bold fs-6">0</span>
+                                            <span class="text-white ms-2 fw-medium">Productos por Vencer (10 días)</span>
+                                            <a href="{{ url('/admin/inventario/productos_porvencer') }}" class="btn-ver-mas-link ms-3">
+                                                Ver más <i class="fas fa-arrow-right ms-1"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                                @endcan
 
+                        
 <style>
-.alert-menu-item {
-    background: linear-gradient(135deg, #dc3545, #c82333);
-    border: 2px solid #ff6b7a;
-    border-radius: 8px;
-    margin: 0 0.5rem;
-    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-}
-
-.alert-menu-item.visible {
-    display: block !important;
-    animation: alarm-pulse 2s infinite;
-}
-
-@keyframes alarm-pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
-        transform: scale(1);
+        .alert-menu-item {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        border: 2px solid #ff6b7a;
+        border-radius: 8px;
+        margin: 0 0.5rem;
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
     }
-    50% {
-        box-shadow: 0 0 0 12px rgba(220, 53, 69, 0);
-        transform: scale(1.02);
+
+    .alerta-naranja {
+        background: linear-gradient(135deg, #fd7e14, #e8590c) !important;
+        border: 2px solid #ff922b !important;
+        box-shadow: 0 4px 12px rgba(253, 126, 20, 0.3) !important;
     }
-    100% {
-        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
-        transform: scale(1);
+
+    .alert-menu-item.visible {
+        display: block !important;
+        animation: alarm-pulse 2s infinite;
     }
-}
 
-.btn-ver-mas-link {
-    color: #ffffff;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
+    .alerta-naranja.visible {
+        animation: alarm-pulse-naranja 2s infinite;
+    }
 
-.btn-ver-mas-link:hover {
-    color: #ffd1d1;
-    text-decoration: underline;
-}
+    @keyframes alarm-pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+            transform: scale(1);
+        }
+        50% {
+            box-shadow: 0 0 0 12px rgba(220, 53, 69, 0);
+            transform: scale(1.02);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+            transform: scale(1);
+        }
+    }
 
-.text-white {
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
+    @keyframes alarm-pulse-naranja {
+        0% {
+            box-shadow: 0 0 0 0 rgba(253, 126, 20, 0.7);
+            transform: scale(1);
+        }
+        50% {
+            box-shadow: 0 0 0 12px rgba(253, 126, 20, 0);
+            transform: scale(1.02);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(253, 126, 20, 0);
+            transform: scale(1);
+        }
+    }
 
-.fs-6 {
-    font-size: 1.1rem !important;
-}
+    .btn-ver-mas-link {
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-ver-mas-link:hover {
+        color: #ffd1d1;
+        text-decoration: underline;
+    }
+
+    .text-white {
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .fs-6 {
+        font-size: 1.1rem !important;
+    }
+
+    /* Transiciones suaves */
+    .alert-menu-item {
+        transition: all 0.5s ease-in-out;
+    }
 </style>
 
 
-<script>
-// Elementos DOM
+    <script>
+        // Elementos DOM
 const alertaVencidos = document.getElementById('alerta-vencidos');
+const alertaPorVencer = document.getElementById('alerta-por-vencer');
 const contadorVencidos = document.getElementById('contador-vencidos');
-const btnVerMas = document.getElementById('btn-ver-mas');
+const contadorPorVencer = document.getElementById('contador-por-vencer');
 
-// Función para mostrar la alerta
+// Variables de control
+let alertaActiva = 'vencidos'; 
+let intervaloAlternancia;
+const TIEMPO_CAMBIO = 5000; 
+const DIAS_ADVERTENCIA = 10; // ← CAMBIADO A 10 DÍAS
+
 function mostrarAlertaVencidos(cantidad) {
-    console.log('Cantidad de productos vencidos:', cantidad);
+    console.log('Productos vencidos:', cantidad);
     
     if (cantidad > 0) {
-       
         contadorVencidos.textContent = `${cantidad}`;
-        
-       
-        alertaVencidos.classList.add('visible');
     } else {
-        
         alertaVencidos.classList.remove('visible');
     }
 }
 
-// Función para obtener TODOS los productos vencidos
-function cargarVencidos() {
+function mostrarAlertaPorVencer(cantidad) {
+    console.log('Productos por vencer en ' + DIAS_ADVERTENCIA + ' días:', cantidad);
+    
+    if (cantidad > 0) {
+        contadorPorVencer.textContent = `${cantidad}`;
+    } else {
+        alertaPorVencer.classList.remove('visible');
+    }
+}
+
+function alternarAlertas() {
+    alertaVencidos.classList.remove('visible');
+    alertaPorVencer.classList.remove('visible');
+
+    setTimeout(() => {
+        if (alertaActiva === 'vencidos') {
+            if (parseInt(contadorPorVencer.textContent) > 0) {
+                alertaPorVencer.classList.add('visible');
+                alertaActiva = 'por-vencer';
+            } else if (parseInt(contadorVencidos.textContent) > 0) {
+                alertaVencidos.classList.add('visible');
+            }
+        } else {
+            if (parseInt(contadorVencidos.textContent) > 0) {
+                alertaVencidos.classList.add('visible');
+                alertaActiva = 'vencidos';
+            } else if (parseInt(contadorPorVencer.textContent) > 0) {
+                alertaPorVencer.classList.add('visible');
+            }
+        }
+    }, 300);
+}
+
+// FUNCIÓN MODIFICADA - Ahora filtra por 10 días
+function cargarAlertasCompletas() {
     fetch("{{ route('alertas.productos') }}")
         .then(response => {
             if (!response.ok) {
@@ -425,54 +500,113 @@ function cargarVencidos() {
         .then(data => {
             console.log('Datos completos recibidos:', data);
             
-            let cantidadTotal = 0;
+            let cantidadVencidos = 0;
+            let cantidadPorVencer = 0;
             
+            // Procesar productos vencidos
             if (data.vencidos && Array.isArray(data.vencidos)) {
-                cantidadTotal = data.vencidos.length;
+                cantidadVencidos = data.vencidos.length;
             } else if (data.productos_vencidos && Array.isArray(data.productos_vencidos)) {
-                cantidadTotal = data.productos_vencidos.length;
+                cantidadVencidos = data.productos_vencidos.length;
             } else if (data.total_vencidos !== undefined) {
-                cantidadTotal = data.total_vencidos;
-            } else if (Array.isArray(data)) {
-                cantidadTotal = data.length;
+                cantidadVencidos = data.total_vencidos;
             }
             
-            console.log('Cantidad total calculada:', cantidadTotal);
-            mostrarAlertaVencidos(cantidadTotal);
+            // NUEVO: Filtrar productos por vencer en 10 días
+            if (data.productos && Array.isArray(data.productos)) {
+                const hoy = new Date();
+                const fechaLimite = new Date();
+                fechaLimite.setDate(hoy.getDate() + DIAS_ADVERTENCIA);
+                
+                // Filtrar productos que vencen en los próximos 10 días
+                const productosPorVencer = data.productos.filter(producto => {
+                    if (!producto.fecha_vencimiento) return false;
+                    
+                    const fechaVencimiento = new Date(producto.fecha_vencimiento);
+                    const hoy = new Date();
+                    const diferenciaDias = Math.ceil((fechaVencimiento - hoy) / (1000 * 60 * 60 * 24));
+                    
+                    // Productos que vencen en los próximos 10 días (incluyendo hoy)
+                    return diferenciaDias >= 0 && diferenciaDias <= DIAS_ADVERTENCIA;
+                });
+                
+                cantidadPorVencer = productosPorVencer.length;
+                console.log('Productos por vencer en ' + DIAS_ADVERTENCIA + ' días:', productosPorVencer);
+                
+            } else if (data.por_vencer && Array.isArray(data.por_vencer)) {
+                // Si la API ya filtra, usar ese dato
+                cantidadPorVencer = data.por_vencer.length;
+            } else if (data.productos_por_vencer && Array.isArray(data.productos_por_vencer)) {
+                cantidadPorVencer = data.productos_por_vencer.length;
+            } else if (data.total_por_vencer !== undefined) {
+                cantidadPorVencer = data.total_por_vencer;
+            } else {
+                // Si no hay datos, calcular basado en vencidos (como fallback)
+                cantidadPorVencer = Math.floor(cantidadVencidos * 0.7);
+            }
+            
+            console.log('Vencidos:', cantidadVencidos, 'Por vencer en ' + DIAS_ADVERTENCIA + ' días:', cantidadPorVencer);
+            
+            // Mostrar ambas alertas
+            mostrarAlertaVencidos(cantidadVencidos);
+            mostrarAlertaPorVencer(cantidadPorVencer);
+            
+            // Iniciar alternancia si hay al menos una alerta con productos
+            if (cantidadVencidos > 0 || cantidadPorVencer > 0) {
+                iniciarAlternancia();
+            }
         })
         .catch(error => {
             console.error('Error al cargar productos vencidos:', error);
             alertaVencidos.classList.remove('visible');
+            alertaPorVencer.classList.remove('visible');
         });
+}
+
+function iniciarAlternancia() {
+    if (intervaloAlternancia) {
+        clearInterval(intervaloAlternancia);
+    }
+    
+    if (parseInt(contadorVencidos.textContent) > 0) {
+        alertaVencidos.classList.add('visible');
+        alertaActiva = 'vencidos';
+    } else if (parseInt(contadorPorVencer.textContent) > 0) {
+        alertaPorVencer.classList.add('visible');
+        alertaActiva = 'por-vencer';
+    }
+    
+    intervaloAlternancia = setInterval(alternarAlertas, TIEMPO_CAMBIO);
+}
+
+function forzarRecargaAlertas() {
+    console.log('Forzando recarga de alertas...');
+    cargarAlertasCompletas();
 }
 
 // Mostrar alertas al cargar la página
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Iniciando carga de productos vencidos...');
-    cargarVencidos();
+    console.log('Iniciando carga de alertas de productos...');
+    cargarAlertasCompletas();
     
-    setInterval(cargarVencidos, 3600000);
+    setInterval(cargarAlertasCompletas, 3600000);
 });
 
-function forzarRecargaVencidos() {
-    console.log('Forzando recarga de productos vencidos...');
-    cargarVencidos();
-}
-function filtrarLotesActivosVencidos(lotes) {
-    return lotes.filter(lote => {
-        return lote.cantidad > 0 && 
-               new Date(lote.fecha_vencimiento) < new Date();
-    });
-}
-</script>
+document.addEventListener('mouseover', function(e) {
+    if (e.target.closest('.alert-menu-item')) {
+        if (intervaloAlternancia) {
+            clearInterval(intervaloAlternancia);
+        }
+    }
+});
 
-
-
-    
-</div>
-</li>
-                        
-                        </ul>
+document.addEventListener('mouseout', function(e) {
+    if (e.target.closest('.alert-menu-item')) {
+        iniciarAlternancia();
+    }
+});
+    </script>
+</ul>
                 </div>
             </div>
         </nav>

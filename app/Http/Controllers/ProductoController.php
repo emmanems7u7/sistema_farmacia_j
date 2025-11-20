@@ -17,19 +17,23 @@ use PDF;
 use Illuminate\Support\Str;
 class ProductoController extends Controller
 {
-    public function index()
-    {
+   public function index()
+{
+    $breadcrumb = [
+        ['name' => 'Inicio', 'url' => route('home')],
+        ['name' => 'Productos', 'url' => route('admin.laboratorios.index')],
+    ];
+    
+    $productos = Producto::with(['categoria', 'laboratorio', 'lotes'])
+                        ->paginate(40);
+    
+    $categorias = Categoria::all();
+    $laboratorios = Laboratorio::all();
 
-        $breadcrumb = [
-            ['name' => 'Inicio', 'url' => route('home')],
-            ['name' => 'Productos', 'url' => route('admin.laboratorios.index')],
-        ];
-        $productos = Producto::with(['categoria', 'laboratorio', 'lotes'])->get();
-        $categorias = Categoria::all();
-        $laboratorios = Laboratorio::all();
+    return view('admin.productos.index', compact('breadcrumb', 'productos', 'categorias', 'laboratorios'));
+}
 
-        return view('admin.productos.index', compact('breadcrumb', 'productos', 'categorias', 'laboratorios'));
-    }
+    
 
     public function create()
     {

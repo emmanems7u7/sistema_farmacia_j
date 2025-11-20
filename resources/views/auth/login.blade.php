@@ -65,7 +65,7 @@
                             border-radius: 15px;
                             box-shadow: 0 10px 25px rgba(95, 87, 87, 0.5);
                         ">
-                            <!-- Encabezado con logo transparente -->
+                            <!-- Encabezado  -->
                             <div class="card-header bg-transparent text-center pt-4 pb-3">
                                 <div class="d-flex justify-content-center mb-3">
                                     <div style="
@@ -113,7 +113,7 @@
                                                        border-left: 0;
                                                        backdrop-filter: blur(5px);
                                                    "
-                                                   placeholder="usuario@ejemplo.com" 
+                                                   placeholder="usuario@gmail.com" 
                                                    value="{{ old('email') ?? '' }}" required>
                                         </div>
                                         @error('email') 
