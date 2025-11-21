@@ -324,7 +324,7 @@
 
                                 @can('alertas')
                                 <li class="nav-item">
-                                    <!-- Alerta Productos Vencidos (Roja) -->
+                                    <!-- Alerta Productos Vencidos  -->
                                     <div id="alerta-vencidos" class="alert-menu-item" style="display: none;">
                                         <div class="d-flex align-items-center px-3 py-2">
                                             <i class="fas fa-skull-crossbones text-white me-2"></i>
@@ -336,7 +336,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- Alerta Productos por Vencer (Naranja) - CAMBIADO A 10 DÍAS -->
+                                    <!-- Alerta Productos por Vencer  -->
                                     <div id="alerta-por-vencer" class="alert-menu-item alerta-naranja" style="display: none;">
                                         <div class="d-flex align-items-center px-3 py-2">
                                             <i class="fas fa-exclamation-triangle text-white me-2"></i>
@@ -352,12 +352,14 @@
 
                         
 <style>
-        .alert-menu-item {
+    .alert-menu-item {
         background: linear-gradient(135deg, #dc3545, #c82333);
         border: 2px solid #ff6b7a;
         border-radius: 8px;
         margin: 0 0.5rem;
         box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        
+        min-height: 54px; 
     }
 
     .alerta-naranja {
@@ -425,9 +427,17 @@
         font-size: 1.1rem !important;
     }
 
-    /* Transiciones suaves */
+ 
+    .nav-item:has(.alert-menu-item) {
+        min-height: 60px; 
+        display: flex;
+        align-items: center;
+    }
+
+  
     .alert-menu-item {
-        transition: all 0.5s ease-in-out;
+        transition: all 0.3s ease;
+        width: 100%;
     }
 </style>
 
@@ -443,7 +453,7 @@ const contadorPorVencer = document.getElementById('contador-por-vencer');
 let alertaActiva = 'vencidos'; 
 let intervaloAlternancia;
 const TIEMPO_CAMBIO = 5000; 
-const DIAS_ADVERTENCIA = 10; // ← CAMBIADO A 10 DÍAS
+const DIAS_ADVERTENCIA = 10; // ← CAMBIAR
 
 function mostrarAlertaVencidos(cantidad) {
     console.log('Productos vencidos:', cantidad);

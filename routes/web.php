@@ -39,7 +39,7 @@ Route::post('/change-password', [ChangePassword::class, 'update'])->middleware('
 
 //RUTAS PARA EJECUTAR ARTISAN EN PRODUCCION
 
-Route::middleware(['auth', 'can:ejecutar-artisan'])->group(function () {
+Route::middleware(['auth'])->group(function () {
 
     Route::get('/artisan-panel', [ArtisanController::class, 'verificacion'])->name('artisan.admin');
 
