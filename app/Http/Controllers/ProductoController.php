@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use PDF;
 use Illuminate\Support\Str;
 class ProductoController extends Controller
+
 {
    public function index()
 {
@@ -25,7 +26,7 @@ class ProductoController extends Controller
     ];
     
     $productos = Producto::with(['categoria', 'laboratorio', 'lotes'])
-                        ->paginate(200);
+                        ->paginate(250);
                         
     
     $categorias = Categoria::all();
