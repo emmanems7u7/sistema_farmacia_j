@@ -327,6 +327,7 @@ class ProductoController extends Controller
 
         return $pdf->download('reporte_productos_' . now()->format('YmdHis') . '.pdf');
     }
+    //generar
 
     private function generarExcel($productos)
     {
