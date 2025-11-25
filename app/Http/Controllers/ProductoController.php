@@ -27,7 +27,7 @@ class ProductoController extends Controller
     
     $productos = Producto::with(['categoria', 'laboratorio', 'lotes'])
                         ->paginate(250);
-                        
+                        //paginacion 
     
     $categorias = Categoria::all();
     $laboratorios = Laboratorio::all();
