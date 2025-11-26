@@ -509,84 +509,97 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 
     <!-- Modales para Editar -->
-    @foreach($clientes as $cliente)
-        <div class="modal fade" id="editModal{{ $cliente->id }}" tabindex="-1" role="dialog"
-            aria-labelledby="editModalLabel{{ $cliente->id }}" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content border-0 shadow-lg">
-                    <div class="modal-header bg-gradient-success text-white">
-                        <h5 class="modal-title text-white" id="editModalLabel{{ $cliente->id }}">
-                            <i class="fas fa-edit me-2"></i>Editar Cliente
-                        </h5>
-                        <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form action="{{url('/admin/clientes', $cliente->id) }}" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label for="nombre_cliente">Nombre del cliente</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                    <input type="text" class="form-control" value="{{$cliente->nombre_cliente}}"
-                                        name="nombre_cliente">
-                                </div>
-                                @error('nombre_cliente')
-                                    <small class="text-danger">{{$message}}</small>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="nit_ci">NIT/CI</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                                    <input type="text" class="form-control" value="{{$cliente->nit_ci}}" name="nit_ci">
-                                </div>
-                                @error('nit_ci')
-                                    <small class="text-danger">{{$message}}</small>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="celular">Celular</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
-                                    <input type="text" class="form-control" value="{{$cliente->celular}}" name="celular">
-                                </div>
-                                @error('celular')
-                                    <small class="text-danger">{{$message}}</small>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="email">Correo</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="text" class="form-control" value="{{$cliente->email}}" name="email">
-                                </div>
-                                @error('email')
-                                    <small class="text-danger">{{$message}}</small>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                <i class="fas fa-times me-1"></i> Cancelar
-                            </button>
-                             @can('clientes.actualizar')
-                            <button type="submit" class="btn bg-gradient-success text-white">
-                                <i class="fas fa-save me-1"></i> Actualizar
-                            </button>
-                            @endcan
-                        </div>
-                       
-                    </form>
+@foreach($clientes as $cliente)
+    <div class="modal fade" id="editModal{{ $cliente->id }}" tabindex="-1" role="dialog"
+        aria-labelledby="editModalLabel{{ $cliente->id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-gradient-success text-white">
+                    <h5 class="modal-title text-white" id="editModalLabel{{ $cliente->id }}">
+                        <i class="fas fa-edit me-2"></i>Editar Cliente
+                    </h5>
+                    <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
+                <form action="{{url('/admin/clientes', $cliente->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="nombre_cliente">Nombre del cliente</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control" 
+                                    value="{{ $cliente->nombre_cliente }}" 
+                                    name="nombre_cliente"
+                                    pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+"
+                                    oninput="this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '')">
+                            </div>
+                            @error('nombre_cliente')
+                                <small class="text-danger">{{$message}}</small>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nit_ci">NIT/CI</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                <input type="text" class="form-control" 
+                                    value="{{ $cliente->nit_ci }}" 
+                                    name="nit_ci"
+                                    pattern="[0-9]+"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                    maxlength="15">
+                            </div>
+                            @error('nit_ci')
+                                <small class="text-danger">{{$message}}</small>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="celular">Celular</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+                                <input type="text" class="form-control" 
+                                    value="{{ $cliente->celular }}" 
+                                    name="celular"
+                                    pattern="[0-9]+"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                    maxlength="8">
+                            </div>
+                            @error('celular')
+                                <small class="text-danger">{{$message}}</small>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Correo</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                <input type="text" class="form-control" value="{{ $cliente->email }}" name="email">
+                            </div>
+                            @error('email')
+                                <small class="text-danger">{{$message}}</small>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i> Cancelar
+                        </button>
+                        @can('clientes.actualizar')
+                        <button type="submit" class="btn bg-gradient-success text-white">
+                            <i class="fas fa-save me-1"></i> Actualizar
+                        </button>
+                        @endcan
+                    </div>
+                </form>
             </div>
         </div>
-    @endforeach
+    </div>
+@endforeach
+
     
 </style>
  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>

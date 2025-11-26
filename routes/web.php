@@ -533,6 +533,7 @@ Route::get('/admin/usuarios/reporte/{tipo}', [App\Http\Controllers\UsuarioContro
 Route::get('/admin/inventario/reporte_bajo_stock', [App\Http\Controllers\InventarioController::class, 'reporteBajoStock'])
     ->name('admin.inventario.reportebajo_stock');
 
+Route::get('/admin/inventario/reporte/pdf',  [App\Http\Controllers\InventarioController::class, 'reportePDF'])->name('admin.inventario.reporte_pdf');
 
 // Ruta para obtener productos vencidos o por vencer
 

@@ -1079,13 +1079,24 @@ document.addEventListener('DOMContentLoaded', function() {
                             <tr>
                                 <td class="text-xs font-weight-normal ps-4">{{ $loop->iteration }}</td>
                                 <td class="text-center">
-                                    <button type="button" class="btn btn-sm btn-outline-primary seleccionar-btn-cliente" 
-                                            data-id="{{$cliente->id}}" 
-                                            data-nit="{{$cliente->nit_ci}}" 
-                                            data-nombre_cliente="{{$cliente->nombre_cliente}}">
-                                        <i class="fas fa-check me-1"></i> 
-                                    </button>
-                                </td>
+    <!-- Botón Seleccionar -->
+    <button type="button" class="btn btn-sm btn-outline-primary seleccionar-btn-cliente" 
+            data-id="{{$cliente->id}}" 
+            data-nit="{{$cliente->nit_ci}}" 
+            title="Seleccionar cliente"
+            data-nombre_cliente="{{$cliente->nombre_cliente}}">
+        <i class="fas fa-check me-1"></i>
+    </button>
+
+    <!-- Botón Editar al lado del seleccionar -->
+    <button type="button" class="btn btn-sm btn-outline-success ms-1" 
+            data-bs-toggle="modal" 
+            title="Editar cliente"
+            data-bs-target="#editModal{{ $cliente->id }}">
+        <i class="fas fa-edit me-1"></i>
+    </button>
+</td>
+
                                 <td class="text-xs font-weight-normal">
                                     <strong>{{ $cliente->nombre_cliente }}</strong>
                                 </td>
@@ -1277,6 +1288,93 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 </style>
+
+<!-- Modales para Editar Clientes -->
+@foreach($clientes as $cliente)
+<div class="modal fade" id="editModal{{ $cliente->id }}" tabindex="-1" role="dialog"
+    aria-labelledby="editModalLabel{{ $cliente->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-success text-white">
+                <h5 class="modal-title text-white" id="editModalLabel{{ $cliente->id }}">
+                    <i class="fas fa-edit me-2"></i>Editar Cliente
+                </h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="editClienteForm{{ $cliente->id }}" action="{{ url('/admin/clientes', $cliente->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Nombre del cliente</label>
+                        <input type="text" class="form-control" value="{{ $cliente->nombre_cliente }}" name="nombre_cliente"
+                            pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+"
+                            oninput="this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '')">
+                    </div>
+
+                    <div class="form-group">
+                        <label>NIT/CI</label>
+                        <input type="text" class="form-control" value="{{ $cliente->nit_ci }}" name="nit_ci"
+                            pattern="[0-9]+"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="15">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Celular</label>
+                        <input type="text" class="form-control" value="{{ $cliente->celular }}" name="celular"
+                            pattern="[0-9]+"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="8">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Correo</label>
+                        <input type="text" class="form-control" value="{{ $cliente->email }}" name="email">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn bg-gradient-success text-white">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endforeach
+
+
+
+<script>
+@foreach($clientes as $cliente)
+$('#editClienteForm{{ $cliente->id }}').submit(function(e){
+    e.preventDefault(); // Evita recargar la página
+    var form = $(this);
+
+    $.ajax({
+        url: form.attr('action'),
+        type: 'POST',
+        data: form.serialize(),
+        success: function(response){
+            // Cierra el modal
+            $('#editModal{{ $cliente->id }}').modal('hide');
+
+            // Actualiza dinámicamente los campos del cliente en la vista de crear venta
+            // Supongamos que tienes un input con name="cliente_nombre" y otro name="cliente_nit"
+            $('[name="cliente_nombre"]').val(response.nombre_cliente);
+            $('[name="cliente_nit"]').val(response.nit_ci);
+        },
+        error: function(xhr){
+            console.error('Error al actualizar cliente');
+        }
+    });
+});
+@endforeach
+</script>
+
+
 
 
 

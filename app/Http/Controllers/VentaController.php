@@ -255,98 +255,103 @@ public function updateTmp(Request $request, $id)
 public function reporteDia(Request $request)
 {
     try {
-        // DEBUG: Mostrar información básica
-        logger('=== INICIANDO REPORTE DÍA ===');
-        logger('Fecha: ' . $request->input('fecha', now()->format('Y-m-d')));
-        logger('Sucursal ID: ' . Auth::user()->sucursal_id);
-        logger('Usuario: ' . Auth::user()->name);
+        $tipo = $request->input('tipo', 'dia');
 
-   
-        $fecha = $request->input('fecha', now()->format('Y-m-d'));
-        
-        
-        $ventasQuery = Venta::with(['detallesVenta.producto', 'detallesVenta.lote', 'cliente'])
-            ->where('sucursal_id', Auth::user()->sucursal_id)
-            ->whereDate('fecha', $fecha)
-            ->orderBy('fecha', 'desc');
-
-        logger('SQL: ' . $ventasQuery->toSql());
-        logger('Bindings: ' . json_encode($ventasQuery->getBindings()));
-        
-        $ventas = $ventasQuery->get();
-        
-        logger('Ventas encontradas: ' . $ventas->count());
-
-    
-        if ($ventas->count() === 0) {
-            logger('NO HAY VENTAS para esta fecha: ' . $fecha);
-            // Forzar error para ver qué pasa
-            throw new \Exception("No hay ventas registradas para la fecha: " . $fecha);
-        }
-
-        // Calcular estadísticas
-        $totalVentas = $ventas->count();
-        $totalIngresos = $ventas->sum('precio_total');
-        $totalProductos = $ventas->sum(function($venta) {
-            return $venta->detallesVenta->sum('cantidad');
-        });
-
-        logger('Estadísticas - Ventas: ' . $totalVentas . ', Ingresos: ' . $totalIngresos . ', Productos: ' . $totalProductos);
-
-        // Obtener sucursal
         $sucursal = Sucursal::find(Auth::user()->sucursal_id);
-        
-        if (!$sucursal) {
-            throw new \Exception("No se encontró la sucursal con ID: " . Auth::user()->sucursal_id);
+
+        $query = Venta::with(['detallesVenta.producto', 'detallesVenta.lote', 'cliente'])
+            ->where('sucursal_id', Auth::user()->sucursal_id);
+
+        $hoy = now()->format("Y-m-d");
+
+        switch ($tipo) {
+
+            case 'dia':
+                $inicio = $request->input('fecha', $hoy);
+                $fin = $inicio;
+                $query->whereDate('fecha', $inicio);
+                $titulo = "REPORTE DE VENTAS DEL DÍA";
+                break;
+
+            case 'semana':
+                $inicio = now()->startOfWeek()->format("Y-m-d");
+                $fin = now()->endOfWeek()->format("Y-m-d");
+                $query->whereBetween('fecha', [$inicio, $fin]);
+                $titulo = "REPORTE SEMANAL";
+                break;
+
+            case 'mes':
+                $inicio = now()->startOfMonth()->format("Y-m-d");
+                $fin = now()->endOfMonth()->format("Y-m-d");
+                $query->whereBetween('fecha', [$inicio, $fin]);
+                $titulo = "REPORTE MENSUAL";
+                break;
+
+            case 'anio':
+                $inicio = now()->startOfYear()->format("Y-m-d");
+                $fin = now()->endOfYear()->format("Y-m-d");
+                $query->whereBetween('fecha', [$inicio, $fin]);
+                $titulo = "REPORTE ANUAL";
+                break;
+
+            case 'rango':
+                $inicio = $request->fecha_inicio;
+                $fin = $request->fecha_fin;
+
+                if (!$inicio || !$fin) {
+                    throw new \Exception("Debe seleccionar un rango de fechas válido");
+                }
+
+                $query->whereBetween('fecha', [$inicio, $fin]);
+                $titulo = "REPORTE POR RANGO PERSONALIZADO";
+                break;
+
+            default:
+                throw new \Exception("Tipo de reporte inválido");
         }
 
-        logger('Sucursal: ' . $sucursal->nombre);
+        $ventas = $query->orderBy('fecha', 'desc')->get();
+
+        if ($ventas->count() === 0) {
+            throw new \Exception("No se encontraron ventas en este periodo");
+        }
+
+        // Para compatibilidad con la vista antigua que usa $fecha
+        // asignamos $fecha al inicio (si es día será ese día; en rangos será el inicio)
+        $fecha = $inicio ?? $hoy;
 
         $data = [
             'ventas' => $ventas,
-            'fecha' => $fecha,
+            'titulo' => $titulo,
+            'inicio' => $inicio,
+            'fin' => $fin,
+            'fecha' => $fecha, // <-- variable agregada para evitar "Undefined variable $fecha"
             'sucursal' => $sucursal,
-            'totalVentas' => $totalVentas,
-            'totalIngresos' => $totalIngresos,
-            'totalProductos' => $totalProductos,
-            'fecha_generacion' => now()->format('d/m/Y H:i:s')
+            'fecha_generacion' => now()->format('d/m/Y H:i:s'),
+            'totalVentas' => $ventas->count(),
+            'totalIngresos' => $ventas->sum('precio_total'),
+            'totalProductos' => $ventas->sum(fn($v) => $v->detallesVenta->sum('cantidad'))
         ];
 
-        // DEBUG: Verificar si la vista existe
-        if (!view()->exists('admin.ventas.reporte_dia')) {
-            throw new \Exception("La vista no existe: admin.ventas.reporte_dia");
-        }
-        
-        logger('Vista encontrada: admin.ventas.reporte_dia');
+        // Preferimos la vista general si existe, sino usamos la vieja reporte_dia para compatibilidad
+        $vista = view()->exists('admin.ventas.reporte_general')
+                 ? 'admin.ventas.reporte_general'
+                 : 'admin.ventas.reporte_dia';
 
-        logger('Generando PDF...');
-
-       
-        $pdf = PDF::loadView('admin.ventas.reporte_dia', $data)
+        $pdf = PDF::loadView($vista, $data)
                  ->setPaper('a4', 'portrait');
 
-        logger('PDF generado exitosamente');
-
-        return $pdf->download('reporte_ventas_dia_' . $fecha . '.pdf');
+        return $pdf->download("reporte_" . $tipo . ".pdf");
 
     } catch (\Exception $e) {
-    
-        logger('=== ERROR EN REPORTE ===');
-        logger('Mensaje: ' . $e->getMessage());
-        logger('Archivo: ' . $e->getFile());
-        logger('Línea: ' . $e->getLine());
-        logger('Trace: ' . $e->getTraceAsString());
 
-        // Retornar error en pantalla para verlo directamente
         return response()->json([
             'error' => true,
             'message' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => $e->getTraceAsString()
         ], 500);
     }
 }
+
 
     public function pdf($id)
 {

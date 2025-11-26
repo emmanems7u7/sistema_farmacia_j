@@ -24,34 +24,62 @@
             </div>
 
             <!-- Card  -->
-            <div class="card-body p-4">
-                <div class="row g-3 align-items-center">
-                    <div class="col-md-12">
-                        <label class="form-label small text-muted mb-2">Filtrar por:</label>
-                        <div class="d-flex flex-wrap gap-2">
-                           
-                            <a href="{{ route('admin.inventario.productos_porvencer', ['vencidos' => 1, 'sucursal' => $sucursalId]) }}" 
-                               class="btn {{ $mostrarVencidos ? 'btn-danger' : 'btn-outline-danger' }}">
-                                <i class="fas fa-exclamation-triangle me-1"></i> Productos Vencidos
-                            </a>
+<div class="card-body p-4">
+    <div class="row g-3 align-items-center">
+        <div class="col-md-12">
+            <label class="form-label small text-muted mb-2">Filtrar por:</label>
+            <div class="d-flex flex-wrap gap-2">
 
-                            <!-- Botón 15 días -->
-                            <a href="{{ route('admin.inventario.productos_porvencer', ['dias' => 15, 'sucursal' => $sucursalId]) }}" 
-                               class="btn {{ !$mostrarVencidos && $diasSeleccionados == 15 ? 'btn-warning' : 'btn-outline-warning' }}">
-                                <i class="fas fa-clock me-1"></i> Próximos 15 Días
-                            </a>
+                <a href="{{ route('admin.inventario.productos_porvencer', ['vencidos' => 1, 'sucursal' => $sucursalId]) }}" 
+                   class="btn {{ $mostrarVencidos ? 'btn-danger' : 'btn-outline-danger' }}">
+                    <i class="fas fa-exclamation-triangle me-1"></i> Productos Vencidos
+                </a>
 
-                            <!-- Botón 30 días -->
-                            <a href="{{ route('admin.inventario.productos_porvencer', ['dias' => 30, 'sucursal' => $sucursalId]) }}" 
-                               class="btn {{ !$mostrarVencidos && $diasSeleccionados == 30 ? 'btn-info' : 'btn-outline-info' }}">
-                                <i class="fas fa-calendar me-1"></i> Próximos 30 Días
-                            </a>
+                <a href="{{ route('admin.inventario.productos_porvencer', ['dias' => 15, 'sucursal' => $sucursalId]) }}" 
+                   class="btn {{ !$mostrarVencidos && $diasSeleccionados == 15 ? 'btn-warning' : 'btn-outline-warning' }}">
+                    <i class="fas fa-clock me-1"></i> Próximos 15 Días
+                </a>
 
-                            
-                        </div>
-                    </div>
-                </div>
+                <a href="{{ route('admin.inventario.productos_porvencer', ['dias' => 30, 'sucursal' => $sucursalId]) }}" 
+                   class="btn {{ !$mostrarVencidos && $diasSeleccionados == 30 ? 'btn-info' : 'btn-outline-info' }}">
+                    <i class="fas fa-calendar me-1"></i> Próximos 30 Días
+                </a>
+
+               
+                <!-- Reportes -->
+<div class="dropdown">
+    <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        <i class="fas fa-file-pdf me-1"></i> Reportes PDF
+    </button>
+
+    <ul class="dropdown-menu">
+        <li>
+            <a class="dropdown-item" 
+               href="{{ route('admin.inventario.reporte_pdf', ['tipo' => 'vencidos']) }}">
+                Productos Vencidos
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" 
+               href="{{ route('admin.inventario.reporte_pdf', ['tipo' => '15']) }}">
+                Productos a vencer en 15 días
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" 
+               href="{{ route('admin.inventario.reporte_pdf', ['tipo' => '30']) }}">
+                Productos a vencer en 30 días
+            </a>
+        </li>
+    </ul>
+</div>
+
+
             </div>
+        </div>
+    </div> 
+</div>
+
         </div>
 
         <!-- Card de resultados -->

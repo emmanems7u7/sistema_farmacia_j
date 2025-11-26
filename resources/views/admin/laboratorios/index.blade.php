@@ -697,14 +697,10 @@ document.addEventListener('DOMContentLoaded', function() {
 @endforeach
         
         @foreach($laboratorios as $laboratorio)
-        
 <div class="modal fade" id="editModal{{ $laboratorio->id }}" tabindex="-1"
     aria-labelledby="editModalLabel{{ $laboratorio->id }}" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered"> {{-- MÁS ANCHO --}}
-
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-3">
-            
-            {{-- HEADER --}}
             <div class="modal-header bg-gradient-success text-white">
                 <h5 class="modal-title text-white" id="editModalLabel{{ $laboratorio->id }}">
                     <i class="fas fa-edit me-2"></i> Editar Laboratorio
@@ -713,50 +709,52 @@ document.addEventListener('DOMContentLoaded', function() {
                     aria-label="Close"></button>
             </div>
 
-            {{-- FORM --}}
             <form action="{{ url('/admin/laboratorios', $laboratorio->id) }}" method="POST">
                 @csrf
                 @method('PUT')
                 <div class="modal-body">
 
-                    {{-- DATOS DEL LABORATORIO --}}
                     <div class="card shadow-sm border-0 mb-4">
                         <div class="card-header bg-light text-dark fw-bold">
                             <i class="fas fa-flask me-2"></i> Información del Laboratorio
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                {{-- Nombre --}}
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Nombre</label>
-                                    <div class="input-group input-group-outline">
-                                        <span class="input-group-text"><i class="fas fa-flask"></i></span>
-                                        <input type="text" class="form-control" name="nombre"
-                                            value="{{ old('nombre', $laboratorio->nombre) }}" required>
-                                    </div>
-                                </div>
+                                <!-- Nombre -->
+                                <div class="col-md-6 mb-3"> 
+                                    <label class="form-label">Nombre</label> 
+                                    <div class="input-group input-group-outline"> 
+                                        <span class="input-group-text">
+                                            <i class="fas fa-flask"></i></span>
+                                     <input type="text" class="form-control" 
+                                     name="nombre" value="{{ old('nombre', $laboratorio->nombre) }}" required> 
+                                    </div> </div>
 
-                                {{-- Teléfono --}}
+                                <!-- Teléfono -->
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Teléfono</label>
                                     <div class="input-group input-group-outline">
                                         <span class="input-group-text"><i class="fas fa-phone"></i></span>
                                         <input type="text" class="form-control" name="telefono"
-                                            value="{{ old('telefono', $laboratorio->telefono) }}" required>
+                                            value="{{ old('telefono', $laboratorio->telefono) }}" required
+                                            pattern="[0-9]+"
+                                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="8">
                                     </div>
                                 </div>
 
-                                {{-- NIT --}}
+                                <!-- NIT -->
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">NIT</label>
                                     <div class="input-group input-group-outline">
                                         <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                                         <input type="text" class="form-control" name="nit"
-                                            value="{{ old('nit', $laboratorio->nit) }}">
+                                            value="{{ old('nit', $laboratorio->nit) }}"
+                                            pattern="[0-9]+"
+                                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="15">
                                     </div>
                                 </div>
 
-                                {{-- Correo --}}
+                                <!-- Correo -->
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Correo</label>
                                     <div class="input-group input-group-outline">
@@ -766,7 +764,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     </div>
                                 </div>
 
-                                {{-- Dirección (ocupa todo el ancho) --}}
+                                <!-- Dirección -->
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label">Dirección</label>
                                     <div class="input-group input-group-outline">
@@ -779,30 +777,34 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     </div>
 
-                    {{-- DATOS DEL PROVEEDOR --}}
+                    <!-- DATOS DEL PROVEEDOR -->
                     <div class="card shadow-sm border-0">
                         <div class="card-header bg-light text-dark fw-bold">
                             <i class="fas fa-user-tie me-2"></i> Información del Proveedor
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                {{-- Nombre Proveedor --}}
+                                <!-- Nombre Proveedor -->
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Nombre Proveedor</label>
                                     <div class="input-group input-group-outline">
                                         <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
                                         <input type="text" class="form-control" name="nombre_proveedor"
-                                            value="{{ old('nombre_proveedor', $laboratorio->nombre_proveedor) }}">
+                                            value="{{ old('nombre_proveedor', $laboratorio->nombre_proveedor) }}"
+                                            pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+"
+                                            oninput="this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '')">
                                     </div>
                                 </div>
 
-                                {{-- Celular --}}
+                                <!-- Celular -->
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Celular</label>
                                     <div class="input-group input-group-outline">
                                         <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
                                         <input type="text" class="form-control" name="celular"
-                                            value="{{ old('celular', $laboratorio->celular) }}">
+                                            value="{{ old('celular', $laboratorio->celular) }}"
+                                            pattern="[0-9]+"
+                                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="8">
                                     </div>
                                 </div>
                             </div>
@@ -810,7 +812,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
 
-                {{-- FOOTER --}}
+                <!-- FOOTER -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times me-1"></i> Cancelar
@@ -825,13 +827,8 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 </div>
+@endforeach
 
-
-
-
-
-            
-        @endforeach
 
  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -155,20 +155,20 @@ class InventarioController extends Controller
             ->count();
 
     
-$mesesCompras = collect($mesesDisponiblesCompras)->map(function($fecha) {
-    return $fecha instanceof Carbon ? $fecha->format('Y-m') : $fecha;
-});
+        $mesesCompras = collect($mesesDisponiblesCompras)->map(function($fecha) {
+            return $fecha instanceof Carbon ? $fecha->format('Y-m') : $fecha;
+        });
 
-$mesesVentas = collect($mesesDisponiblesVentas)->map(function($fecha) {
-    return $fecha instanceof Carbon ? $fecha->format('Y-m') : $fecha;
-});
+        $mesesVentas = collect($mesesDisponiblesVentas)->map(function($fecha) {
+            return $fecha instanceof Carbon ? $fecha->format('Y-m') : $fecha;
+        });
 
 
-$mesesDisponibles = $mesesCompras
-    ->merge($mesesVentas)
-    ->unique()
-    ->sortDesc()
-    ->values(); 
+        $mesesDisponibles = $mesesCompras
+            ->merge($mesesVentas)
+            ->unique()
+            ->sortDesc()
+            ->values(); 
 
 
         return view('admin.inventario.index', compact(
@@ -624,6 +624,48 @@ public function reportebajoStock(Request $request)
             'breadcrumb' => $breadcrumb
         ]);
     }
+
+
+public function reportePDF(Request $request)
+{
+    $tipo = $request->tipo;
+
+    switch ($tipo) {
+        case 'vencidos':
+            $titulo = "Productos Vencidos";
+            $lotes = Lote::with('producto')
+                ->where('fecha_vencimiento', '<=', now())
+                ->get();
+            break;
+
+        case '15':
+            $titulo = "Productos a vencer en 15 días";
+            $lotes = Lote::with('producto')
+                ->whereBetween('fecha_vencimiento', [now(), now()->addDays(15)])
+                ->get();
+            break;
+
+        case '30':
+            $titulo = "Productos a vencer en 30 días";
+            $lotes = Lote::with('producto')
+                ->whereBetween('fecha_vencimiento', [now(), now()->addDays(30)])
+                ->get();
+            break;
+
+        default:
+            abort(404);
+    }
+
+    $pdf = Pdf::loadView('admin.inventario.reporte_pdf', [
+        'titulo' => $titulo,
+        'lotes' => $lotes,
+        'tipo' => $tipo // Añadimos el tipo para usarlo en la vista
+    ]);
+
+
+     return $pdf->download($titulo . '.pdf');
+}
+
 }
 
 

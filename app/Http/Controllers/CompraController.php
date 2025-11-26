@@ -432,52 +432,97 @@ public function destroy($id)
 
 
 
-public function reporteDiario()
+public function reporteDiario(Request $request)
 {
     try {
-        // Obtener la fecha actual
-        $fechaHoy = Carbon::today();
+        $tipo = $request->input('tipo', 'dia'); // 'dia', 'semana', 'mes', 'anio', 'rango'
+        $sucursal = Sucursal::find(Auth::user()->sucursal_id);
 
-        // Obtener las compras del día actual - solo con proveedor
-        $compras = Compra::with(['laboratorio'])
-            ->where('sucursal_id', Auth::user()->sucursal_id)
-            ->whereDate('fecha', $fechaHoy)
-            ->get();
+        $query = Compra::with(['laboratorio'])
+            ->where('sucursal_id', Auth::user()->sucursal_id);
 
-        
+        $hoy = now()->format("Y-m-d");
+
+        switch ($tipo) {
+            case 'dia':
+                $inicio = $request->input('fecha', $hoy);
+                $fin = $inicio;
+                $query->whereDate('fecha', $inicio);
+                $titulo = "REPORTE DE COMPRAS DEL DÍA";
+                break;
+
+            case 'semana':
+                $inicio = now()->startOfWeek()->format("Y-m-d");
+                $fin = now()->endOfWeek()->format("Y-m-d");
+                $query->whereBetween('fecha', [$inicio, $fin]);
+                $titulo = "REPORTE SEMANAL DE COMPRAS";
+                break;
+
+            case 'mes':
+                $inicio = now()->startOfMonth()->format("Y-m-d");
+                $fin = now()->endOfMonth()->format("Y-m-d");
+                $query->whereBetween('fecha', [$inicio, $fin]);
+                $titulo = "REPORTE MENSUAL DE COMPRAS";
+                break;
+
+            case 'anio':
+                $inicio = now()->startOfYear()->format("Y-m-d");
+                $fin = now()->endOfYear()->format("Y-m-d");
+                $query->whereBetween('fecha', [$inicio, $fin]);
+                $titulo = "REPORTE ANUAL DE COMPRAS";
+                break;
+
+            case 'rango':
+                $inicio = $request->fecha_inicio;
+                $fin = $request->fecha_fin;
+
+                if (!$inicio || !$fin) {
+                    throw new \Exception("Debe seleccionar un rango de fechas válido");
+                }
+
+                $query->whereBetween('fecha', [$inicio, $fin]);
+                $titulo = "REPORTE DE COMPRAS POR RANGO";
+                break;
+
+            default:
+                throw new \Exception("Tipo de reporte inválido");
+        }
+
+        $compras = $query->orderBy('fecha', 'desc')->get();
+
+        if ($compras->count() === 0) {
+            throw new \Exception("No se encontraron compras en este periodo");
+        }
+
         $totalCompras = $compras->count();
         $totalEgresos = $compras->sum('precio_total');
-        
-      
-        $totalProductos = 0; 
-
-        
-        $sucursal = Sucursal::find(Auth::user()->sucursal_id);
 
         $data = [
             'compras' => $compras,
-            'fecha' => $fechaHoy,
             'sucursal' => $sucursal,
+            'tipo' => $tipo,
+            'titulo' => $titulo,
+            'inicio' => $inicio,
+            'fin' => $fin,
+            'fecha' => $inicio, // para compatibilidad con la vista
+            'fecha_generacion' => now()->format('d/m/Y H:i:s'),
             'totalCompras' => $totalCompras,
             'totalEgresos' => $totalEgresos,
-            'totalProductos' => $totalProductos, 
-            'fecha_generacion' => now()->format('d/m/Y H:i:s')
         ];
 
-      
-        $pdf = Pdf::loadView('admin.compras.reporte_diario_pdf', $data);
-        return $pdf->download('reporte_compras_' . $fechaHoy->format('Y-m-d') . '.pdf');
-        
-        
+        $pdf = PDF::loadView('admin.compras.reporte_diario_pdf', $data)
+                 ->setPaper('a4', 'portrait');
+
+        return $pdf->download("reporte_compras_{$tipo}.pdf");
 
     } catch (\Exception $e) {
-        logger('ERROR en reporteDiario: ' . $e->getMessage());
         return response()->json([
             'error' => true,
-            'message' => $e->getMessage()
+            'message' => $e->getMessage(),
         ], 500);
     }
 }
+
 
 public function reporteDiaario(Request $request)
 {

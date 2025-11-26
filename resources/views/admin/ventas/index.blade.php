@@ -174,63 +174,114 @@
                         </h5>
                        
                         <div class="d-flex gap-2 align-items-center ms-auto position-relative">
-                            <button class="btn btn-sm btn-info text-white" onclick="generarReporteDia()">
-                                <i class="fas fa-file-alt me-1"></i> Reporte del Día
-                            </button>
+    <!-- Filtro de reportes para PDF -->
+    <div class="dropdown d-inline-block">
+        <button class="btn btn-sm btn-info text-white dropdown-toggle" type="button"
+            id="reportFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-filter me-1"></i> Generar Reporte PDF
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow-lg"
+            style="position: absolute; z-index: 1100;" aria-labelledby="reportFilterDropdown">
 
+            <li>
+                <a class="dropdown-item d-flex align-items-center" href="#" onclick="generarReportePDF('dia')">
+                    <i class="fas fa-calendar-day text-primary me-2"></i> Reporte del Día
+                </a>
+            </li>
+
+            <li>
+                <a class="dropdown-item d-flex align-items-center" href="#" onclick="generarReportePDF('semana')">
+                    <i class="fas fa-calendar-week text-info me-2"></i> Reporte Semanal
+                </a>
+            </li>
+
+            <li>
+                <a class="dropdown-item d-flex align-items-center" href="#" onclick="generarReportePDF('mes')">
+                    <i class="fas fa-calendar-alt text-success me-2"></i> Reporte Mensual
+                </a>
+            </li>
+
+            <li>
+                <a class="dropdown-item d-flex align-items-center" href="#" onclick="generarReportePDF('anio')">
+                    <i class="fas fa-calendar text-warning me-2"></i> Reporte Anual
+                </a>
+            </li>
+
+            <li><hr class="dropdown-divider"></li>
+
+            <li>
+                <a class="dropdown-item d-flex align-items-center" href="#" data-bs-toggle="modal"
+                    data-bs-target="#rangoPersonalizadoModal">
+                    <i class="fas fa-calendar-range text-secondary me-2"></i> Rango Personalizado
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Modal para rango personalizado -->
+<div class="modal fade" id="rangoPersonalizadoModal" tabindex="-1"
+    aria-labelledby="rangoPersonalizadoModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Rango Personalizado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="rangoPersonalizadoForm">
+                    <div class="mb-3">
+                        <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
+                        <input type="date" class="form-control" id="fechaInicio" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="fechaFin" class="form-label">Fecha de Fin</label>
+                        <input type="date" class="form-control" id="fechaFin" required>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="generarReportePersonalizadoPDF()">
+                    Generar Reporte PDF
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
 <script>
-    
-function generarReporteDia() {
-    Swal.fire({
-        title: 'Generar Reporte del Día',
-        text: '¿Deseas generar el reporte de ventas de hoy?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, generar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            
-            const hoy = new Date().toISOString().split('T')[0];
-            
-            
-            window.location.href = "{{ route('admin.ventas.reporte_dia') }}?fecha=" + hoy;
-        }
-    });
+function generarReportePDF(tipo) {
+    let url = "{{ route('admin.ventas.reporte_dia') }}?tipo=" + tipo;
+    window.location.href = url;
+}
+
+function generarReportePersonalizadoPDF() {
+    let fi = document.getElementById("fechaInicio").value;
+    let ff = document.getElementById("fechaFin").value;
+
+    if (!fi || !ff) {
+        Swal.fire("Error", "Debe seleccionar ambas fechas", "error");
+        return;
+    }
+
+    let url = "{{ route('admin.ventas.reporte_dia') }}"
+            + "?tipo=rango"
+            + "&fecha_inicio=" + fi
+            + "&fecha_fin=" + ff;
+
+    window.location.href = url;
 }
 </script>
 
+                           
 
-                            <button class="btn btn-sm btn-outline-secondary" id="refreshTable">
-                                <i class="fas fa-sync-alt me-1"></i> Actualizar
-                            </button>
-
-                            <!-- Dropdown mejorado -->
-                            <div class="dropdown d-inline-block">
-                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button"
-                                    id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-download me-1"></i> Exportar
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end shadow-lg"
-                                    style="position: absolute; z-index: 1100;" aria-labelledby="exportDropdown">
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center"
-                                            href="{{ route('admin.ventas.reporte', ['tipo' => 'pdf']) }}?{{ http_build_query(request()->only(['fecha_inicio', 'fecha_fin', 'cliente_id'])) }}"
-                                            target="_blank">
-                                            <i class="fas fa-file-pdf text-danger me-2"></i> PDF
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center"
-                                            href="{{ route('admin.ventas.reporte', ['tipo' => 'excel']) }}?{{ http_build_query(request()->only(['fecha_inicio', 'fecha_fin', 'cliente_id'])) }}">
-                                            <i class="fas fa-file-excel text-success me-2"></i> Excel
-                                        </a>
-                                    </li>
-
-                                </ul>
-                            </div>
+                            
                         </div>
                     </div>
 

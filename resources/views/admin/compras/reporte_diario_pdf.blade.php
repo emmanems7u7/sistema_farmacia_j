@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Reporte de Compras del Día</title>
+    <title>{{ $titulo ?? 'Reporte de Compras' }}</title>
     <style>
         body { font-family: Arial, sans-serif; font-size: 12px; }
         .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
@@ -24,11 +24,15 @@
 </head>
 <body>
     <div class="header">
-        <h1>REPORTE DE COMPRAS DEL DÍA</h1>
+        <h1>{{ $titulo ?? 'REPORTE DE COMPRAS' }}</h1>
         @if(isset($sucursal) && $sucursal)
-        <p><strong>Sucursal:</strong> {{ $sucursal->nombre }}</p>
+            <p><strong>Sucursal:</strong> {{ $sucursal->nombre }}</p>
         @endif
-        <p><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($fecha)->format('d/m/Y') }}</p>
+        @if($tipo == 'rango')
+            <p><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($inicio)->format('d/m/Y') }} al {{ \Carbon\Carbon::parse($fin)->format('d/m/Y') }}</p>
+        @else
+            <p><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($fecha)->format('d/m/Y') }}</p>
+        @endif
         <p><strong>Generado:</strong> {{ $fecha_generacion }}</p>
     </div>
 
@@ -42,7 +46,6 @@
                 <div class="summary-value">Bs {{ number_format($totalEgresos, 2) }}</div>
                 <div class="summary-label">TOTAL GASTADO</div>
             </div>
-          
         </div>
     </div>
 
@@ -51,7 +54,7 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Fecha </th>
+                    <th>Fecha</th>
                     <th>Laboratorio</th>
                     <th>Proveedor</th>
                     <th class="text-right">Total Compra</th>
@@ -61,22 +64,26 @@
                 @foreach($compras as $index => $compra)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                 <td>{{ \Carbon\Carbon::parse($compra->fecha)->format('d/m/Y') }}</td> 
+                    <td>{{ \Carbon\Carbon::parse($compra->fecha)->format('d/m/Y') }}</td> 
                     <td>{{ $compra->laboratorio->nombre ?? 'S/D' }}</td>
-                    <td>{{ $compra->laboratorio->nombre_proveedor?? 'S/D' }}</td>
+                    <td>{{ $compra->laboratorio->nombre_proveedor ?? 'S/D' }}</td>
                     <td class="text-right">Bs {{ number_format($compra->precio_total, 2) }}</td>
                 </tr>
                 @endforeach
                 <tr class="total-row">
-                    <td colspan="4" class="text-right"><strong>TOTAL DEL DÍA:</strong></td>
+                    <td colspan="4" class="text-right"><strong>TOTAL:</strong></td>
                     <td class="text-right"><strong>Bs {{ number_format($totalEgresos, 2) }}</strong></td>
                 </tr>
             </tbody>
         </table>
     @else
         <div style="text-align: center; padding: 40px; color: #7f8c8d;">
-            <h3>No hay compras registradas para esta fecha</h3>
-            <p>No se encontraron compras para el día {{ \Carbon\Carbon::parse($fecha)->format('d/m/Y') }}</p>
+            <h3>No hay compras registradas para este periodo</h3>
+            @if($tipo == 'rango')
+                <p>No se encontraron compras entre {{ \Carbon\Carbon::parse($inicio)->format('d/m/Y') }} y {{ \Carbon\Carbon::parse($fin)->format('d/m/Y') }}</p>
+            @else
+                <p>No se encontraron compras para {{ \Carbon\Carbon::parse($fecha)->format('d/m/Y') }}</p>
+            @endif
         </div>
     @endif
 </body>

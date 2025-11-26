@@ -74,48 +74,106 @@
                             <p class="mb-0 small">Total: <span class="badge bg-primary">{{ count($compras) }}</span></p>
                             
                             
-                                <div class="d-flex gap-2 align-items-center ms-auto position-relative">
-                                <div class="d-flex justify-content-end mb-3">
-                                    <a href="{{ route('admin.compras.reporteDiario') }}" class="btn btn-sm btn-info text-white" target="_blank">
-                                        <i class="fas fa-file-pdf me-2"></i> Reporte del Día
-                                    </a>
+                               <div class="d-flex gap-2 align-items-center ms-auto position-relative">
+    <div class="dropdown d-inline-block">
+        <button class="btn btn-sm btn-info text-white dropdown-toggle" type="button"
+            id="reportFilterDropdown2" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-filter me-1"></i> Reporte Compras PDF
+        </button>
 
-                                    
-                                </div>
+        <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="reportFilterDropdown2">
 
+            <li>
+                <a class="dropdown-item d-flex align-items-center" href="#"
+                    onclick="generarReporteCompras('dia')">
+                    <i class="fas fa-calendar-day text-primary me-2"></i> Reporte del Día
+                </a>
+            </li>
 
-                                
-                                <button class="btn btn-sm btn-outline-secondary" id="refreshTable">
-                                <i class="fas fa-sync-alt me-1"></i> Actualizar
-                            </button>
-                                
-                                    <div class="dropdown d-inline-block">
-                                    <button class="btn btn-icon btn-outline-primary  dropdown-toggle" type="button"
-                                        id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false"
-                                        data-bs-toggle="tooltip" title="Exportar datos">
-                                        <i class="fas fa-download"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                                        <li>
+            <li>
+                <a class="dropdown-item d-flex align-items-center" href="#"
+                    onclick="generarReporteCompras('semana')">
+                    <i class="fas fa-calendar-week text-info me-2"></i> Reporte Semanal
+                </a>
+            </li>
 
+            <li>
+                <a class="dropdown-item d-flex align-items-center" href="#"
+                    onclick="generarReporteCompras('mes')">
+                    <i class="fas fa-calendar-alt text-success me-2"></i> Reporte Mensual
+                </a>
+            </li>
 
-                                            <a class="dropdown-item d-flex align-items-center"
-                                                href="{{ route('admin.compras.reporte', ['tipo' => 'pdf']) }}?fecha_inicio={{ request('fecha_inicio') }}&fecha_fin={{ request('fecha_fin') }}&laboratorio_id={{ request('laboratorio_id') }}"
-                                                target="_blank">
-                                                <i class="fas fa-file-pdf text-danger me-2"></i>
-                                                <span>Exportar a PDF</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item d-flex align-items-center"
-                                                href="{{ route('admin.compras.reporte', ['tipo' => 'excel']) }}?fecha_inicio={{ request('fecha_inicio') }}&fecha_fin={{ request('fecha_fin') }}&laboratorio_id={{ request('laboratorio_id') }}">
-                                                <i class="fas fa-file-excel text-success me-2"></i>
-                                                <span>Exportar a Excel</span>
-                                            </a>
-                                        </li>
+            <li>
+                <a class="dropdown-item d-flex align-items-center" href="#"
+                    onclick="generarReporteCompras('anio')">
+                    <i class="fas fa-calendar text-warning me-2"></i> Reporte Anual
+                </a>
+            </li>
 
-                                    </ul>
-                                </div>
+            <li><hr class="dropdown-divider"></li>
+
+            <li>
+                <a class="dropdown-item d-flex align-items-center" href="#"
+                    data-bs-toggle="modal" data-bs-target="#rangoComprasModal">
+                    <i class="fas fa-calendar-range text-secondary me-2"></i> Rango Personalizado
+                </a>
+            </li>
+
+        </ul>
+    </div>
+</div>
+
+<!-- Modal para rango personalizado -->
+<div class="modal fade" id="rangoComprasModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Rango Personalizado - Compras</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="formRangoCompras">
+                    <div class="mb-3">
+                        <label class="form-label">Fecha Inicio</label>
+                        <input type="date" class="form-control" id="inicioCompras" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Fecha Fin</label>
+                        <input type="date" class="form-control" id="finCompras" required>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button class="btn btn-primary" onclick="generarReporteComprasRango()">Generar PDF</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function generarReporteCompras(tipo) {
+    window.open(`{{ route('admin.compras.reporteDiario') }}?tipo=${tipo}`, '_blank');
+}
+
+function generarReporteComprasRango() {
+    const inicio = document.getElementById('inicioCompras').value;
+    const fin = document.getElementById('finCompras').value;
+
+    if (!inicio || !fin) {
+        alert("Debe seleccionar ambas fechas");
+        return;
+    }
+
+    window.open(`{{ route('admin.compras.reporteDiario') }}?tipo=rango&fecha_inicio=${inicio}&fecha_fin=${fin}`, '_blank');
+}
+</script>
+
 
                             </div>
                         </div>

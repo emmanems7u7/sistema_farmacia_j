@@ -95,35 +95,31 @@ class ClienteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
-    {
-        //
-        //$datos =request()->all();
-        //return response()->json($datos);
-        // Validación de los datos de entrada
-        $request->validate([
-            'nombre_cliente' => 'required',
-            'nit_ci' => 'nullable',
-            'celular' => 'nullable',
-            'email' => 'nullable',
-        ]);
+ public function update(Request $request, $id)
+{
+    $request->validate([
+        'nombre_cliente' => 'required',
+        'nit_ci' => 'nullable',
+        'celular' => 'nullable',
+        'email' => 'nullable',
+    ]);
 
-        
-        $cliente = Cliente::find($id);
+    $cliente = Cliente::find($id);
+    $cliente->nombre_cliente = $request->nombre_cliente;
+    $cliente->nit_ci = $request->nit_ci;
+    $cliente->celular = $request->celular;
+    $cliente->email = $request->email;
+    $cliente->sucursal_id = Auth::user()->sucursal_id;
+    $cliente->save();
 
-        
-        $cliente->nombre_cliente = $request->nombre_cliente;
-        $cliente->nit_ci = $request->nit_ci;
-        $cliente->celular = $request->celular;
-        $cliente->email = $request->email;
-        $cliente->sucursal_id = Auth::user()->sucursal_id;
-
-
-        $cliente->save();
-      
-        return redirect()->route('admin.clientes.index')
-            ->with('status', 'Se modifico la cliente');
+    if ($request->ajax()) {
+        return response()->json($cliente); // Devuelve los datos actualizados al AJAX
     }
+
+    return redirect()->route('admin.clientes.index')
+        ->with('status', 'Cliente actualizado');
+}
+
 
     /**
      * Remove the specified resource from storage.
